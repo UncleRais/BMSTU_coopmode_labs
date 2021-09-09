@@ -1,0 +1,7 @@
+/ is the root of the current drive;
+./ is the current directory;
+../ is the parent of the current directory.
+
+1) OptMethods is a parent directory for all projects.
+2) To add a file from another directory use #include "../folder/file.cpp"
+3) To add another file from the same (current) directory use #include "./file.cpp" or #include "file.cpp"
