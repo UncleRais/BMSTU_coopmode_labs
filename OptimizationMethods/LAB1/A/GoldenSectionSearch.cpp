@@ -59,7 +59,6 @@ public:
 	}
 
 private:
-
 	double getLeftX() {
 		return range.getStart() + (1 - 1 / 1.618) * range.getLength();
 	}
