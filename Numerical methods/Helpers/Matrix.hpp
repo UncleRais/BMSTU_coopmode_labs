@@ -5,6 +5,7 @@
 #include<fstream>
 #include<vector>
 #include<iomanip>
+#include<cmath>
 
 enum FileError {
 	settingsNotFound,
@@ -23,13 +24,14 @@ private:
 	size_t systemSize;
 
 public:
-	T at(const size_t row, const size_t col) const {
+ 	T& at(const size_t row, const size_t col) 
+	{
 		return matrix_[row * systemSize + col];
 	}
 
-public:
-	void print(int width = 7) const
+	void print(int width = 7) 
 	{
+		std::cout << "---------------------"<< std::endl;;
 		for (size_t i = 0; i < systemSize; ++i)
 			{			
 				std::cout << "| "; 
@@ -37,6 +39,26 @@ public:
 					std::cout << std::setw(width) << at(i, j) << " ";
 				std::cout << "| " << rightvalues_[i] << std::endl;
 			}
+		std::cout << "---------------------"<< std::endl;;
+	}
+
+	void GaussMethod()
+	{
+		for(size_t k = 0; k < systemSize - 1; ++k)
+		{
+		    //THERE WILL BE: checking elem a[k][k] != 0 OR finding main elem 
+			for(size_t row = k + 1; row < systemSize; ++row)
+			{
+				for(size_t col = k; col < systemSize; ++col)
+				{
+					at(row,col) -= at(k, col)*at(row , k)/at(k , k); 
+					std::cout <<at(row,col)<< " " <<at(k, col) << " " << at(row , k) << "  " << at(k , k) << std::endl;
+				}
+				rightvalues_[row] -= rightvalues_[k]*at(row , k)/at(k , k); 
+				//print(10);
+			} //Doesn't work 
+		}
+		print(10);
 	}
 
 	Matrix(const char * settings)
