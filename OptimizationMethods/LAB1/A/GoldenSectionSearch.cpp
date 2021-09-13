@@ -3,6 +3,7 @@
 #include <vector>
 #include <math.h>
 #include "../../Helpers/Range.cpp"
+#include <functional>
 
 typedef std::function<double(double)> UnimodalFunction;
 typedef std::vector<double> DoubleArray;

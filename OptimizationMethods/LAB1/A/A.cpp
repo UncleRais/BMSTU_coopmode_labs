@@ -6,5 +6,5 @@ double func (double x) {
 }
 
 int main(int argc, char *argv[]) {
-	GoldenSectionSearch(-1, 1, func).run(10e-6);
+	GoldenSectionSearch(-1, 1, func).run(1e-15);
 }
