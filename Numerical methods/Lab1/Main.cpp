@@ -3,7 +3,7 @@
 int main(int argc, char** argv) {
 	Matrix<double> a("settings.dat");
 	a.print(10,4);
-	const auto result = a.linearSolveGauss(gauss);
+	const auto result = a.linearSolve(gauss);
 	for (const auto& x: result) {
 		std::cout << x << ";  ";
 	}

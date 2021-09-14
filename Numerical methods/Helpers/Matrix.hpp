@@ -64,7 +64,6 @@ private:
 		}
 	}
 
-	//WARNING: - Unsafe for vector with a different size
 	void resetIndexation(Vector& vector) {
 		for (auto it = swapJournal.end() - 1; it >= swapJournal.begin(); --it) {
 			const size_t leftIndex = it->first_;
@@ -125,10 +124,10 @@ public:
 					std::cout << std::setw(width) << std::setprecision(prec)<< at(i, j) << " ";
 				std::cout << "| " << rightvalues_[i] << std::endl;
 			}
-		std::cout << std::endl;;
+		std::cout << std::endl;
 	}
 
-	Vector linearSolveGauss(Method method) {
+	Vector linearSolve(Method method) {
 		switch (method) {
 		case gauss:
 			return gaussMethod();
