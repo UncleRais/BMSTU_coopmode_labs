@@ -24,6 +24,37 @@ private:
 	std::vector<T> rightvalues_ = {};
 	size_t systemSize;
 
+	//MARK: Convenient functions
+	std::vector<T> gaussMethod() {
+		for(size_t k = 0; k < systemSize - 1; ++k)
+		{
+		    //THERE WILL BE: checking elem a[k][k] != 0 OR finding main elem 
+			for(size_t row = k + 1; row < systemSize; ++row)
+			{
+				T value = atvalue(row , k);
+				for(size_t col = k; col < systemSize; ++col)
+				{
+					at(row,col) -= at(k, col) * value / at(k , k); 
+				}
+				rightvalues_[row] -= rightvalues_[k] * value / at(k , k); 
+			}
+		}
+
+		std::vector<T> solution(systemSize, 0.0);
+		for (int row = systemSize - 1; row >= 0; --row)
+		{
+			T x = 0.0;
+			x += rightvalues_[row];			
+			for(int col = systemSize - 1; col > row ; --col )
+			{
+				x -= at(row, col) * solution[col];
+			} 
+			x /= at(row,row);
+			solution[row] = x;
+		}			
+		return solution;
+	}
+
 public:
  	T& at(const size_t row, const size_t col) 
 	{
@@ -48,40 +79,12 @@ public:
 		std::cout << "---------------------"<< std::endl;;
 	}
 
-	std::vector<T> gaussMethod()
+	std::vector<T> linearSolveGauss()
 	{
-		//Forward method progress START
-		for(size_t k = 0; k < systemSize - 1; ++k)
-		{
-		    //THERE WILL BE: checking elem a[k][k] != 0 OR finding main elem 
-			for(size_t row = k + 1; row < systemSize; ++row)
-			{
-				T value = atvalue(row , k);
-				for(size_t col = k; col < systemSize; ++col)
-				{
-					at(row,col) -= at(k, col) * value / at(k , k); 
-				}
-				rightvalues_[row] -= rightvalues_[k] * value / at(k , k); 
-			}
-		}
-		//Forward method progress FINISH
-		print(10,4);
-		//Backward method progress START
-		std::vector<T> solution(systemSize, 0.0);
-		for (int row = systemSize - 1; row >= 0; --row)
-		{
-			T x = 0.0;
-			x += rightvalues_[row];			
-			for(int col = systemSize - 1; col > row ; --col )
-			{
-				x -= at(row, col) * solution[col];
-			} 
-			x /= at(row,row);
-			solution[row] = x;
-		}			
-		//Backward method progress FINISH
-		return solution;
+		return gaussMethod();
 	}
+
+	Matrix() {}
 
 	Matrix(const char * settings)
 	{
