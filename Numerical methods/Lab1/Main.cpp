@@ -2,9 +2,8 @@
 
 int main(int argc, char** argv) {
 	Matrix<double> a("settings.dat");
-	a.linearSolveGauss();
 	a.print(10,4);
-	const auto result = a.linearSolveGauss();
+	const auto result = a.linearSolveGauss(gauss);
 	for (const auto& x: result) {
 		std::cout << x << ";  ";
 	}
