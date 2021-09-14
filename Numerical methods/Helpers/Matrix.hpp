@@ -29,14 +29,19 @@ public:
 		return matrix_[row * systemSize + col];
 	}
 
-	void print(int width = 7) 
+	T atvalue(const size_t row, const size_t col) 
+	{
+		return matrix_[row * systemSize + col];
+	}
+
+	void print(int width = 7, int prec = 4) 
 	{
 		std::cout << "---------------------"<< std::endl;;
 		for (size_t i = 0; i < systemSize; ++i)
 			{			
 				std::cout << "| "; 
 				for (size_t j = 0; j < systemSize; ++j)
-					std::cout << std::setw(width) << at(i, j) << " ";
+					std::cout << std::setw(width) << std::setprecision(prec)<< at(i, j) << " ";
 				std::cout << "| " << rightvalues_[i] << std::endl;
 			}
 		std::cout << "---------------------"<< std::endl;;
@@ -44,21 +49,38 @@ public:
 
 	void GaussMethod()
 	{
+		//Forward method progress START
 		for(size_t k = 0; k < systemSize - 1; ++k)
 		{
 		    //THERE WILL BE: checking elem a[k][k] != 0 OR finding main elem 
 			for(size_t row = k + 1; row < systemSize; ++row)
 			{
+				T value = atvalue(row , k);
 				for(size_t col = k; col < systemSize; ++col)
 				{
-					at(row,col) -= at(k, col)*at(row , k)/at(k , k); 
-					std::cout <<at(row,col)<< " " <<at(k, col) << " " << at(row , k) << "  " << at(k , k) << std::endl;
+					at(row,col) -= at(k, col) * value / at(k , k); 
 				}
-				rightvalues_[row] -= rightvalues_[k]*at(row , k)/at(k , k); 
-				//print(10);
-			} //Doesn't work 
+				rightvalues_[row] -= rightvalues_[k] * value / at(k , k); 
+			}
 		}
-		print(10);
+		//Forward method progress FINISH
+		print(10,4);
+		//Backward method progress START
+		std::vector<T> solution = {};
+		solution.reserve(systemSize);
+		for (size_t row = systemSize - 1; row >= 0; --row)
+		{
+			T x = 0.0;
+			x += rightvalues_[row];			
+			for(size_t col = 0; col < solution.size() ; ++col )
+			{
+				x -= at(row,col) * solution[systemSize - col];
+			} 
+			x /= at(row,row);
+			solution.push_back(x);
+		}			
+		//Backward method progress FINISH
+		print(10,4);
 	}
 
 	Matrix(const char * settings)
