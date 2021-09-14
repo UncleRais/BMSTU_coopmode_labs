@@ -6,6 +6,7 @@
 #include<vector>
 #include<iomanip>
 #include<cmath>
+#include<algorithm>
 
 enum FileError {
 	settingsNotFound,
@@ -47,7 +48,7 @@ public:
 		std::cout << "---------------------"<< std::endl;;
 	}
 
-	void GaussMethod()
+	std::vector<T> gaussMethod()
 	{
 		//Forward method progress START
 		for(size_t k = 0; k < systemSize - 1; ++k)
@@ -66,21 +67,20 @@ public:
 		//Forward method progress FINISH
 		print(10,4);
 		//Backward method progress START
-		std::vector<T> solution = {};
-		solution.reserve(systemSize);
-		for (size_t row = systemSize - 1; row >= 0; --row)
+		std::vector<T> solution(systemSize, 0.0);
+		for (int row = systemSize - 1; row >= 0; --row)
 		{
 			T x = 0.0;
 			x += rightvalues_[row];			
-			for(size_t col = 0; col < solution.size() ; ++col )
+			for(int col = systemSize - 1; col > row ; --col )
 			{
-				x -= at(row,col) * solution[systemSize - col];
+				x -= at(row, col) * solution[col];
 			} 
 			x /= at(row,row);
-			solution.push_back(x);
+			solution[row] = x;
 		}			
 		//Backward method progress FINISH
-		print(10,4);
+		return solution;
 	}
 
 	Matrix(const char * settings)
