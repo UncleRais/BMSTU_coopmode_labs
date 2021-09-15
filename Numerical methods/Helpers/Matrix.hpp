@@ -65,7 +65,15 @@ private:
 	}
 
 	void resetIndexation(Vector& vector) {
+		// auto it = swapJournal.end() - 1;
+		// while (it >= swapJournal.begin()) {
+		// 	const size_t leftIndex = it->first_;
+		// 	const size_t rightIndex = it->second_;
+		// 	std::swap(vector[rightIndex], vector[leftIndex]);
+		// 	--it;
+		// }
 		for (auto it = swapJournal.end() - 1; it >= swapJournal.begin(); --it) {
+			std::cout << "hi";
 			const size_t leftIndex = it->first_;
 			const size_t rightIndex = it->second_;
 			std::swap(vector[rightIndex], vector[leftIndex]);
@@ -117,14 +125,19 @@ public:
 
 	void print(int width = 7, int prec = 4) 
 	{
+		for(size_t i = 0; i < systemSize * (width + 1); ++i)
+				std::cout << "-";
+			std::cout << "-\n";
 		for (size_t i = 0; i < systemSize; ++i)
 			{			
 				std::cout << "| "; 
 				for (size_t j = 0; j < systemSize; ++j)
 					std::cout << std::setw(width) << std::setprecision(prec)<< at(i, j) << " ";
-				std::cout << "| " << rightvalues_[i] << std::endl;
+				std::cout << "| " << rightvalues_[i] << "\n";
 			}
-		std::cout << std::endl;
+			for(size_t i = 0; i < systemSize * (width + 1); ++i)
+				std::cout << "-";
+			std::cout << "-\n";
 	}
 
 	Vector linearSolve(Method method) {
@@ -135,6 +148,7 @@ public:
 		case qr:
 			return {};
 		}
+		return{};
 	}
 
 	Matrix() {}
@@ -189,13 +203,13 @@ public:
 			std::string errorDescription;
 			switch (error) {
 				case settingsNotFound:
-					errorDescription = "Settings not found";
+					errorDescription = "Settings not found\n";
 					break;
 				case matrixNotFound:
-					errorDescription = "Matrix not found";
+					errorDescription = "Matrix not found\n";
 					break;
 				case vectorNotFound:
-					errorDescription = "Vector not found";
+					errorDescription = "Vector not found\n";
 			}
 			std::cerr << errorDescription << std::endl;
 			exit(5);

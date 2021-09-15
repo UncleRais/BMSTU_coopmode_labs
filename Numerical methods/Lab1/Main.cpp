@@ -1,4 +1,5 @@
 #include "../Helpers/Matrix.hpp"
+#include <cmath>
 
 int main(int argc, char** argv) {
 	Matrix<double> a("settings.dat");
