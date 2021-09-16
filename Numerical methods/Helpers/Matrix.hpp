@@ -1,18 +1,7 @@
 #ifndef MATRIX
 #define MATRIX
 
-#include<iostream>
-#include<fstream>
-#include<vector>
-#include<iomanip>
-#include<cmath>
-#include<algorithm>
-
-enum FileError {
-	settingsNotFound,
-	matrixNotFound,
-	vectorNotFound,
-};
+#include "../Helpers/Foundation.cpp"
 
 enum Method {
 	gauss,
@@ -53,7 +42,7 @@ private:
 		T maxValue = at(startCol, startCol);
 		for (size_t col = startCol + 1; col < systemSize; ++col) {
 			const T nextValue = atvalue(startCol, col);
-			if ( nextValue > maxValue ) {
+			if ( absolute(nextValue) > maxValue ) {
 				maxValue = nextValue;
 				maxCol = col;
 			}
@@ -65,15 +54,7 @@ private:
 	}
 
 	void resetIndexation(Vector& vector) {
-		// auto it = swapJournal.end() - 1;
-		// while (it >= swapJournal.begin()) {
-		// 	const size_t leftIndex = it->first_;
-		// 	const size_t rightIndex = it->second_;
-		// 	std::swap(vector[rightIndex], vector[leftIndex]);
-		// 	--it;
-		// }
-		for (auto it = swapJournal.end() - 1; it >= swapJournal.begin(); --it) {
-			std::cout << "hi";
+		for (auto it = swapJournal.rbegin(); it < swapJournal.rend(); ++it) {
 			const size_t leftIndex = it->first_;
 			const size_t rightIndex = it->second_;
 			std::swap(vector[rightIndex], vector[leftIndex]);
@@ -107,7 +88,7 @@ private:
 			x /= at(row,row);
 			solution[row] = x;
 		}	
-		resetIndexation(solution); //!!!	
+		resetIndexation(solution); 
 		return solution;
 	}
 
@@ -123,7 +104,7 @@ public:
 		return matrix_[rows_[row] * systemSize + cols_[col]];
 	}
 
-	void print(int width = 7, int prec = 4) 
+	void printsystem(int width = 7, int prec = 4) 
 	{
 		for(size_t i = 0; i < systemSize * (width + 1); ++i)
 				std::cout << "-";
