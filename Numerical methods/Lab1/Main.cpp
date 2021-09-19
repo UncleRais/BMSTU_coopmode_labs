@@ -1,13 +1,11 @@
-#include "../Helpers/Matrix.hpp"
+#include "../Helpers/Foundation/Foundation.cpp"
 
-int main(int argc, char** argv) {
-	Matrix<double> a("settings.dat");
-	a.print(10,4);
-	const auto result = a.linearSolve(gauss);
-	for (const auto& x: result) {
-		std::cout << x << ";  ";
-	}
-	std::cout << std::endl;
-
+int main(int argc, char** argv) 
+{
+	Matrix<double> matrix("settings.dat");
+	const auto result = MatrixAlgorithms<double>::linearSolve(matrix);
+	matrix.printsystem();
+	print(result, vect);
+	save<double>(result, "Lab1/data", "soludtion");
 	return 0;
 }
