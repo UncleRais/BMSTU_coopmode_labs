@@ -18,9 +18,6 @@ struct SwappingElements {
 class MatrixAlgorithm {
 private:
 	template < typename T >
-	static bool checkIfInvertible(const Matrix<T>);
-
-	template < typename T >
 	static SwappingElements partialColumnSelection(const size_t startCol, Matrix<T>& matrix);
 
 	template < typename T > 

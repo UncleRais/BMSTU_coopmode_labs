@@ -8,11 +8,6 @@ T absolute(const T value) {
 	return value < 0 ? -value : value;
 }
 
-template < typename T >
-bool MatrixAlgorithm::checkIfInvertible(const Matrix<T>) {
-	return  false;
-}
-
 template <typename T>
 SwappingElements MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matrix<T>& matrix) {
 	size_t maxCol = startCol;

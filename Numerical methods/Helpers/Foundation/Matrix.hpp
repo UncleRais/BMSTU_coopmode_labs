@@ -2,6 +2,7 @@
 #define MATRIX
 
 #include "./Foundation.cpp"
+#include "./Algorithms/Algorithms.cpp"
 
 enum FileError {
 	settingsNotFound,
@@ -25,6 +26,14 @@ private:
 	size_t systemSize;
 
 public:
+	// Matrix<T> inversed() {
+	// 	// Gauss::factor(*this);
+	// }
+
+	// void inverse() {
+
+	// }
+
 	size_t fullSize() const {
 		return systemSize * systemSize;
 	}

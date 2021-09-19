@@ -7,12 +7,6 @@
 #include "./Algorithms/Algorithms.cpp"
 #include "./Matrix.cpp"
 
-//FUNCTIONS--------------------------------------------------------------------------------
-// template < typename T >
-// T absolute(const T value) {
-// 	return value < 0 ? -value : value;
-// }
-
 template<typename T>
 void save(
 	const Matrix<T>& matrix, 

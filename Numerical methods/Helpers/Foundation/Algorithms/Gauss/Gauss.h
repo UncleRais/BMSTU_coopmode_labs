@@ -3,10 +3,18 @@
 
 #include "../Main/Algorithm.h"
 
+// enum FactorizationResult {
+// 	successfully,
+// 	notInvertible
+// };
+
 class Gauss: public MatrixAlgorithm {
 public:
+	// template < typename T >
+	// static FactorizationResult factor(Matrix<T>& matrix);
+
 	template < typename T >
-	static std::vector<T> solve(Matrix<T>& matrix);
+	static std::vector<T> solve(Matrix<T> matrix);
 };
 
 #endif
