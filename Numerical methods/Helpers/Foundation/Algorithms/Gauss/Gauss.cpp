@@ -62,9 +62,10 @@ std::vector<T> Gauss::solve(Matrix<T> matrix) {
 		const auto newSolution = backwardMove(matrix, journal);
 		if (absolute(norm(newSolution) - norm(solution)) < __DBL_EPSILON__) {
 			solution = newSolution;
-			break;
+			// break;
 		}
 		solution = newSolution;
+		break;
 	}
 
 	return solution;
