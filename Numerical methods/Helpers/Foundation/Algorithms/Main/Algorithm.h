@@ -2,14 +2,14 @@
 #define ALGORITHM_HPP
 
 #include <iostream>
-#include "../../Matrix.cpp"
+#include "../../Matrix/Matrix.cpp"
 
-struct SwappingElements {
+struct SwappingElement {
 	size_t first_;
 	size_t second_; 
 	bool isEqual;
 
-	SwappingElements(const size_t first = 0, const size_t second = 0) {
+	SwappingElement(const size_t first = 0, const size_t second = 0) {
 		first_ = first; second_ = second;
 		isEqual = first == second;
 	}
@@ -18,10 +18,10 @@ struct SwappingElements {
 class MatrixAlgorithm {
 private:
 	template < typename T >
-	static SwappingElements partialColumnSelection(const size_t startCol, Matrix<T>& matrix);
+	static SwappingElement partialColumnSelection(const size_t startCol, Matrix<T>& matrix);
 
 	template < typename T > 
-	static void resetIndexation(std::vector<T>& vector, const std::vector<SwappingElements>& swapJournal);
+	static void resetIndexation(std::vector<T>& vector, const std::vector<SwappingElement>& swapJournal);
 
 public:
 	template < typename T > 

@@ -8,8 +8,17 @@ T absolute(const T value) {
 	return value < 0 ? -value : value;
 }
 
+template<typename T>
+T norm(const std::vector<T> vector) {
+	T result = 0;
+	for (auto& x: vector) { 
+		result += pow(x, 2);
+	}
+	return result;
+}
+
 template <typename T>
-SwappingElements MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matrix<T>& matrix) {
+SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matrix<T>& matrix) {
 	size_t maxCol = startCol;
 	T maxValue = matrix.atvalue(startCol, startCol);
 	for (size_t col = startCol + 1; col < matrix.size(); ++col) {
@@ -21,13 +30,13 @@ SwappingElements MatrixAlgorithm::partialColumnSelection(const size_t startCol, 
 	}
 	if (startCol != maxCol) {
 		matrix.swapCols(startCol, maxCol);
-		return SwappingElements(startCol, maxCol);
+		return SwappingElement(startCol, maxCol);
 	}
 	return {}; 
 }
 
 template < typename T >
-void MatrixAlgorithm::resetIndexation(std::vector<T>& vector, const std::vector<SwappingElements>& swapJournal) {
+void MatrixAlgorithm::resetIndexation(std::vector<T>& vector, const std::vector<SwappingElement>& swapJournal) {
 	for (auto it = swapJournal.rbegin(); it < swapJournal.rend(); ++it) {
 		const size_t leftIndex = it->first_;
 		const size_t rightIndex = it->second_;

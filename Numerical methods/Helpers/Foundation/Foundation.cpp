@@ -2,10 +2,8 @@
 #define Foundation
 
 #include <iostream>
-#include <string>
 #include "./Print.cpp"
 #include "./Algorithms/Algorithms.cpp"
-#include "./Matrix.cpp"
 
 template<typename T>
 void save(
