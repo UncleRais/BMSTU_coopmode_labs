@@ -3,9 +3,9 @@
 int main(int argc, char** argv) 
 {
 	Matrix<double> matrix("settings.dat");
-	const auto result = MatrixAlgorithms<double>::linearSolve(matrix);
+	const auto result = Gauss::solve(matrix);
 	matrix.printsystem();
 	print(result, vect);
-	save<double>(result, "Lab1/data", "solution");
+	save(result, "Lab1/data", "solution");
 	return 0;
 }

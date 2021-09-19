@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include "./Print.cpp"
-#include "./Algorithms.cpp"
+#include "./Algorithms/Algorithms.cpp"
 #include "./Matrix.cpp"
 
 //FUNCTIONS--------------------------------------------------------------------------------
