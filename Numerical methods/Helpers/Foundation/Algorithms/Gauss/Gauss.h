@@ -4,6 +4,7 @@
 #include "../Main/Algorithm.h"
 
 class Gauss: public MatrixAlgorithm {
+protected:
 	template < typename T >
 	static std::vector<SwappingElement> factor(Matrix<T>& matrix);
 

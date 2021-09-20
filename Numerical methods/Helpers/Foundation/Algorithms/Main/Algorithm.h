@@ -16,7 +16,7 @@ struct SwappingElement {
 };
 
 class MatrixAlgorithm {
-private:
+protected:
 	template < typename T >
 	static SwappingElement partialColumnSelection(const size_t startCol, Matrix<T>& matrix);
 

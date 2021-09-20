@@ -4,6 +4,7 @@
 #include "../Main/Algorithm.h"
 
 class QR: public MatrixAlgorithm {
+protected:
 	template < typename T >
 	static Matrix<T> factor(Matrix<T> rMatrix);
 
