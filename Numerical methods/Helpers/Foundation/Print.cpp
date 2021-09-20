@@ -8,6 +8,7 @@
 #include<iomanip>
 #include<cmath>
 #include<algorithm>
+#include "./Matrix/Matrix.cpp"
 
 enum ContainerType {
 	matr,
@@ -53,5 +54,9 @@ void print(const std::vector<T>& container, ContainerType type, bool boxed = fal
 		if (boxed) drawline(size * (width + 1));
 	}
 //FUNCTIONS--------------------------------------------------------------------------------
+template<typename T>
+void print(const T& message) {
+	std::cout << message << "\n";
+}
 
 #endif
