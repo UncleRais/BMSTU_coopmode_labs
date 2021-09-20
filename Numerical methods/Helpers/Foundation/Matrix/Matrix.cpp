@@ -58,8 +58,47 @@ void Matrix<T>::printsystem(int width, int prec)
 		std::cout << "-\n";
 }
 
+// template<typename T> 
+// void Matrix<T>::inverse()
+// {
+// 	const auto result = Gauss::solve(this);
+// 	print(result, vect);
+// }
+
+
 template<typename T> 
 Matrix<T>::Matrix() {}
+
+template<typename T> 
+Matrix<T>::Matrix(const std::vector<T> matrix, const std::vector<T> rightvalues) 
+{
+	try
+	{
+		if (sqrt(matrix.size()) != rightvalues.size()) {
+		throw dimensionsIncongruity;
+		}
+		matrix_ = matrix;
+		rightvalues_ = rightvalues;
+		systemSize = rightvalues.size();
+		rows_.reserve(systemSize);
+		cols_.reserve(systemSize);
+		for (size_t i = 0; i < systemSize; ++i)
+		{
+			rows_.push_back(i); cols_.push_back(i);
+		}
+	} catch (FileError error) {
+		std::string errorDescription;
+		switch (error) {
+			case dimensionsIncongruity:
+				errorDescription = "The dimensions don't match!";
+				break;
+			default:
+				errorDescription = "The dimensions don't match!"; 
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}
+}
 
 template<typename T> 
 Matrix<T>::Matrix(const char * settings)

@@ -6,7 +6,7 @@
 #include "../../Foundation.cpp"
 
 template < typename T >
-std::vector<SwappingElement> Gauss::factor(Matrix<T>& matrix) {
+std::vector<SwappingElement> Gauss::forwardMove(Matrix<T>& matrix) {
 	std::vector<SwappingElement> journal = {};
 	for(size_t k = 0; k < matrix.size() - 1; ++k)
 	{
@@ -49,7 +49,7 @@ template < typename T >
 std::vector<T> Gauss::solve(Matrix<T> matrix) {
 	std::vector<T> solution(matrix.size(), 0.0);
 	while (true) {
-		const auto journal = factor(matrix);
+		const auto journal = forwardMove(matrix);
 
 		//MARK: - check if the matrix is not invertible
 		for (size_t k = 0; k < matrix.size(); ++k) {

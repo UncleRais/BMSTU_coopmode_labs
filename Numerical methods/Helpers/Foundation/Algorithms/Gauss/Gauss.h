@@ -6,7 +6,7 @@
 class Gauss: public MatrixAlgorithm {
 protected:
 	template < typename T >
-	static std::vector<SwappingElement> factor(Matrix<T>& matrix);
+	static std::vector<SwappingElement> forwardMove(Matrix<T>& matrix);
 
 	template < typename T >
 	static std::vector<T> backwardMove(Matrix<T>& matrix, const std::vector<SwappingElement>& journal);

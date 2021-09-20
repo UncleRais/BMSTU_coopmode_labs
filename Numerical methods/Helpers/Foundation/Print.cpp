@@ -9,6 +9,7 @@
 #include<cmath>
 #include<algorithm>
 #include "./Matrix/Matrix.cpp"
+#include "./Algorithms/Algorithms.cpp"
 
 enum ContainerType {
 	matr,

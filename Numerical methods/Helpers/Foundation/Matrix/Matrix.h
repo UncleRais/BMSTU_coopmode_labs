@@ -5,8 +5,10 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
+#include "../Print.cpp"
 
 enum FileError {
+	dimensionsIncongruity,
 	settingsNotFound,
 	matrixNotFound,
 	vectorNotFound,
@@ -19,6 +21,7 @@ private:
 	std::vector<size_t> rows_ = {};
 	std::vector<size_t> cols_ = {};
 	std::vector<T> matrix_ = {};
+	std::vector<T> invmatrix_ = {};
 	std::vector<T> rightvalues_ = {};
 	size_t systemSize;
 
@@ -40,7 +43,11 @@ public:
 
 	void printsystem(int width = 7, int prec = 4);
 
+	//void inverse();
+
 	Matrix();
+
+	Matrix(const std::vector<T> matrix, const std::vector<T> rightvalues);
 
 	Matrix(const char * settings);
 };
