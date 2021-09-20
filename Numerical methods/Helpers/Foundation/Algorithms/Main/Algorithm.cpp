@@ -2,20 +2,7 @@
 #define ALGORITHM_CPP
 
 #include "./Algorithm.h"
-
-template < typename T >
-T absolute(const T value) {
-	return value < 0 ? -value : value;
-}
-
-template<typename T>
-T norm(const std::vector<T> vector) {
-	T result = 0;
-	for (auto& x: vector) { 
-		result += pow(x, 2);
-	}
-	return result;
-}
+#include "../../Foundation.cpp"
 
 template <typename T>
 SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matrix<T>& matrix) {
@@ -23,7 +10,7 @@ SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, M
 	T maxValue = matrix.atvalue(startCol, startCol);
 	for (size_t col = startCol + 1; col < matrix.size(); ++col) {
 		const T nextValue = matrix.atvalue(startCol, col);
-		if ( absolute(nextValue) > maxValue ) {
+		if ( Math::absolute(nextValue) > maxValue ) {
 			maxValue = nextValue;
 			maxCol = col;
 		}

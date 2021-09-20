@@ -43,11 +43,15 @@ public:
 
 	void printsystem(int width = 7, int prec = 4);
 
-	//void inverse();
+	void changerightvalues(const std::vector<T>& rightvalues);
+
+	void inverse();
+
+	void printInverse(int width = 7, int prec = 4);
 
 	Matrix();
 
-	Matrix(const std::vector<T> matrix, const std::vector<T> rightvalues);
+	Matrix(const std::vector<T>& matrix, const std::vector<T>& rightvalues);
 
 	Matrix(const char * settings);
 };

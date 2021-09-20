@@ -2,6 +2,9 @@
 #define MATRIX_CPP
 
 #include "./Matrix.h"
+#include "../Algorithms/Gauss/Gauss.cpp"
+#include "../Foundation.cpp"
+#include <memory.h>
 
 template<typename T> 
 size_t Matrix<T>::fullSize() const {
@@ -58,19 +61,64 @@ void Matrix<T>::printsystem(int width, int prec)
 		std::cout << "-\n";
 }
 
-// template<typename T> 
-// void Matrix<T>::inverse()
-// {
-// 	const auto result = Gauss::solve(this);
-// 	print(result, vect);
-// }
+template<typename T> 
+void Matrix<T>::changerightvalues(const std::vector<T>& rightvalues)
+{
+	try
+	{
+		if (systemSize != rightvalues.size()) {
+		throw dimensionsIncongruity;
+		}
+		rightvalues_ = rightvalues;
+	} catch (FileError error) {
+		std::string errorDescription;
+		switch (error) {
+			case dimensionsIncongruity:
+				errorDescription = "The dimensions don't match!";
+				break;
+			default:
+				errorDescription = "The dimensions don't match!"; 
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}
+}
+
+template<typename T> 
+void Matrix<T>::inverse()
+{
+	invmatrix_.reserve(systemSize * systemSize);
+	memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
+	std::vector<T> partofright(systemSize, 0);
+	for (size_t i = 0; i < systemSize; ++i)
+	{
+		partofright[i] = 1;
+		if(i > 0) partofright[i - 1] = 0;
+		Matrix<T> system(matrix_, partofright);
+		const auto result = Gauss::solve(system);
+		for (size_t j = 0; j < systemSize; ++j)
+		invmatrix_[j * systemSize + i] = result[j];
+	}
+}
+
+template<typename T>
+void Matrix<T>::printInverse(int width, int prec)
+{
+	 	for (size_t i = 0; i < systemSize; ++i)
+			{			
+				std::cout <<"| "; 
+				for (size_t j = 0; j < systemSize; ++j)
+					std::cout << std::setprecision(prec) << std::setw(width) << invmatrix_[i * systemSize + j] << " ";
+				std::cout << "|\n"; 
+			}
+};
 
 
 template<typename T> 
 Matrix<T>::Matrix() {}
 
 template<typename T> 
-Matrix<T>::Matrix(const std::vector<T> matrix, const std::vector<T> rightvalues) 
+Matrix<T>::Matrix(const std::vector<T>& matrix, const std::vector<T>& rightvalues) 
 {
 	try
 	{
@@ -158,6 +206,8 @@ Matrix<T>::Matrix(const char * settings)
 				break;
 			case vectorNotFound:
 				errorDescription = "Vector not found\n";
+			default:
+			break;
 		}
 		std::cerr << errorDescription << std::endl;
 		exit(5);

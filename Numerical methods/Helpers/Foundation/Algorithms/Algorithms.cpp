@@ -7,5 +7,6 @@
 
 #include "./Main/Algorithm.cpp"
 #include "./Gauss/Gauss.cpp"
+#include "../Math.cpp"
 
 #endif

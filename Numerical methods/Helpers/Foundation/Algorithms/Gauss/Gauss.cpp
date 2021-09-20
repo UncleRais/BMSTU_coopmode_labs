@@ -4,6 +4,7 @@
 #include "./Gauss.h"
 #include <cmath>
 #include "../../Foundation.cpp"
+#include "../../Math.cpp"
 
 template < typename T >
 std::vector<SwappingElement> Gauss::forwardMove(Matrix<T>& matrix) {
@@ -53,7 +54,7 @@ std::vector<T> Gauss::solve(Matrix<T> matrix) {
 
 		//MARK: - check if the matrix is not invertible
 		for (size_t k = 0; k < matrix.size(); ++k) {
-			if( absolute(matrix.at(k, k)) < __DBL_EPSILON__ ) {
+			if(absolute(matrix.at(k, k)) < __DBL_EPSILON__ ) {
 				std::cerr << "Matrix is not invertible.\n";
 				exit(-4);
 			}
