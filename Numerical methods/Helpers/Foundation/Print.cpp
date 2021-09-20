@@ -5,9 +5,10 @@
 #include<fstream>
 #include<iterator>
 #include<vector>
-#include <cmath>
 #include<iomanip>
-#include "./Foundation.cpp"
+#include<cmath>
+#include<algorithm>
+#include "./Matrix/Matrix.cpp"
 
 enum ContainerType {
 	matr,
