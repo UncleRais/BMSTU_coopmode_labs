@@ -6,6 +6,6 @@ int main(int argc, char** argv)
 	const auto result = Gauss::solve(matrix);
 	matrix.printsystem();
 	print(result, vect);
-	save(result, "Lab1/data", "solution");
+	save(result, "Lab1/output", "solution");
 	return 0;
 }
