@@ -30,7 +30,7 @@ std::vector<T> QR::solve (Matrix<T> matrix) {
 	}
 	rMatrix.printsystem(15);
 
-	const Matrix<T> qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed());
+	const Matrix<T> qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed()).transposed();
 
 	qMatrix.printsystem(15);
 

@@ -53,6 +53,10 @@ public:
 
 	Matrix<T> inversed(); // -> copy
 
+	void transpose();
+
+	Matrix<T> transposed();
+
 	void printInverse(int width = 7, int prec = 4) const;
 
 	Matrix();

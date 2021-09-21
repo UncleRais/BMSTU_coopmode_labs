@@ -127,6 +127,25 @@ Matrix<T> Matrix<T>::inversed()
 }
 
 template<typename T>
+void Matrix<T>::transpose() {
+	for (size_t k = 0; k < systemSize - 1; ++k) 
+	{
+		for (size_t i = k; i < systemSize; ++i) 
+		{
+			// const T temp = atvalue(k, i);
+			std::swap(at(k, i), at(i, k));
+		}
+	}
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::transposed() {
+	Matrix<T> result(*this);
+	result.transpose();
+	return result;
+}
+
+template<typename T>
 void Matrix<T>::printInverse(int width, int prec) const
 {
 	 	for (size_t i = 0; i < systemSize; ++i)
