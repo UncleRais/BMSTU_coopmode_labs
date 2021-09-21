@@ -49,7 +49,7 @@ void Matrix<T>::swapRows(const size_t first, const size_t second) {
 }
 
 template<typename T> 
-void Matrix<T>::printsystem(int width, int prec) 
+void Matrix<T>::printsystem(int width, int prec) const 
 {
 	for(size_t i = 0; i < systemSize * (width + 1); ++i)
 			std::cout << "-";
@@ -58,7 +58,7 @@ void Matrix<T>::printsystem(int width, int prec)
 		{			
 			std::cout << "| "; 
 			for (size_t j = 0; j < systemSize; ++j)
-				std::cout << std::setw(width) << std::setprecision(prec)<< at(i, j) << " ";
+				std::cout << std::setw(width) << std::setprecision(prec)<< atvalue(i, j) << " ";
 			std::cout << "| " << rightvalues_[i] << "\n";
 		}
 		for(size_t i = 0; i < systemSize * (width + 1); ++i)
@@ -127,7 +127,7 @@ Matrix<T> Matrix<T>::inversed()
 }
 
 template<typename T>
-void Matrix<T>::printInverse(int width, int prec)
+void Matrix<T>::printInverse(int width, int prec) const
 {
 	 	for (size_t i = 0; i < systemSize; ++i)
 			{			

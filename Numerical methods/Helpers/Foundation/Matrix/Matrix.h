@@ -45,7 +45,7 @@ public:
 
 	void swapRows(const size_t first, const size_t second);
 
-	void printsystem(int width = 7, int prec = 4);
+	void printsystem(int width = 7, int prec = 4) const;
 
 	void changerightvalues(const std::vector<T>& rightvalues);
 
@@ -53,7 +53,7 @@ public:
 
 	Matrix<T> inversed(); // -> copy
 
-	void printInverse(int width = 7, int prec = 4);
+	void printInverse(int width = 7, int prec = 4) const;
 
 	Matrix();
 

@@ -4,10 +4,10 @@
 #include "./QR.h"
 
 template < typename T >
-std::vector<T> solve (Matrix<T> matrix) {
+std::vector<T> QR::solve (Matrix<T> matrix) {
 	T c = 0;
 	T s = 0;
-	Matrix<T> rMatrix(matrix.matrix_);
+	Matrix<T> rMatrix(matrix);
 	for(size_t k = 0; k < rMatrix.size() - 1; ++k)
 	{
 		for(size_t i = k + 1; i < rMatrix.size(); ++i)
@@ -30,7 +30,7 @@ std::vector<T> solve (Matrix<T> matrix) {
 	}
 	rMatrix.printsystem(15);
 
-	const auto qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed());
+	const Matrix<T> qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed());
 
 	qMatrix.printsystem(15);
 
