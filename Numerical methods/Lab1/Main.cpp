@@ -3,14 +3,16 @@
 int main(int argc, char** argv) 
 {
 	Matrix<double> matrix("settings.dat");
-	const auto result = QR::solve(matrix);
+	const auto qr = QR::solve(matrix);
+	AlgPrint::value("Solution (QR Decomposition):");
+	AlgPrint::container(qr, AlgPrint::vect);
+	AlgPrint::value("\n");
+	save(qr, "Lab1/output", "qr solution");
 
-	// matrix.printInverse(15 , 6);
-	// Matrix<double> matrix({1 , 2 , 3 , 4} , {2 , 2});
-	// matrix.changerightvalues({3 , 3});
-	// const auto result = Gauss::solve(matrix);
-	// matrix.printsystem();
-	// print(result, vect);
-	// save(result, "Lab1/output", "solution
+	const auto gauss = Gauss::solve(matrix);
+	AlgPrint::value("Solution (Gauss):");
+	AlgPrint::container(gauss, AlgPrint::vect);
+	save(gauss, "Lab1/output", "gauss solution");
+
 	return 0;
 }

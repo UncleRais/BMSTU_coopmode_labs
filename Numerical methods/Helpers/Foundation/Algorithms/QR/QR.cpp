@@ -2,6 +2,7 @@
 #define QR_CPP
 
 #include "./QR.h"
+#include "../../Print/Print.cpp"
 
 template < typename T >
 std::vector<T> QR::solve (Matrix<T> matrix) {
@@ -28,13 +29,16 @@ std::vector<T> QR::solve (Matrix<T> matrix) {
 			}
 		}
 	}
-	rMatrix.printsystem(15);
 
-	const Matrix<T> qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed()).transposed();
+	Matrix<T> qMatrix = MatrixAlgorithm::dot(matrix, rMatrix.inversed());
+	qMatrix.changerightvalues(matrix.rightvalues_);
+	const std::vector<T> bStar = Gauss::solve(qMatrix);
+	rMatrix.changerightvalues(bStar);
 
-	qMatrix.printsystem(15);
+	std::cout << "Q: \n"; qMatrix.printsystem(20);
+	std::cout << "R: \n"; rMatrix.printsystem(20);
 
-	return {};
+	return Gauss::solve(rMatrix);
 }
 
 #endif
