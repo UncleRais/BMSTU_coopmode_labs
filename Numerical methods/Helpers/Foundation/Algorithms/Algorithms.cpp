@@ -7,6 +7,7 @@
 
 #include "./Main/Algorithm.cpp"
 #include "./Gauss/Gauss.cpp"
+#include "./QR/QR.cpp"
 #include "../Math.cpp"
 
 #endif

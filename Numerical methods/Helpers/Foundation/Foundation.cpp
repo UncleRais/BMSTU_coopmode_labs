@@ -2,7 +2,7 @@
 #define Foundation
 
 #include <iostream>
-#include "./Print.cpp"
+#include "./Print/Print.cpp"
 #include "./Algorithms/Algorithms.cpp"
 
 template<typename T>
@@ -19,7 +19,7 @@ void save(
 		const std::string oopsMessage = "Oops. Could not save file at: ";
 		const std::string error = ". Directory location not found";
 		const std::string message = oopsMessage + path + error;
-		print(message);
+		AlgPrint::value(message);
 	}
 	for (size_t i = 0; i < matrix.size(); ++i) {
 		for (size_t j = 0; j < matrix.size(); ++j) {
@@ -44,7 +44,7 @@ void save(
 		const std::string oopsMessage = "Oops. Could not save file at: ";
 		const std::string error = ". Directory location not found";
 		const std::string message = oopsMessage + path + error;
-		print(message);
+		AlgPrint::value(message);
 	}
 	for (size_t i = 0; i < vector.size(); ++i) {
 		file << vector[i] << " ";

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
-#include "../Print.cpp"
+#include "../Print/Print.cpp"
 
 enum FileError {
 	dimensionsIncongruity,
@@ -17,7 +17,7 @@ enum FileError {
 template<typename T> 
 class Matrix {
 
-private:
+public:
 	std::vector<size_t> rows_ = {};
 	std::vector<size_t> cols_ = {};
 	std::vector<T> matrix_ = {};
@@ -30,7 +30,11 @@ public:
 
 	size_t size() const;
 
-	T& rightValue(const size_t at);
+	T& rightValueRef(const size_t at);
+
+	T rightValue(const size_t at);
+
+	// T& rightValue(const size_t at);
 
 	//MARK: - Shared functions
  	T& at(const size_t row, const size_t col);
@@ -47,6 +51,8 @@ public:
 
 	void inverse();
 
+	Matrix<T> inversed(); // -> copy
+
 	void printInverse(int width = 7, int prec = 4);
 
 	Matrix();
@@ -54,6 +60,8 @@ public:
 	Matrix(const std::vector<T>& matrix, const std::vector<T>& rightvalues);
 
 	Matrix(const char * settings);
+
+	Matrix(const Matrix<T>& copy);
 };
 
 #endif

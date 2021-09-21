@@ -22,7 +22,7 @@ std::vector<SwappingElement> Gauss::forwardMove(Matrix<T>& matrix) {
 			{
 				matrix.at(row,col) -= matrix.at(k, col) * value / matrix.at(k , k); 
 			}
-			matrix.rightValue(row) -= matrix.rightValue(k) * value / matrix.at(k , k); 
+			matrix.rightValueRef(row) -= matrix.rightValue(k) * value / matrix.at(k , k); 
 		}
 	}
 	return journal;
@@ -34,7 +34,7 @@ std::vector<T> Gauss::backwardMove(Matrix<T>& matrix, const std::vector<Swapping
 	for (int row = matrix.size() - 1; row >= 0; --row)
 		{
 			T x = 0.0;
-			x += matrix.rightValue(row);			
+			x += matrix.rightValueRef(row);			
 			for(int col = matrix.size() - 1; col > row ; --col )
 			{
 				x -= matrix.at(row, col) * solution[col];
@@ -48,28 +48,17 @@ std::vector<T> Gauss::backwardMove(Matrix<T>& matrix, const std::vector<Swapping
 
 template < typename T >
 std::vector<T> Gauss::solve(Matrix<T> matrix) {
-	std::vector<T> solution(matrix.size(), 0.0);
-	while (true) {
-		const auto journal = forwardMove(matrix);
+	const auto journal = forwardMove(matrix);
 
-		//MARK: - check if the matrix is not invertible
-		for (size_t k = 0; k < matrix.size(); ++k) {
-			if(absolute(matrix.at(k, k)) < __DBL_EPSILON__ ) {
-				std::cerr << "Matrix is not invertible.\n";
-				exit(-4);
-			}
+	//MARK: - check if the matrix is not invertible
+	for (size_t k = 0; k < matrix.size(); ++k) {
+		if(absolute(matrix.at(k, k)) < __DBL_EPSILON__ ) {
+			std::cerr << "Matrix is not invertible.\n";
+			exit(-4);
 		}
-
-		const auto newSolution = backwardMove(matrix, journal);
-		if (absolute(norm(newSolution) - norm(solution)) < __DBL_EPSILON__) {
-			solution = newSolution;
-			// break;
-		}
-		solution = newSolution;
-		break;
 	}
 
-	return solution;
+	return backwardMove(matrix, journal);
 }
 
 #endif

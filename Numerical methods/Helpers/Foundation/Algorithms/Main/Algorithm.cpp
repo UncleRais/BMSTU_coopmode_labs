@@ -31,5 +31,44 @@ void MatrixAlgorithm::resetIndexation(std::vector<T>& vector, const std::vector<
 	}
 }
 
+template < typename T >
+Matrix<T> MatrixAlgorithm::dot(const Matrix<T>& A, const Matrix<T>& B) {
+	const size_t size = A.size();
+	std::vector<T> result(size * size, 0);
+	for (size_t i = 0; i < size; ++i)
+	{
+		for (size_t j = 0; j < size; ++j)
+		{
+			for (size_t k = 0; k < size; ++k)
+			{
+				result[i * size + j] += A.atvalue(i, k) * B.atvalue(k, j);  
+			}
+		}
+	}
+	return Matrix<T>(result, A.rightvalues_);  
+}
+
+template < typename T >
+std::vector<T> MatrixAlgorithm::dot(const Matrix<T>& A, const std::vector<T>& B) {
+	const size_t size = A.size();
+	std::vector<T> result(size, 0);
+	for (size_t i = 0; i < size; ++i)
+	{
+		for (size_t j = 0; j < size; ++j)
+		{
+			result[i] += A.atvalue(i, j) * B[i];
+		}
+	}
+	return result; 
+}
+
+template < typename T > 
+T MatrixAlgorithm::misclosure(const Matrix<T>& matrix, const std::vector<T>& x, const std::vector<T>& b) {
+	const auto Ax = MatrixAlgorithm::dot(matrix, x);
+	std::vector<T> result(x.size(), 0);
+	for (size_t i = 0; i < x.size(); ++i) 
+		result[i] = Ax[i] - b[i];
+	return Math::norm(result);
+}
 
 #endif

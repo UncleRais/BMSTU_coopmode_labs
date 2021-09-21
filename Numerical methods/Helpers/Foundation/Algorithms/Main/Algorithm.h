@@ -27,6 +27,15 @@ protected:
 public:
 	template < typename T > 
 	static std::vector<T> solve(Matrix<T> matrix) = delete;
+
+	template < typename T > 
+	static Matrix<T> dot(const Matrix<T>& A, const Matrix<T>& B);
+
+	template < typename T > 
+	static std::vector<T> dot(const Matrix<T>& A, const std::vector<T>& B);
+
+	template < typename T > 
+	static T misclosure(const Matrix<T>& matrix, const std::vector<T>& x, const std::vector<T>& b);
 };
 
 #endif

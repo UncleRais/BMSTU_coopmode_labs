@@ -17,7 +17,12 @@ size_t Matrix<T>::size() const {
 }
 
 template<typename T> 
-T& Matrix<T>::rightValue(const size_t at) {
+T& Matrix<T>::rightValueRef(const size_t at) {
+	return rightvalues_[at];
+}
+
+template<typename T> 
+T Matrix<T>::rightValue(const size_t at) {
 	return rightvalues_[at];
 }
 
@@ -88,17 +93,37 @@ template<typename T>
 void Matrix<T>::inverse()
 {
 	invmatrix_.reserve(systemSize * systemSize);
-	memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
-	std::vector<T> partofright(systemSize, 0);
+	// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
+	std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
+	for (size_t i = 0; i < systemSize; ++i){
+		partofright[i] = 1;
+		if(i > 0) partofright[i - 1] = 0.0;
+		Matrix<T> system(matrix_, partofright);
+		const auto result = Gauss::solve(system);
+		for (size_t j = 0; j < systemSize; ++j) 
+			invmatrix_[j * systemSize + i] = result[j];
+	}
+}
+
+template<typename T> 
+Matrix<T> Matrix<T>::inversed()
+{
+
+	// invmatrix_.reserve(systemSize * systemSize);
+	invmatrix_ = std::vector<T>(systemSize * systemSize, 0);
+	std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
 	for (size_t i = 0; i < systemSize; ++i)
 	{
 		partofright[i] = 1;
-		if(i > 0) partofright[i - 1] = 0;
+		if(i > 0) partofright[i - 1] = 0.0;
 		Matrix<T> system(matrix_, partofright);
 		const auto result = Gauss::solve(system);
-		for (size_t j = 0; j < systemSize; ++j)
-		invmatrix_[j * systemSize + i] = result[j];
+		for (size_t j = 0; j < systemSize; ++j) 
+		{
+			invmatrix_[j * systemSize + i] = result[j];
+		}
 	}
+	return Matrix<T>(invmatrix_, rightvalues_);
 }
 
 template<typename T>
@@ -212,6 +237,16 @@ Matrix<T>::Matrix(const char * settings)
 		std::cerr << errorDescription << std::endl;
 		exit(5);
 	}
+}
+
+template<typename T>
+Matrix<T>::Matrix(const Matrix<T>& copy) {
+	matrix_ = copy.matrix_;
+	rightvalues_ = copy.rightvalues_;
+	rows_ = copy.rows_;
+	cols_ = copy.cols_;
+	systemSize = copy.systemSize;
+	invmatrix_ = copy.invmatrix_;
 }
 
 #endif
