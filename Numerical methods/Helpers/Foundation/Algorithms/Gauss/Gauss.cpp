@@ -47,8 +47,15 @@ std::vector<T> Gauss::backwardMove(Matrix<T>& matrix, const std::vector<Swapping
 }
 
 template < typename T >
-std::vector<T> Gauss::solve(Matrix<T> matrix) {
-	const auto journal = forwardMove(matrix);
+std::vector<T> Gauss::solve(Matrix<T> matrix, bool uppertriangular) {
+	std::vector<SwappingElement> journal;
+	if (!uppertriangular)
+	{
+		journal = forwardMove(matrix);
+	} else
+	{
+		journal = {};
+	}
 
 	//MARK: - check if the matrix is not invertible
 	for (size_t k = 0; k < matrix.size(); ++k) {

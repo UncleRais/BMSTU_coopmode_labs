@@ -38,7 +38,7 @@ std::vector<T> QR::solve (Matrix<T> matrix) {
 	std::cout << "Q: \n"; qMatrix.printsystem(20);
 	std::cout << "R: \n"; rMatrix.printsystem(20);
 
-	return Gauss::solve(rMatrix);
+	return Gauss::solve(rMatrix, true);
 }
 
 #endif

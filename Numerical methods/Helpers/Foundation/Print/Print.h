@@ -14,7 +14,7 @@ struct AlgPrint {
 	static void drawline(size_t HowMuch = 10);
 
 	template<typename T>
-	static void container(const std::vector<T>& container, ContainerType type, bool boxed = false, int width = 7, int prec = 4);
+	static void container(const std::vector<T>& container, ContainerType type, bool boxed = false, int width = 7, int prec = 8);
 
 	template<typename T>
 	static void value(const T& message);

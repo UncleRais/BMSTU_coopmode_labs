@@ -92,16 +92,20 @@ void Matrix<T>::changerightvalues(const std::vector<T>& rightvalues)
 template<typename T> 
 void Matrix<T>::inverse()
 {
-	invmatrix_.reserve(systemSize * systemSize);
-	// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
-	std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
-	for (size_t i = 0; i < systemSize; ++i){
-		partofright[i] = 1;
-		if(i > 0) partofright[i - 1] = 0.0;
-		Matrix<T> system(matrix_, partofright);
-		const auto result = Gauss::solve(system);
-		for (size_t j = 0; j < systemSize; ++j) 
-			invmatrix_[j * systemSize + i] = result[j];
+	if (!isinversed)
+	{
+		invmatrix_.reserve(systemSize * systemSize);
+		// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
+		std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
+		for (size_t i = 0; i < systemSize; ++i){
+			partofright[i] = 1;
+			if(i > 0) partofright[i - 1] = 0.0;
+			Matrix<T> system(matrix_, partofright);
+			const auto result = Gauss::solve(system);
+			for (size_t j = 0; j < systemSize; ++j) 
+				invmatrix_[j * systemSize + i] = result[j];
+		}
+		isinversed = true;
 	}
 }
 
@@ -110,20 +114,24 @@ Matrix<T> Matrix<T>::inversed()
 {
 
 	// invmatrix_.reserve(systemSize * systemSize);
-	invmatrix_ = std::vector<T>(systemSize * systemSize, 0);
-	std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
-	for (size_t i = 0; i < systemSize; ++i)
+	if (!isinversed)
 	{
-		partofright[i] = 1;
-		if(i > 0) partofright[i - 1] = 0.0;
-		Matrix<T> system(matrix_, partofright);
-		const auto result = Gauss::solve(system);
-		for (size_t j = 0; j < systemSize; ++j) 
+		invmatrix_ = std::vector<T>(systemSize * systemSize, 0);
+		std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
+		for (size_t i = 0; i < systemSize; ++i)
 		{
-			invmatrix_[j * systemSize + i] = result[j];
+			partofright[i] = 1;
+			if(i > 0) partofright[i - 1] = 0.0;
+			Matrix<T> system(matrix_, partofright);
+			const auto result = Gauss::solve(system);
+			for (size_t j = 0; j < systemSize; ++j) 
+			{
+				invmatrix_[j * systemSize + i] = result[j];
+			}
 		}
+		isinversed = true;
 	}
-	return Matrix<T>(invmatrix_, rightvalues_);
+	return Matrix<T>(invmatrix_,rightvalues_);
 }
 
 template<typename T>
@@ -157,6 +165,53 @@ void Matrix<T>::printInverse(int width, int prec) const
 			}
 };
 
+template<typename T> 
+T Matrix<T>::norminf() const
+{
+	T sum, maxsum = 0;
+	for(size_t i = 0; i < systemSize; ++i)
+	{
+		sum = 0;
+		for(size_t j = 0; j < systemSize; ++j)
+		{
+			sum += atvalue(j , i);
+		}
+		if (maxsum < sum) maxsum = sum;
+	}
+			
+	return maxsum;
+}
+
+template<typename T> 
+T Matrix<T>::normfirst() const
+{
+	T sum, maxsum = 0;
+	for(size_t i = 0; i < systemSize; ++i)
+	{
+		sum = 0;
+		for(size_t j = 0; j < systemSize; ++j)
+		{
+			sum += atvalue(i , j);
+		}
+		if (maxsum < sum) maxsum = sum;
+	}
+			
+	return maxsum;
+}
+
+template<typename T> 
+T Matrix<T>::normmax() const
+{
+	const auto iter = std::max_element(matrix_.begin(), matrix_.end());
+	return *iter * systemSize;
+}
+
+template<typename T> 
+void Matrix<T>::makeoutrage(T sign)
+{
+	for(size_t i = 0; i < systemSize; ++i)
+		rightvalues_[i] += sign * 0.01;
+}
 
 template<typename T> 
 Matrix<T>::Matrix() {}

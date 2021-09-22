@@ -35,7 +35,7 @@ public:
 	static std::vector<T> dot(const Matrix<T>& A, const std::vector<T>& B);
 
 	template < typename T > 
-	static T misclosure(const Matrix<T>& matrix, const std::vector<T>& x, const std::vector<T>& b);
+	static T misclosure(Matrix<T>& matrix, const std::vector<T>& x);
 };
 
 #endif

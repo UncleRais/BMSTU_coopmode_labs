@@ -12,7 +12,7 @@ protected:
 	static std::vector<T> backwardMove(Matrix<T>& matrix, const std::vector<SwappingElement>& journal);
 public:
 	template < typename T >
-	static std::vector<T> solve(Matrix<T> matrix);
+	static std::vector<T> solve(Matrix<T> matrix, bool uppertriangular = false);
 };
 
 #endif

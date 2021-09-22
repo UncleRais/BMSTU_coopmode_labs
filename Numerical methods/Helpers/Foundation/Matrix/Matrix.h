@@ -22,6 +22,7 @@ public:
 	std::vector<size_t> cols_ = {};
 	std::vector<T> matrix_ = {};
 	std::vector<T> invmatrix_ = {};
+	bool isinversed = false;
 	std::vector<T> rightvalues_ = {};
 	size_t systemSize;
 
@@ -33,8 +34,6 @@ public:
 	T& rightValueRef(const size_t at);
 
 	T rightValue(const size_t at);
-
-	// T& rightValue(const size_t at);
 
 	//MARK: - Shared functions
  	T& at(const size_t row, const size_t col);
@@ -51,13 +50,21 @@ public:
 
 	void inverse();
 
-	Matrix<T> inversed(); // -> copy
+	Matrix<T> inversed(); 
 
 	void transpose();
 
 	Matrix<T> transposed();
 
 	void printInverse(int width = 7, int prec = 4) const;
+
+	T norminf() const;
+
+	T normfirst() const;
+
+	T normmax() const;
+
+	void makeoutrage(T sign);
 
 	Matrix();
 
