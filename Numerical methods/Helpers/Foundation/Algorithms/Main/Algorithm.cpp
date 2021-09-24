@@ -56,16 +56,15 @@ std::vector<T> MatrixAlgorithm::dot(const Matrix<T>& A, const std::vector<T>& B)
 	{
 		for (size_t j = 0; j < size; ++j)
 		{
-			result[i] += A.atvalue(i, j) * B[i];
+			result[i] += A.atvalue(i, j) * B[j];
 		}
-		std::cout << result[i] << " ";
 	}
 	return result; 
 }
 
 template < typename T > 
 T MatrixAlgorithm::misclosure( Matrix<T>& matrix, const std::vector<T>& x) {
-	const std::vector<T> Ax = MatrixAlgorithm::dot(matrix, x);
+	const std::vector<T> Ax(matrix * x);
 	std::vector<T> result(x.size(), 0.0);
 	for (size_t i = 0; i < x.size(); ++i)
 	{ 

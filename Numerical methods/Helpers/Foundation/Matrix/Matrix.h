@@ -65,6 +65,10 @@ public:
 	T normmax() const;
 
 	void makeoutrage(T sign);
+public:
+	std::vector<T> operator *(const std::vector<T>& rightvector);
+
+public:
 
 	Matrix();
 

@@ -92,34 +92,13 @@ void Matrix<T>::changerightvalues(const std::vector<T>& rightvalues)
 template<typename T> 
 void Matrix<T>::inverse()
 {
-	if (!isinversed)
-	{
-		invmatrix_.reserve(systemSize * systemSize);
-		// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
-		std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
-		for (size_t i = 0; i < systemSize; ++i){
-			partofright[i] = 1;
-			if(i > 0) partofright[i - 1] = 0.0;
-			Matrix<T> system(matrix_, partofright);
-			const auto result = Gauss::solve(system);
-			for (size_t j = 0; j < systemSize; ++j) 
-				invmatrix_[j * systemSize + i] = result[j];
-		}
-		isinversed = true;
-	}
-}
-
-template<typename T> 
-Matrix<T> Matrix<T>::inversed()
-{
-
-	// invmatrix_.reserve(systemSize * systemSize);
+	invmatrix_.reserve(systemSize * systemSize);
 	if (!isinversed)
 	{
 		invmatrix_ = std::vector<T>(systemSize * systemSize, 0);
+		// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
 		std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
-		for (size_t i = 0; i < systemSize; ++i)
-		{
+		for (size_t i = 0; i < systemSize; ++i){
 			partofright[i] = 1;
 			if(i > 0) partofright[i - 1] = 0.0;
 			Matrix<T> system(matrix_, partofright);
@@ -131,6 +110,12 @@ Matrix<T> Matrix<T>::inversed()
 		}
 		isinversed = true;
 	}
+}
+
+template<typename T> 
+Matrix<T> Matrix<T>::inversed()
+{
+	inverse();
 	return Matrix<T>(invmatrix_,rightvalues_);
 }
 
@@ -140,7 +125,6 @@ void Matrix<T>::transpose() {
 	{
 		for (size_t i = k; i < systemSize; ++i) 
 		{
-			// const T temp = atvalue(k, i);
 			std::swap(at(k, i), at(i, k));
 		}
 	}
@@ -211,6 +195,20 @@ void Matrix<T>::makeoutrage(T sign)
 {
 	for(size_t i = 0; i < systemSize; ++i)
 		rightvalues_[i] += sign * 0.01;
+}
+
+template<typename T>
+std::vector<T> Matrix<T>::operator *(const std::vector<T>& rightvector)
+{
+	std::vector<T> result(systemSize, 0.0);
+	for (size_t i = 0; i < systemSize; ++i)
+	{
+		for (size_t j = 0; j < systemSize; ++j)
+		{
+			result[i] += atvalue(i, j) * rightvector[j];
+		}
+	}
+	return result; 
 }
 
 template<typename T> 
