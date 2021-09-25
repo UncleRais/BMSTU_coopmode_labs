@@ -5,12 +5,12 @@
 #include "../../Foundation.cpp"
 
 template <typename T>
-SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matrix<T>& matrix) {
+SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, Matr<T>& matrix) {
 	size_t maxCol = startCol;
 	T maxValue = matrix.atvalue(startCol, startCol);
 	for (size_t col = startCol + 1; col < matrix.size(); ++col) {
 		const T nextValue = matrix.atvalue(startCol, col);
-		if ( Math::absolute(nextValue) > maxValue ) {
+		if ( fabs(nextValue) > maxValue ) {
 			maxValue = nextValue;
 			maxCol = col;
 		}
@@ -32,7 +32,7 @@ void MatrixAlgorithm::resetIndexation(std::vector<T>& vector, const std::vector<
 }
 
 template < typename T >
-Matrix<T> MatrixAlgorithm::dot(const Matrix<T>& A, const Matrix<T>& B) {
+Matr<T> MatrixAlgorithm::dot(const Matr<T>& A, const Matr<T>& B) {
 	const size_t size = A.size();
 	std::vector<T> result(size * size, 0);
 	for (size_t i = 0; i < size; ++i)
@@ -45,11 +45,11 @@ Matrix<T> MatrixAlgorithm::dot(const Matrix<T>& A, const Matrix<T>& B) {
 			}
 		}
 	}
-	return Matrix<T>(result, A.rightvalues_);  
+	return Matr<T>(result);  
 }
 
 template < typename T >
-std::vector<T> MatrixAlgorithm::dot(const Matrix<T>& A, const std::vector<T>& B) {
+std::vector<T> MatrixAlgorithm::dot(const Matr<T>& A, const std::vector<T>& B) {
 	const size_t size = A.size();
 	std::vector<T> result(size, 0.0);
 	for (size_t i = 0; i < size; ++i)
@@ -63,13 +63,12 @@ std::vector<T> MatrixAlgorithm::dot(const Matrix<T>& A, const std::vector<T>& B)
 }
 
 template < typename T > 
-T MatrixAlgorithm::misclosure( Matrix<T>& matrix, const std::vector<T>& x) {
+T MatrixAlgorithm::misclosure( Matr<T>& matrix, const std::vector<T>& vec, const std::vector<T>& x) {
 	const std::vector<T> Ax(matrix * x);
 	std::vector<T> result(x.size(), 0.0);
 	for (size_t i = 0; i < x.size(); ++i)
-	{ 
-		//std :: cout << Ax[i] << " "; 
-		result[i] = Ax[i] - matrix.rightValue(i);
+	{  
+		result[i] = Ax[i] - vec[i];
 	}
 
 	return Math::norm(result);

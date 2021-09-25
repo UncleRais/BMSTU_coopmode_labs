@@ -1,5 +1,5 @@
-#ifndef MATRIX
-#define MATRIX
+#ifndef MATR
+#define MATR
 
 #include <iostream>
 #include <fstream>
@@ -7,15 +7,15 @@
 #include <vector>
 #include "../Print/Print.cpp"
 
-enum FileError {
+enum ErrorMatr {
 	dimensionsIncongruity,
-	settingsNotFound,
-	matrixNotFound,
-	vectorNotFound,
 };
 
+
 template<typename T> 
-class Matrix {
+class Matr {
+public:
+	typedef T (*normfunc)();
 
 public:
 	std::vector<size_t> rows_ = {};
@@ -23,17 +23,22 @@ public:
 	std::vector<T> matrix_ = {};
 	std::vector<T> invmatrix_ = {};
 	bool isinversed = false;
-	std::vector<T> rightvalues_ = {};
 	size_t systemSize;
 
 public:
+	void setsize(size_t size);
+	
+	void reserve(size_t size);
+
+	void push_back_rows(size_t i);
+
+	void push_back_cols(size_t i);
+
+	void push_back(T value);
+
 	size_t fullSize() const;
 
 	size_t size() const;
-
-	T& rightValueRef(const size_t at);
-
-	T rightValue(const size_t at);
 
 	//MARK: - Shared functions
  	T& at(const size_t row, const size_t col);
@@ -44,17 +49,13 @@ public:
 
 	void swapRows(const size_t first, const size_t second);
 
-	void printsystem(int width = 7, int prec = 4) const;
-
-	void changerightvalues(const std::vector<T>& rightvalues);
-
 	void inverse();
 
-	Matrix<T> inversed(); 
+	Matr<T> inversed(); 
 
 	void transpose();
 
-	Matrix<T> transposed();
+	Matr<T> transposed();
 
 	void printInverse(int width = 7, int prec = 4) const;
 
@@ -64,19 +65,20 @@ public:
 
 	T normmax() const;
 
-	void makeoutrage(T sign);
+	T normestimate(const std::vector<T>& vec);//,  size_t times = 5);
 public:
 	std::vector<T> operator *(const std::vector<T>& rightvector);
 
+	Matr<T> operator *(const Matr& matrix);
+
 public:
 
-	Matrix();
+	Matr();
 
-	Matrix(const std::vector<T>& matrix, const std::vector<T>& rightvalues);
+	Matr(const std::vector<T>& matrix, const std::vector<T>& invmatrix = {});
 
-	Matrix(const char * settings);
+	Matr(const Matr<T>& copy);
 
-	Matrix(const Matrix<T>& copy);
 };
 
 #endif

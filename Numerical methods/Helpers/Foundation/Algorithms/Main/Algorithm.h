@@ -2,7 +2,7 @@
 #define ALGORITHM_HPP
 
 #include <iostream>
-#include "../../Matrix/Matrix.cpp"
+#include "../../Matrix/Matr.cpp"
 #include "../../Foundation.cpp"
 
 struct SwappingElement {
@@ -19,23 +19,23 @@ struct SwappingElement {
 class MatrixAlgorithm {
 protected:
 	template < typename T >
-	static SwappingElement partialColumnSelection(const size_t startCol, Matrix<T>& matrix);
+	static SwappingElement partialColumnSelection(const size_t startCol, Matr<T>& matrix);
 
 	template < typename T > 
 	static void resetIndexation(std::vector<T>& vector, const std::vector<SwappingElement>& swapJournal);
 
 public:
 	template < typename T > 
-	static std::vector<T> solve(Matrix<T> matrix) = delete;
+	static std::vector<T> solve(Matr<T> matrix) = delete;
 
 	template < typename T > 
-	static Matrix<T> dot(const Matrix<T>& A, const Matrix<T>& B);
+	static Matr<T> dot(const Matr<T>& A, const Matr<T>& B);
 
 	template < typename T > 
-	static std::vector<T> dot(const Matrix<T>& A, const std::vector<T>& B);
+	static std::vector<T> dot(const Matr<T>& A, const std::vector<T>& B);
 
 	template < typename T > 
-	static T misclosure(Matrix<T>& matrix, const std::vector<T>& x);
+	static T misclosure(Matr<T>& matrix, const std::vector<T>& vec, const std::vector<T>& x);
 };
 
 #endif

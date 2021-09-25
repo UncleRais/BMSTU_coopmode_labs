@@ -54,4 +54,49 @@ void AlgPrint::value(const T& message) {
 	std::cout << message << "\n";
 }
 
+template<typename T>
+void AlgPrint::printsystem(const Matr<T>& matrix, const std::vector<T>& vec, int width, int prec) 
+{
+	size_t size = matrix.size();
+	for(size_t i = 0; i < size * (width + 1); ++i)
+				std::cout << "-";
+			std::cout << "-\n";
+		for (size_t i = 0; i < size; ++i)
+			{			
+				std::cout << "| "; 
+				for (size_t j = 0; j < size; ++j)
+					std::cout << std::setw(width) << std::setprecision(prec)<< matrix.atvalue(i, j) << " ";
+				std::cout << "| " << vec[i] << "\n";
+			}
+			for(size_t i = 0; i < size * (width + 1); ++i)
+				std::cout << "-";
+			std::cout << "-\n";
+}
+
+template<typename T>
+std::ostream& operator <<(std::ostream& str, const Matr<T>& matrix)
+{
+	size_t size = matrix.size();
+	for (size_t i = 0; i < size; ++i)
+		{			
+			str <<"| "; 
+			for (size_t j = 0; j < size; ++j)
+				str << std::setprecision(4) << std::setw(10) << matrix.atvalue(i , j) << " ";
+			str << "|\n"; 
+		}
+	return str;
+}
+
+template<typename T>
+std::ostream& operator <<(std::ostream& str, const std::vector<T>& vec)
+{
+	size_t size = vec.size();
+	str << " | ";
+	for (size_t i = 0; i < size; ++i)
+		{			
+			str << std::setprecision(4) << std::setw(10) << vec[i]<< " ";
+		}
+	str << "|\n"; 
+	return str;
+}
 #endif

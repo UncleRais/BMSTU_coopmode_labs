@@ -7,7 +7,7 @@ class QR: public MatrixAlgorithm {
 
 public:
 	template < typename T >
-	static std::vector<T> solve(Matrix<T> matrix);
+	static std::vector<T> solve(Matr<T> matrix, std::vector<T> vec, bool printQR = false);
 };
 
 #endif

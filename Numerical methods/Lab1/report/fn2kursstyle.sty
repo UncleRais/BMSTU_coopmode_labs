@@ -583,6 +583,7 @@
 
 \def\group#1{\def\@group{#1}}
 \def\supervisor#1{\def\@supervisor{#1}}
+\def\secauthor#1{\def\@secauthor{#1}}
 
 \renewcommand{\maketitle}{
 \thispagestyle{empty}
@@ -662,6 +663,10 @@
 
 \vspace*{3.5mm}
 
+\vspace{13mm}
+
+
+
 \noindent{Проверил:}
 
 \vspace*{5mm}
@@ -670,6 +675,10 @@
 \rule{20mm}{0pt}
 \begin{minipage}{79mm}
 \noindent\rlap{\rule[-1.2mm]{30mm}{0.2mm}}\hbox to 30mm{\hfill} \quad \rlap{\rule[-1.2mm]{47mm}{0.2mm}}{\rule{3mm}{0pt}\@author}
+
+\noindent\raisebox{2mm}{\hbox to 30mm{\hfill \footnotesize(Подпись, дата) \hfill}} \quad  \raisebox{2mm}{\rule{5mm}{0pt}\footnotesize(И.\,О.~Фамилия)}
+
+\noindent\rlap{\rule[-1.2mm]{30mm}{0.2mm}}\hbox to 30mm{\hfill} \quad \rlap{\rule[-1.2mm]{47mm}{0.2mm}}{\rule{3mm}{0pt}\@secauthor}
 
 \noindent\raisebox{2mm}{\hbox to 30mm{\hfill \footnotesize(Подпись, дата) \hfill}} \quad  \raisebox{2mm}{\rule{5mm}{0pt}\footnotesize(И.\,О.~Фамилия)}
 

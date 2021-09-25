@@ -2,7 +2,7 @@
 #define Print_H
 
 #include <iostream>
-#include "../Matrix/Matrix.cpp"
+#include "../Matrix/Matr.cpp"
 #include "../Algorithms/Algorithms.cpp"
 
 struct AlgPrint {
@@ -18,6 +18,10 @@ struct AlgPrint {
 
 	template<typename T>
 	static void value(const T& message);
+
+	template<typename T>
+	static void printsystem(const Matr<T>& matrix, const std::vector<T>& vec, int width = 7, int prec = 8);
+
 };
 
 #endif
