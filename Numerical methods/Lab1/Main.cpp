@@ -2,12 +2,12 @@
 
 int main(int argc, char** argv) 
 {
-	typedef float T;
+	typedef double T;
 	Matr<T> matrix;
 	std::vector<T> vec;
 	init(matrix, vec, "settings.dat");
 
-	AlgPrint::printsystem(matrix, vec, 10);
+	AlgPrint::printsystem(matrix, vec, 15);
 
 	//AlgPrint::container(matrix * matrix.inversed() , AlgPrint::matr);
 

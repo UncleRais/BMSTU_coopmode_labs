@@ -59,9 +59,9 @@ public:
 
 	void printInverse(int width = 7, int prec = 4) const;
 
-	T norminf() const;
-
 	T normfirst() const;
+
+	T norminf() const;
 
 	T normmax() const;
 

@@ -132,7 +132,7 @@ void Matr<T>::printInverse(int width, int prec) const
 };
 
 template<typename T> 
-T Matr<T>::norminf() const
+T Matr<T>::normfirst() const
 {
 	T sum, maxsum = 0;
 	for(size_t i = 0; i < systemSize; ++i)
@@ -149,7 +149,7 @@ T Matr<T>::norminf() const
 }
 
 template<typename T> 
-T Matr<T>::normfirst() const
+T Matr<T>::norminf() const
 {
 	T sum, maxsum = 0;
 	for(size_t i = 0; i < systemSize; ++i)
