@@ -176,24 +176,19 @@ T Matr<T>::normmax() const
 }
 
 template<typename T>
-T Matr<T>::normestimate(const std::vector<T>& vec)//, size_t times)
+T Matr<T>::normestimate(const std::vector<T>& vec)
 {
 	std::vector<T> f(vec);
 	std::vector<T> x(size(), 0.0);
 	std::vector<T> dx(size(), 0.0);
 	std::vector<T> df(size(), 0.01);
 	T normf , normx , normdf, normdx;
-	//for (size_t i = 0; i < times; ++i)
-	//{
-		x = Gauss::solve(*this, f);
-		dx = Gauss::solve(*this, f + df);
-		normf = Math::norm(f);
-		normdx = Math::norm(dx - x);
-		normx = Math::norm(x);
-		normdf = Math::norm(df);
-		//f = f + df;
-	//}
-	//std::cout << normx <<" "<< normf <<" "<< Math::norm(df) <<" " << normdx;
+	x = Gauss::solve(*this, f);
+	dx = Gauss::solve(*this, f + df);
+	normf = Math::norm(f);
+	normdx = Math::norm(dx - x);
+	normx = Math::norm(x);
+	normdf = Math::norm(df);
 	return ((normdx * normf) / (normdf * normx));
 }
 

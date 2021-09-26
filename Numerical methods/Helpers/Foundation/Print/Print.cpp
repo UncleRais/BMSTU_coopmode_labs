@@ -58,19 +58,15 @@ template<typename T>
 void AlgPrint::printsystem(const Matr<T>& matrix, const std::vector<T>& vec, int width, int prec) 
 {
 	size_t size = matrix.size();
-	for(size_t i = 0; i < size * (width + 1); ++i)
-				std::cout << "-";
-			std::cout << "-\n";
-		for (size_t i = 0; i < size; ++i)
-			{			
-				std::cout << "| "; 
-				for (size_t j = 0; j < size; ++j)
-					std::cout << std::setw(width) << std::setprecision(prec)<< matrix.atvalue(i, j) << " ";
-				std::cout << "| " << vec[i] << "\n";
-			}
-			for(size_t i = 0; i < size * (width + 1); ++i)
-				std::cout << "-";
-			std::cout << "-\n";
+	drawline(size * (width + 1));
+	for (size_t i = 0; i < size; ++i)
+		{			
+			std::cout << "| "; 
+			for (size_t j = 0; j < size; ++j)
+				std::cout << std::setw(width) << std::setprecision(prec)<< matrix.atvalue(i, j) << " ";
+			std::cout << "| " << vec[i] << "\n";
+		}
+	drawline(size * (width + 1));
 }
 
 template<typename T>

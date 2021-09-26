@@ -65,7 +65,7 @@ public:
 
 	T normmax() const;
 
-	T normestimate(const std::vector<T>& vec);//,  size_t times = 5);
+	T normestimate(const std::vector<T>& vec);
 public:
 	std::vector<T> operator *(const std::vector<T>& rightvector);
 
