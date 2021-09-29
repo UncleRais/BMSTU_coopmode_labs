@@ -6,7 +6,6 @@
 #include "../Foundation.cpp"
 #include <memory.h>
 
-
 template<typename T>
 void Matr<T>::setsize(size_t size)
 {
@@ -51,7 +50,7 @@ size_t Matr<T>::size() const {
 }
 
 template<typename T> 
-	T& Matr<T>::at(const size_t row, const size_t col) 
+T& Matr<T>::at(const size_t row, const size_t col) 
 {
 	return matrix_[rows_[row] * systemSize + cols_[col]];
 }
@@ -75,30 +74,25 @@ void Matr<T>::swapRows(const size_t first, const size_t second) {
 template<typename T> 
 void Matr<T>::inverse()
 {
-	invmatrix_.reserve(systemSize * systemSize);
-	if (!isinversed)
-	{
-		invmatrix_ = std::vector<T>(systemSize * systemSize, 0);
-		// memset(invmatrix_.data(), 0, sizeof(T)*systemSize * systemSize);
-		std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
-		for (size_t i = 0; i < systemSize; ++i){
-			partofright[i] = 1;
-			if(i > 0) partofright[i - 1] = 0.0;
-			const auto result = Gauss::solve(*this, partofright);
-			for (size_t j = 0; j < systemSize; ++j) 
-			{
-				invmatrix_[j * systemSize + i] = result[j];
-			}
-		}
-		isinversed = true;
-	}
+	*this = inversed();
 }
 
 template<typename T> 
 Matr<T> Matr<T>::inversed()
 {
-	inverse();
-	return Matr<T>(invmatrix_, matrix_);
+	std::vector<T> invmatrix_(systemSize * systemSize, 0);
+	std::vector<T> partofright(systemSize, 0.0); // columns of an E matrix
+	for (size_t i = 0; i < systemSize; ++i)
+	{
+		partofright[i] = 1;
+		if(i > 0) partofright[i - 1] = 0.0;
+		const auto result = Gauss::solve(*this, partofright);
+		for (size_t j = 0; j < systemSize; ++j) 
+		{
+			invmatrix_[j * systemSize + i] = result[j];
+		}
+	}
+	return Matr<T>(invmatrix_);
 }
 
 template<typename T>
@@ -110,6 +104,8 @@ void Matr<T>::transpose() {
 			std::swap(at(k, i), at(i, k));
 		}
 	}
+
+
 }
 
 template<typename T>
@@ -118,18 +114,6 @@ Matr<T> Matr<T>::transposed() {
 	result.transpose();
 	return result;
 }
-
-template<typename T>
-void Matr<T>::printInverse(int width, int prec) const
-{
-	 	for (size_t i = 0; i < systemSize; ++i)
-			{			
-				std::cout <<"| "; 
-				for (size_t j = 0; j < systemSize; ++j)
-					std::cout << std::setprecision(prec) << std::setw(width) << invmatrix_[i * systemSize + j] << " ";
-				std::cout << "|\n"; 
-			}
-};
 
 template<typename T> 
 T Matr<T>::normfirst() const
@@ -224,26 +208,29 @@ Matr<T> Matr<T>::operator *(const Matr<T>& matrix)
 };
 
 template<typename T> 
+Matr<T>& Matr<T>::operator =(const Matr<T>& rightv)
+{
+	matrix_ = rightv.matrix_;
+	rows_ = rightv.rows_;
+	cols_ = rightv.cols_;
+	systemSize = rightv.systemSize;
+	return *this;
+}
+
+template<typename T> 
 Matr<T>::Matr() {}
 
 template<typename T> 
-Matr<T>::Matr(const std::vector<T>& matrix, const std::vector<T>& invmatrix) 
+Matr<T>::Matr(const std::vector<T>& matrix) 
 {
 	try
 	{
-		if ((modf(sqrt(matrix.size()), nullptr) > 0)||(modf(sqrt(invmatrix.size()), nullptr) > 0))
+		if ((modf(sqrt(matrix.size()), nullptr) > 0))
 		{
 			throw dimensionsIncongruity;
 		}
 
 		matrix_ = matrix;
-
-		if(invmatrix.size()==matrix.size())
-		{
-			invmatrix_ = invmatrix;
-			isinversed = true;
-		}
-
 		systemSize = sqrt(matrix.size());
 		rows_.reserve(systemSize);
 		cols_.reserve(systemSize);
@@ -271,7 +258,6 @@ Matr<T>::Matr(const Matr<T>& copy) {
 	rows_ = copy.rows_;
 	cols_ = copy.cols_;
 	systemSize = copy.systemSize;
-	invmatrix_ = copy.invmatrix_;
 }
 
 

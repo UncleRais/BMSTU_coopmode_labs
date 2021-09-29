@@ -9,8 +9,6 @@ int main(int argc, char** argv)
 
 	AlgPrint::printsystem(matrix, vec, 15);
 
-	//AlgPrint::container(matrix * matrix.inversed() , AlgPrint::matr);
-
 	AlgPrint::value("condA(inf)= ");
 	AlgPrint::value(matrix.norminf()*(matrix.inversed()).norminf());
 	AlgPrint::value("condA(1)= ");

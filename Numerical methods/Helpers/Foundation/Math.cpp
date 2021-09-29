@@ -1,6 +1,10 @@
 #ifndef Math
 #define Math
 
+enum ErrorVect {
+	dimInc,
+};
+
 template<typename T>
 T norm(const std::vector<T>& vector) {
 	T result = 0;
@@ -19,6 +23,12 @@ void makeoutrage(std::vector<T>& vec, double sign)
 template<typename T>
 std::vector<T> operator -(const std::vector<T>& left, const std::vector<T>& right)
 {
+	try
+	{
+		if(left.size() != right.size())
+		{
+			throw dimInc;
+		}
 	std::vector<T> result;
 	result.reserve(left.size());
 	for (size_t i = 0; i < left.size(); ++i)
@@ -26,11 +36,29 @@ std::vector<T> operator -(const std::vector<T>& left, const std::vector<T>& righ
 		result.push_back(left[i] - right[i]);
 	}
 	return(result);
+	} catch (ErrorVect error) {
+		std::string errorDescription;
+		switch (error) {
+			case dimInc:
+				errorDescription = "The dimensions don't match!";
+				break;
+			default:
+				errorDescription = "The dimensions don't match!"; 
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}
 }
 
 template<typename T>
 std::vector<T> operator +(const std::vector<T>& left, const std::vector<T>& right)
 {
+	try
+	{
+		if(left.size() != right.size())
+		{
+			throw dimInc;
+		}
 	std::vector<T> result;
 	result.reserve(left.size());
 	for (size_t i = 0; i < left.size(); ++i)
@@ -38,6 +66,18 @@ std::vector<T> operator +(const std::vector<T>& left, const std::vector<T>& righ
 		result.push_back(left[i] + right[i]);
 	}
 	return(result);
+	} catch (ErrorVect error) {
+		std::string errorDescription;
+		switch (error) {
+			case dimInc:
+				errorDescription = "The dimensions don't match!";
+				break;
+			default:
+				errorDescription = "The dimensions don't match!"; 
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}
 }
 
 

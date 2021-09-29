@@ -14,15 +14,11 @@ enum ErrorMatr {
 
 template<typename T> 
 class Matr {
-public:
-	typedef T (*normfunc)();
 
 public:
 	std::vector<size_t> rows_ = {};
 	std::vector<size_t> cols_ = {};
 	std::vector<T> matrix_ = {};
-	std::vector<T> invmatrix_ = {};
-	bool isinversed = false;
 	size_t systemSize;
 
 public:
@@ -57,8 +53,6 @@ public:
 
 	Matr<T> transposed();
 
-	void printInverse(int width = 7, int prec = 4) const;
-
 	T normfirst() const;
 
 	T norminf() const;
@@ -69,13 +63,15 @@ public:
 public:
 	std::vector<T> operator *(const std::vector<T>& rightvector);
 
-	Matr<T> operator *(const Matr& matrix);
+	Matr<T> operator *(const Matr<T>& matrix);
+
+	Matr<T>& operator =(const Matr<T>& rightv);
 
 public:
 
 	Matr();
 
-	Matr(const std::vector<T>& matrix, const std::vector<T>& invmatrix = {});
+	Matr(const std::vector<T>& matrix);
 
 	Matr(const Matr<T>& copy);
 
