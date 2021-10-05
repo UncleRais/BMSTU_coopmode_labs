@@ -80,5 +80,22 @@ std::vector<T> operator +(const std::vector<T>& left, const std::vector<T>& righ
 	}
 }
 
+template<typename T>
+std::vector<T> operator *(const std::vector<T>& left, T right)
+{
+	std::vector<T> result(left);
+	for(size_t i = 0; i < result.size(); ++i)
+	{
+		result[i] *= right;
+	}
+	return(result);
+}
+
+template<typename T>
+std::vector<T> operator *(T left, const std::vector<T>& right)
+{
+	return(right * left);
+}
+
 
 #endif

@@ -177,6 +177,71 @@ T Matr<T>::normestimate(const std::vector<T>& vec)
 }
 
 template<typename T>
+bool Matr<T>::symmetrical(T epsilon) const
+{
+	for(size_t i = 1; i < size(); ++i)
+		for (size_t j = 0; j < i; ++j)
+			if(fabs(atvalue(i , j) - atvalue(j , i)) >= epsilon)
+				return false;
+	return true;
+}
+
+template<typename T>
+Matr<T> Matr<T>::uppertriangular() const
+{
+	try
+	{
+	Matr<T> result(*this);
+	for(size_t k = 0; k < result.size() - 1; ++k)
+	{
+		for(size_t row = k + 1; row < result.size(); ++row)
+			{
+				if (fabs(result.at(k , k)) < __DBL_EPSILON__)
+				{
+					throw linearDependence;
+				}
+				T value = result.atvalue(row , k);
+				for(size_t col = k; col < result.size(); ++col)
+				{
+					result.at(row,col) -= result.at(k, col) * value / result.at(k , k); 
+				}
+			}
+	}		
+	return result;
+	} catch (ErrorMatr error) {
+		std::string errorDescription;
+		switch (error) {
+			case linearDependence:
+				errorDescription = "Matrix is degenerate!";
+				break;
+			default:
+				errorDescription = "Matrix is degenerate!"; 
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}  
+}
+
+template<typename T>
+bool Matr<T>::criteriaSylvester() const
+{
+		if(symmetrical())
+		{
+			Matr<T> upper(uppertriangular());
+			T value = 1.0;
+			for(size_t i = 0; i < size(); ++i)
+			{
+				value *= upper.atvalue(i,i);
+				if(value < __DBL_EPSILON__) return false;
+			}
+			return true;
+		} else
+		{
+			return false;
+		}
+}
+
+template<typename T>
 std::vector<T> Matr<T>::operator *(const std::vector<T>& rightvector)
 {
 	std::vector<T> result(systemSize, 0.0);
@@ -204,8 +269,28 @@ Matr<T> Matr<T>::operator *(const Matr<T>& matrix)
 			}
 		}
 	}
-	return Matr<T>(result);  
-};
+	return Matr<T>(result);
+}
+
+template<typename T>
+Matr<T> Matr<T>::operator *(T value) const
+{
+	Matr<T> result(*this);
+	for(size_t i = 0; i < size(); ++i)
+	{
+		for (size_t j = 0; j < size(); ++j)
+		{
+			result.at(i , j) *= value;
+		}
+	}
+	return result;
+}
+
+template<typename T> //Is not class member 
+Matr<T> operator *(T value, const Matr<T>& matrix) 
+{
+	return matrix * value;
+}
 
 template<typename T> 
 Matr<T>& Matr<T>::operator =(const Matr<T>& rightv)
@@ -260,6 +345,22 @@ Matr<T>::Matr(const Matr<T>& copy) {
 	systemSize = copy.systemSize;
 }
 
+template<typename T>
+Matr<T>::Matr(size_t matrsize, T value) {
+	systemSize = matrsize;
+	rows_.reserve(systemSize);
+	cols_.reserve(systemSize);
+	matrix_.reserve(systemSize * systemSize);
+	for (size_t i = 0; i < systemSize; ++i)
+	{
+		for (size_t j = 0; j < systemSize; ++j)
+		{
+			matrix_[i*systemSize + j] = value;
+		}
+		rows_.push_back(i); cols_.push_back(i);
+	}
+
+}
 
 
 #endif

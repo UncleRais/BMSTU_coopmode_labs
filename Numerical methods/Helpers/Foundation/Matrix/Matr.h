@@ -9,6 +9,7 @@
 
 enum ErrorMatr {
 	dimensionsIncongruity,
+	linearDependence
 };
 
 
@@ -60,10 +61,18 @@ public:
 	T normmax() const;
 
 	T normestimate(const std::vector<T>& vec);
+
+	bool symmetrical(T epsilon = 1e-3) const;
+
+	Matr<T> uppertriangular() const;
+
+	bool criteriaSylvester() const;
 public:
 	std::vector<T> operator *(const std::vector<T>& rightvector);
 
 	Matr<T> operator *(const Matr<T>& matrix);
+
+	Matr<T> operator *(T value) const;
 
 	Matr<T>& operator =(const Matr<T>& rightv);
 
@@ -74,6 +83,8 @@ public:
 	Matr(const std::vector<T>& matrix);
 
 	Matr(const Matr<T>& copy);
+
+	Matr(size_t matrsize, T value);
 
 };
 

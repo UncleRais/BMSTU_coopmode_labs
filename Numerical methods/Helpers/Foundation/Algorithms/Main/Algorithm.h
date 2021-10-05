@@ -29,12 +29,6 @@ public:
 	static std::vector<T> solve(Matr<T> matrix) = delete;
 
 	template < typename T > 
-	static Matr<T> dot(const Matr<T>& A, const Matr<T>& B);
-
-	template < typename T > 
-	static std::vector<T> dot(const Matr<T>& A, const std::vector<T>& B);
-
-	template < typename T > 
 	static T misclosure(Matr<T>& matrix, const std::vector<T>& vec, const std::vector<T>& x);
 };
 

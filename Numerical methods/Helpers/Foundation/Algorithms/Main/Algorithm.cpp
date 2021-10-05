@@ -31,37 +31,6 @@ void MatrixAlgorithm::resetIndexation(std::vector<T>& vector, const std::vector<
 	}
 }
 
-template < typename T >
-Matr<T> MatrixAlgorithm::dot(const Matr<T>& A, const Matr<T>& B) {
-	const size_t size = A.size();
-	std::vector<T> result(size * size, 0);
-	for (size_t i = 0; i < size; ++i)
-	{
-		for (size_t j = 0; j < size; ++j)
-		{
-			for (size_t k = 0; k < size; ++k)
-			{
-				result[i * size + j] += A.atvalue(i, k) * B.atvalue(k, j);  
-			}
-		}
-	}
-	return Matr<T>(result);  
-}
-
-template < typename T >
-std::vector<T> MatrixAlgorithm::dot(const Matr<T>& A, const std::vector<T>& B) {
-	const size_t size = A.size();
-	std::vector<T> result(size, 0.0);
-	for (size_t i = 0; i < size; ++i)
-	{
-		for (size_t j = 0; j < size; ++j)
-		{
-			result[i] += A.atvalue(i, j) * B[j];
-		}
-	}
-	return result; 
-}
-
 template < typename T > 
 T MatrixAlgorithm::misclosure( Matr<T>& matrix, const std::vector<T>& vec, const std::vector<T>& x) {
 	const std::vector<T> Ax(matrix * x);

@@ -87,7 +87,7 @@ template<typename T>
 std::ostream& operator <<(std::ostream& str, const std::vector<T>& vec)
 {
 	size_t size = vec.size();
-	str << " | ";
+	str << "| ";
 	for (size_t i = 0; i < size; ++i)
 		{			
 			str << std::setprecision(4) << std::setw(10) << vec[i]<< " ";
