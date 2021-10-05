@@ -9,6 +9,7 @@
 #include "./Gauss/Gauss.cpp"
 #include "./QR/QR.cpp"
 #include "./Simple/Simple.cpp"
+#include "./Jacobi/Jacobi.cpp"
 #include "../Math.cpp"
 
 #endif
