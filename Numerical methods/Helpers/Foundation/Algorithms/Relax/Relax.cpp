@@ -17,11 +17,10 @@ std::vector<T> Relax::solve(Matr<T> matrix, std::vector<T> vec, T omega, T epsil
 
 	std::cout << "Norm G1 = " << normG1 << "\n";
 	std::cout << "Norm G2 = " << normG2 << "\n";
-	
-	 std::vector<T> result(vec.size(), 1.0);
-	std::vector<T> previous(vec.size() , 0.0);
 
   	if (normG1 + normG2 < 1) {
+  		std::vector<T> result(vec.size(), 1.0);
+		std::vector<T> previous(vec.size() , 0.0);
 		while(Math::norm(result - previous) > epsilon * (1 - normG1 - normG2) / normG2 ) {
 			previous = result;
 
@@ -33,9 +32,63 @@ std::vector<T> Relax::solve(Matr<T> matrix, std::vector<T> vec, T omega, T epsil
 				result[i] = - omega * sumJ + (1 - omega) * previous[i] + omega * vec[i] / matrix.at(i, i);
 			}
 		}
+		return  result;
 	}
 
-	 return result;
+	 return {};
+}
+
+template < typename T >
+std::vector<T> Relax::solve(T omega, T epsilon) {
+	const size_t variant = 23;
+	const size_t n = 200 + variant;
+	const T a_i = 1;
+	const T b_i = 4;
+	const T c_i = 1;
+
+	std::vector<T> A(n, a_i);
+	std::vector<T> B(n, b_i);
+	std::vector<T> C(n, c_i);
+
+	std::vector<T> D(n, 6);
+	std::vector<T> X(n, 0);
+	for(size_t i = 0; i < n; ++i) {
+		D[i] = 10 - 2 * fmod(i, 2);
+		X[i] = 2 - fmod(i, 2);
+	}
+	D[n - 1] = 9 - 3 * fmod(n, 2);
+
+	/*
+		| x 0 0 0 0 |     | 0 0 0 0 |      |  0  0  0  0  |
+		| 0 x 0 0 0 |     | y 0 0 0 |   =  |  xy 0  0  0  |
+		| 0 0 x 0 0 |     | 0 y 0 0 | 	   |  0  xy 0  0  |
+		| 0 0 0 x 0 |  .  | 0 0 y 0 |	   |  0  0  xy 0  |
+	*/
+	const T normG1 = fabs(-omega * a_i / b_i);
+	const T normG2 = fmax(fabs(-omega * c_i / b_i), fabs(1 - omega));
+
+	std::cout << "Norm G1 = " << normG1 << "\n";
+	std::cout << "Norm G2 = " << normG2 << "\n";
+
+	if (normG1 + normG2 < 1) {
+		std::vector<T> result(n, 0.0);
+		std::vector<T> previous(n , 1.0);
+		while(Math::norm(result - previous) > epsilon * (1 - normG1 - normG2) / normG2 ) {
+			previous = result;
+			for (size_t i = 0; i < n; ++i) {
+				result[i] = (1 - omega) * previous[i] + omega  * D[i] / b_i;
+				if (i > 0) {
+					result[i] -= omega * a_i / b_i * result[i - 1]; 
+				}
+			}
+		}
+
+		std::cout << X << "\n";
+
+		return  result;
+	} 
+
+	return {};
 }
 
 #endif
