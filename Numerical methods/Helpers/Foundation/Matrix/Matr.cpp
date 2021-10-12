@@ -95,6 +95,38 @@ Matr<T> Matr<T>::inversed()
 	return Matr<T>(invmatrix_);
 }
 
+template<typename T> 
+Matr<T> Matr<T>::lower()
+{
+	std::vector<T> result(systemSize * systemSize, 0);
+		for (size_t i = 0; i < systemSize; ++i)
+			for (size_t j = 0; j < i; ++j)
+				result[i + systemSize * j] = atvalue(i, j);
+		
+	return Matr<T>(result);
+}
+
+template<typename T> 
+Matr<T> Matr<T>::upper()
+{
+	std::vector<T> result(systemSize * systemSize, 0);
+	for (size_t i = 0; i < systemSize; ++i)
+		for (size_t j = i + 1; j < systemSize; ++j)
+			result[i + systemSize * j] = atvalue(i, j);
+	
+	return Matr<T>(result);
+}
+
+template<typename T> 
+Matr<T> Matr<T>::diagonal()
+{
+	std::vector<T> result(systemSize * systemSize, 0);
+	for (size_t i = 0; i < systemSize; ++i)
+		result[i * systemSize + i] = atvalue(i,i);
+
+	return Matr<T>(result);
+}
+
 template<typename T>
 void Matr<T>::transpose() {
 	for (size_t k = 0; k < systemSize - 1; ++k) 
@@ -242,6 +274,24 @@ bool Matr<T>::criteriaSylvester() const
 }
 
 template<typename T>
+Matr<T> Matr<T>::operator +(const Matr<T>& matrix)
+{
+	std::vector<T> result(systemSize * systemSize, 0.0);
+
+	for (size_t i = 0; i < systemSize; ++i)
+		for (size_t j = 0; j < systemSize; ++j)
+			result[i * systemSize + j] = atvalue(i, j) + matrix.atvalue(i, j);
+
+	return Matr<T>(result);
+}
+
+template<typename T>
+Matr<T> Matr<T>::operator -(const Matr<T>& matrix)
+{
+	return *this + T((-1)) * matrix; 
+}
+
+template<typename T>
 std::vector<T> Matr<T>::operator *(const std::vector<T>& rightvector)
 {
 	std::vector<T> result(systemSize, 0.0);
@@ -286,6 +336,12 @@ Matr<T> Matr<T>::operator *(T value) const
 	return result;
 }
 
+template<typename T>
+Matr<T> Matr<T>::operator /(T value) const
+{
+	return T(1 / value) * *this;
+}
+
 template<typename T> //Is not class member 
 Matr<T> operator *(T value, const Matr<T>& matrix) 
 {
@@ -310,10 +366,10 @@ Matr<T>::Matr(const std::vector<T>& matrix)
 {
 	try
 	{
-		if ((modf(sqrt(matrix.size()), nullptr) > 0))
-		{
-			throw dimensionsIncongruity;
-		}
+		// if ((modf(sqrt(matrix.size()), nullptr) > 0))
+		// {
+		// 	throw dimensionsIncongruity;
+		// } // PROBLEMS OCCURE HERE
 
 		matrix_ = matrix;
 		systemSize = sqrt(matrix.size());

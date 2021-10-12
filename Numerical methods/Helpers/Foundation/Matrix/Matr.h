@@ -48,7 +48,13 @@ public:
 
 	void inverse();
 
-	Matr<T> inversed(); 
+	Matr<T> inversed();
+
+	Matr<T> lower();
+
+	Matr<T> upper();
+
+	Matr<T> diagonal(); 
 
 	void transpose();
 
@@ -72,7 +78,13 @@ public:
 
 	Matr<T> operator *(const Matr<T>& matrix);
 
+	Matr<T> operator +(const Matr<T>& matrix);
+
+	Matr<T> operator -(const Matr<T>& matrix);
+
 	Matr<T> operator *(T value) const;
+
+	Matr<T> operator /(T value) const;
 
 	Matr<T>& operator =(const Matr<T>& rightv);
 

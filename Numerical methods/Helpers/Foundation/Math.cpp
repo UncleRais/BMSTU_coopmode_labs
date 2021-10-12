@@ -1,9 +1,20 @@
 #ifndef Math
 #define Math
 
+#include "Foundation.cpp"
+
 enum ErrorVect {
 	dimInc,
 };
+
+template<typename T>
+Matr<T> identityMatrix(size_t n) {
+	std::vector<T> identity(n * n, 0);
+	for (size_t i = 0; i < n; ++i) 
+		identity[i * n + i] = T(1);
+
+	return Matr<T>(identity);
+}
 
 template<typename T>
 T norm(const std::vector<T>& vector) {

@@ -8,7 +8,6 @@ int main(int argc, char** argv)
 	init(matrix, vec, "settings.dat");
 
 	AlgPrint::printsystem(matrix, vec, 15);
-
 	AlgPrint::value("condA(inf)= ");
 	AlgPrint::value(matrix.norminf()*(matrix.inversed()).norminf());
 	AlgPrint::value("condA(1)= ");

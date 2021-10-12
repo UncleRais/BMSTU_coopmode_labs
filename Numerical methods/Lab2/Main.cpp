@@ -25,11 +25,17 @@ int main(int argc, char** argv)
 
 	AlgPrint::drawline(50);
 
-	std::cout << "Jacobi method:\n";
-	res = Jacobi::solve(matrix , vec, epsilon);
+	// std::cout << "Jacobi method:\n";
+	// res = Jacobi::solve(matrix , vec, epsilon);
+	// std::cout << res << "\n";
+	// std::cout << "Misclosure: " << MatrixAlgorithm::misclosure(matrix, vec, res) << "\n\n";
+
+	// AlgPrint::drawline(50);
+
+	std::cout << "Relax method:\n";
+	res = Relax::solve(matrix, vec, 1.0, epsilon);
 	std::cout << res << "\n";
 	std::cout << "Misclosure: " << MatrixAlgorithm::misclosure(matrix, vec, res) << "\n\n";
 
-	AlgPrint::drawline(50);
 	return 0;
 }

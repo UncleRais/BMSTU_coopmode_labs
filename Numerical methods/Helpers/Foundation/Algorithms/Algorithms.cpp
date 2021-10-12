@@ -10,6 +10,7 @@
 #include "./QR/QR.cpp"
 #include "./Simple/Simple.cpp"
 #include "./Jacobi/Jacobi.cpp"
+#include "./Relax/Relax.cpp"
 #include "../Math.cpp"
 
 #endif
