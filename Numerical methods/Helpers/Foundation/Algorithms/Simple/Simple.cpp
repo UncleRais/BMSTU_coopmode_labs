@@ -40,7 +40,15 @@ std::vector<T> Simple::solve(Matr<T> matrix, std::vector<T> vec, T tau, T epsilo
 	std::vector<T> previous(vec.size() , 0.0);
 	if(condC <= 1)
 	{
-		while(Math::norm(previous - result) >= (1 - condC) * (epsilon)/condC )
+		auto criteria = [epsilon](const std::vector<T>& x, const std::vector<T>& y, const T norm) {
+			return Math::norm(x - y) >=
+			// (1 - norm) * (epsilon) / norm;
+			// epsilon;
+			// epsilon * Math::norm(y) + 1e-5;
+			epsilon * (Math::norm(y) + 1e-5);
+		};
+
+		while(criteria(previous, result, condC))
 		{
 			previous = result; 
 			result = vec - C * result;
