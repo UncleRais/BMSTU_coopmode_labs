@@ -10,7 +10,7 @@ SwappingElement MatrixAlgorithm::partialColumnSelection(const size_t startCol, M
 	T maxValue = matrix.atvalue(startCol, startCol);
 	for (size_t col = startCol + 1; col < matrix.size(); ++col) {
 		const T nextValue = matrix.atvalue(startCol, col);
-		if ( fabs(nextValue) > maxValue ) {
+		if ( fabs(nextValue) > fabs(maxValue) ) {
 			maxValue = nextValue;
 			maxCol = col;
 		}
