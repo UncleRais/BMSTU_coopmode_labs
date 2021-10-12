@@ -18,6 +18,8 @@ std::vector<T> Relax::solve(Matr<T> matrix, std::vector<T> vec, T omega, T epsil
 	std::cout << "Norm G1 = " << normG1 << "\n";
 	std::cout << "Norm G2 = " << normG2 << "\n";
 
+	int counter = 0;
+
   	if (normG1 + normG2 < 1) {
   		std::vector<T> result(vec.size(), 1.0);
 		std::vector<T> previous(vec.size() , 0.0);
@@ -31,9 +33,11 @@ std::vector<T> Relax::solve(Matr<T> matrix, std::vector<T> vec, T omega, T epsil
 				}
 				result[i] = - omega * sumJ + (1 - omega) * previous[i] + omega * vec[i] / matrix.at(i, i);
 			}
+			++counter;
 		}
 		return  result;
 	}
+	std::cout << "Iterations: " << counter << "\n";
 
 	 return {};
 }
