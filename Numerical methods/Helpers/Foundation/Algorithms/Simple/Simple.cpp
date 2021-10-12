@@ -32,23 +32,24 @@ std::vector<T> Simple::solve(Matr<T> matrix, std::vector<T> vec, T tau, T epsilo
 	vec = vec * tau;         // tua * b
 	for (size_t i = 0; i < C.size(); ++i)
 		C.at(i,i) -= 1;
-	T condC = C.norminf();
+	T normC = C.norminf();
 
-	std::cout << "CondC = " << condC << "\n";
+	std::cout << "NormC = " << normC << "\n";
 	
 	int counter = 0;
 	std::vector<T> previous(vec.size() , 0.0);
-	if(condC <= 1)
+	std::cout << "Iter estimate: " << log((1-normC)*epsilon/Math::norm(result - previous))/log(normC) << "\n";
+	if(normC <= 1)
 	{
 		auto criteria = [epsilon](const std::vector<T>& x, const std::vector<T>& y, const T norm) {
 			return Math::norm(x - y) >=
-			// (1 - norm) * (epsilon) / norm;
-			// epsilon;
+			//(1 - norm) * (epsilon) / norm;
+			 epsilon;
 			// epsilon * Math::norm(y) + 1e-5;
-			epsilon * (Math::norm(y) + 1e-5);
+			//epsilon * (Math::norm(y) + 1e-5);
 		};
 
-		while(criteria(previous, result, condC))
+		while(criteria(previous, result, normC))
 		{
 			previous = result; 
 			result = vec - C * result;
