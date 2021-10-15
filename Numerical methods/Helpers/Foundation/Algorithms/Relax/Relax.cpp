@@ -26,17 +26,31 @@ std::vector<T> Relax::solve(Matr<T> matrix, std::vector<T> vec, T omega, T epsil
 		std::vector<T> previous(vec.size() , 0.0);
 		T q = normG2/(1 - normG1);
 		std::cout << "Iter estimate: " << log((1-q)*epsilon/Math::norm(result - previous))/log(q) << "\n";
-		while(Math::norm(result - previous) > epsilon * (1 - normG1 - normG2) / normG2 ) 
+
+		auto criteria = [epsilon](const std::vector<T>& x, const std::vector<T>& y, const T norm1, const T norm2) {
+			return Math::norm(x - y) >=
+			(1 - norm1 - norm2) * (epsilon) / norm2;
+			//epsilon;
+			// epsilon * Math::norm(y) + 1e-5;
+			//epsilon * (Math::norm(y) + 1e-5);
+		};
+
+
+		while(criteria(previous, result, normG1, normG2)) 
 		{
 			previous = result;
 
 			for (size_t i = 0; i < vec.size(); ++i) 
 			{
 				T sumJ = 0;
-				for (size_t j = 0; j + 1 < i; ++j) 
+				for (size_t j = 0; j < vec.size(); ++j) 
 				{
+					if (j == i) 
+						continue;
+
 					sumJ += result[j] * matrix.at(i, j) / matrix.at(i, i);
 				}
+
 				result[i] = - omega * sumJ + (1 - omega) * previous[i] + omega * vec[i] / matrix.at(i, i);
 			}
 			++counter;
@@ -86,9 +100,11 @@ std::vector<T> Relax::solve(T omega, T epsilon) {
 			previous = result;
 			for (size_t i = 0; i < n; ++i) {
 				result[i] = (1 - omega) * previous[i] + omega  * D[i] / b_i;
-				if (i > 0) {
-					result[i] -= omega * a_i / b_i * result[i - 1]; 
-				}
+				if (i > 0)
+					result[i] -= omega * a_i / b_i * previous[i - 1]; 
+
+				if (i < n)
+					result[i] -= omega * a_i / b_i * previous[i + 1];
 			}
 		}
 
