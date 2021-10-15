@@ -12,6 +12,9 @@ typedef double(*fun)(double);
 class Grid {
 
 private:
+	double leftval_;
+	double rightval_;
+	size_t numberofpoints_;
 	std::vector<double> points_x = {};
 	std::vector<double> points_y = {};
 
@@ -27,12 +30,18 @@ public:
 
 	void printGrid(int width = 10, int prec = 4) const;
 
-	size_t size() const {
-		return points_x.size();
-	};
+	double unifgrid(size_t i, double leftval, double rightval, double numberofpoints) const;
+
+	double chebishevgrid(size_t i, double leftval, double rightval, double numberofpoints) const;
+
+	size_t size() const {return points_x.size(); };
+
+	void setunifgrid(fun f);
+
+	void setchebishevgrid(fun f);
 public:
 
 	Grid();
-	Grid(fun , double leftval, double rightval, double numberofpoints);
+	Grid(double leftval, double rightval, double numberofpoints);
 };
 #endif

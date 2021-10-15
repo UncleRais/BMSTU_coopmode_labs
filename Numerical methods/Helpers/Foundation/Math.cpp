@@ -1,6 +1,8 @@
 #ifndef Math
 #define Math
 
+static double pi = 3.1415926535;
+
 #include "Foundation.cpp"
 
 enum ErrorVect {

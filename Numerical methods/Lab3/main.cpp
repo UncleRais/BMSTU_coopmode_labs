@@ -4,7 +4,9 @@
 
 int main(int argc, char** argv) 
 {
-	Grid elem(func, -1 , 1, 100);
+	Grid elem(-1 , 1, 100);
+	elem.setchebishevgrid(func);
+	//elem.printGrid();
 	save(elem , "Lab3/output" , "vecx20", "vecy20");
 	return 0;
 }
