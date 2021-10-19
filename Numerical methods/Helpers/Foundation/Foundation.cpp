@@ -12,6 +12,7 @@ enum FileError {
 	vectorNotFound,
 };
 
+
 template<typename T>
 void init(Matr<T>& matrix, std::vector<T>& vec, const char * settings)
 {
@@ -88,7 +89,8 @@ void save(
 	const std::string path = "../" + directory + "/" + name + "." + extension;
 	std::ofstream file;
 	file.open(path);
-	if (!file.is_open()) {
+	if (!file.is_open()) 
+	{
 		const std::string oopsMessage = "Oops. Could not save file at: ";
 		const std::string error = ". Directory location not found";
 		const std::string message = oopsMessage + path + error;
@@ -113,7 +115,8 @@ void save(
 	const std::string path = "../" + directory + "/" + name + "." + extension;
 	std::ofstream file;
 	file.open(path);
-	if (!file.is_open()) {
+	if (!file.is_open()) 
+	{
 		const std::string oopsMessage = "Oops. Could not save file at: ";
 		const std::string error = ". Directory location not found";
 		const std::string message = oopsMessage + path + error;
@@ -131,14 +134,17 @@ const Grid& grid,
 const std::string& directory, 
 const std::string& namex,
 const std::string& namey,
+const std::string& nameintery,
 const std::string& extension = "dat"
 )  
 {
 	const std::string pathx = "../" + directory + "/" + namex + "." + extension;
 	const std::string pathy = "../" + directory + "/" + namey + "." + extension;
-	std::ofstream filex, filey;
+	const std::string pathintery = "../" + directory + "/" + nameintery + "." + extension;
+	std::ofstream filex, filey, fileintery;
 	filex.open(pathx);
 	filey.open(pathy);
+	fileintery.open(pathintery);
 	if (!filex.is_open()) 
 	{
 		const std::string oopsMessage = "Oops. Could not save file at: ";
@@ -153,6 +159,13 @@ const std::string& extension = "dat"
 		const std::string message = oopsMessage + pathy + error;
 		AlgPrint::value(message);
 	}
+	if (!fileintery.is_open()) 
+	{
+		const std::string oopsMessage = "Oops. Could not save file at: ";
+		const std::string error = ". Directory location not found";
+		const std::string message = oopsMessage + pathintery + error;
+		AlgPrint::value(message);
+	}
 	for (size_t i = 0; i < grid.size(); ++i) 
 	{
 			filex << grid.atvalx(i) << " ";
@@ -161,9 +174,15 @@ const std::string& extension = "dat"
 	{
 			filey << grid.atvaly(i) << " ";
 	}
+	for (size_t i = 0; i < grid.intersize(); ++i) 
+	{
+			fileintery << grid.atvalintery(i) << " ";
+	}
 	filex << "\n";
 	filey << "\n";
+	fileintery << "\n";
 	filex.close();
 	filey.close();
+	fileintery.close();
 }
 #endif
