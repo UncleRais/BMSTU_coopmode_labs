@@ -52,6 +52,8 @@ public:
 	void setchebishevgrid(fun f);
 
 	void calculateLagrange(double leftval, double rightval, size_t numberofpoints);
+
+	double funcnorm(fun f); 
 public:
 
 	Grid();

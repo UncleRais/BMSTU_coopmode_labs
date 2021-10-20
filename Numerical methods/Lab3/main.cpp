@@ -4,10 +4,13 @@
 
 int main(int argc, char** argv) 
 {
-	Grid elem(-1 , 1, 15);
-	elem.setunifgrid(func);
-	elem.calculateLagrange(-1 , 1, 100);
-	//elem.printGrid();
-	save(elem , "Lab3/output" , "vecx20", "vecy20", "vecintery20");
+	Grid elem(-1 , 1, 10);
+	elem.setchebishevgrid(func);
+	//elem.setunifgrid(func);
+	elem.calculateLagrange(-1 , 1, 1000);
+	elem.printGrid();
+	std::cout<< "Function norm: " << elem.funcnorm(func) << "\n";
+	const std::string var = "20";
+	save(elem , "Lab3/output" , "vecx" + var, "vecy" + var, "vecintery" + var);
 	return 0;
 }

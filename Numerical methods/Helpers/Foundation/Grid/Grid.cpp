@@ -10,7 +10,7 @@ double Grid::unifgrid(size_t i, double leftval, double rightval, size_t numberof
 
 double Grid::chebishevgrid(size_t i, double leftval, double rightval, size_t numberofpoints) const
 {
-return ((leftval + rightval)/2 + (rightval - leftval)/2 * cos(pi * (2 * i + 1)/(2 * numberofpoints))) ; 
+return ( (leftval + rightval)/2 - (rightval - leftval)/2 * cos(pi * (2 * i + 1)/(2 * numberofpoints)) ) ; 
 }
 
 void Grid::printGrid(int width, int prec) const
@@ -112,6 +112,19 @@ void Grid::calculateLagrange(double leftval, double rightval, size_t numberofpoi
 		intery = interpolationLagrange(x);
 		points_inter_y.push_back(intery);
 	}
+}
+
+double Grid::funcnorm(fun f)
+{
+	double maxval = 0;
+	double value, left = points_x[0], right = points_x[size() - 1];
+	size_t numberofpoints = intersize();
+	for(size_t i = 0; i < numberofpoints; ++i)
+	{
+		value = f(unifgrid(i , left, right, numberofpoints - 1));
+		if(fabs(value - points_inter_y[i]) > maxval) maxval = fabs(value - points_inter_y[i]);
+	}
+	return maxval;
 }
 
 Grid::Grid() {};
