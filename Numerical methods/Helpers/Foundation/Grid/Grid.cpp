@@ -175,49 +175,22 @@ void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoint
 	// //MARK: - Forward move
 	const size_t N = numberofpoints_ - 1;
 	const size_t n = N - 1;
-	std::vector<double> alpha(n + 2, 0);
-	std::vector<double> beta(n + 2, 0);
+	std::vector<double> A(n, 0);
+	std::vector<double> B(n + 1 , 0);
+	std::vector<double> C(n , 0);
+	std::vector<double> D(n + 1 , 0);
 
-	/// i = 1
-	alpha[2] = coeffC_i_Plus_1(1) / coeffC_i(1); // alpha_2
-	beta[2]  = coeffF_i(1) / coeffC_i(1); // beta_2
-
-	/// i = 2...n-1 and i == n
-	double value;
-	for (size_t i = 2; i <= n; ++i) 
-	{ 
-		value = coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i];
-		alpha[i + 1] = coeffC_i_Plus_1(i) / value;
-		beta[i + 1]  = (coeffF_i(i) + coeffC_i_Minus_1(i) * beta[i]) / value;
-	}
-
-	
-	//MARK: - Backward move
-	std::vector<double> c(N + 1, 0);
-	c[n] = (coeffF_i(n+1) + coeffC_i_Minus_1(n+1) * beta[n+1]) / coeffC_i(n+1) - coeffC_i_Minus_1(n+1) * alpha[n+1];
-	for (int i = n - 1; i >= 0; --i) 
+	for(size_t i = 0; i < n ; ++i)
 	{
-		c[i] = alpha[i + 1] * c[i + 1] + beta[i + 1];
+		A[i] = coeffC_i_Minus_1(i + 1);
+		B[i] = -coeffC_i(i + 1);
+		C[i] = coeffC_i_Plus_1(i + 1);
+		D[i] = -coeffF_i(i + 1);
 	}
+	B[n] = coeffC_i(n);
+	D[n] = coeffF_i(n);
 
-	std::cout << c;
-	//---------------------------
-	// std::vector<double> A(n, 0);
-	// std::vector<double> B(n + 1 , 0);
-	// std::vector<double> C(n , 0);
-	// std::vector<double> D(n + 1 , 0);
-
-	// for(size_t i = 0; i < n ; ++i)
-	// {
-	// 	A[i] = coeffC_i_Minus_1(i + 1);
-	// 	B[i] = -coeffC_i(i + 1);
-	// 	C[i] = coeffC_i_Plus_1(i + 1);
-	// 	D[i] = -coeffF_i(i + 1);
-	// }
-	// B[n] = coeffC_i(n);
-	// D[n] = coeffF_i(n);
-
-	// std::vector<double> c = Banish::solve(A , B , C , D);
+	const auto c = Banish::solve(A , B , C , D);
 
 	//---------------------------
 
