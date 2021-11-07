@@ -175,22 +175,25 @@ void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoint
 	// //MARK: - Forward move
 	const size_t N = numberofpoints_ - 1;
 	const size_t n = N - 1;
-	std::vector<double> A(n, 0);
-	std::vector<double> B(n + 1 , 0);
-	std::vector<double> C(n , 0);
-	std::vector<double> D(n + 1 , 0);
+	std::vector<double> A(n - 1, 0);
+	std::vector<double> B(n, 0);
+	std::vector<double> C(n - 1, 0);
+	std::vector<double> D(n, 0);
 
-	for(size_t i = 0; i < n ; ++i)
+	for(size_t i = 0; i < n - 1 ; ++i)
 	{
 		A[i] = coeffC_i_Minus_1(i + 1);
 		B[i] = -coeffC_i(i + 1);
 		C[i] = coeffC_i_Plus_1(i + 1);
 		D[i] = -coeffF_i(i + 1);
 	}
-	B[n] = coeffC_i(n);
-	D[n] = coeffF_i(n);
+	B[n - 1] = coeffC_i(n);
+	D[n - 1] = coeffF_i(n);
 
-	const auto c = Banish::solve(A , B , C , D);
+	auto c = Banish::solve(A , B , C , D);
+	c.push_back(0);
+	c.insert(c.begin(), 0);
+	std::cout << c;
 
 	//---------------------------
 
