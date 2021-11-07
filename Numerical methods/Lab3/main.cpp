@@ -5,7 +5,7 @@
 int main(int argc, char** argv) 
 {
 	Grid elem(-1 , 1, 10);
-	elem.setunifgrid(func);
+	elem.setchebishevgrid(func);
 	elem.whyAreYouRunning();
 	//elem.setunifgrid(func);
 	// elem.calculateLagrange(-1 , 1, 1000);

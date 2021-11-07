@@ -55,7 +55,7 @@ public:
 
 	double funcnorm(fun f); 
 
-	void whyAreYouRunning();
+	std::vector<std::vector<double>> whyAreYouRunning();
 public:
 
 	Grid();
