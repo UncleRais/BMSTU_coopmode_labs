@@ -128,7 +128,24 @@ double Grid::funcnorm(fun f)
 	return maxval;
 }
 
-std::vector<std::vector<double>> Grid::whyAreYouRunning() {
+size_t Grid::findIndex(double point) const
+{
+	for (size_t i = 1; i < numberofpoints_; ++i)
+		if(point < points_x[i])
+			return i;
+	return 0;
+}
+
+double Grid::interpolationSpline(double point, const std::vector<double>& a, 
+	const std::vector<double>& b, const std::vector<double>& c, const std::vector<double>& d) const
+{
+	size_t i = findIndex(point);
+	double value = point - points_x[i];
+	return a[i] + b[i] * value + c[i] * pow(value , 2) / 2 + d[i] * pow(value , 3) / 6 ;
+}
+
+
+void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoints) {
 	typedef std::function<double(size_t)> func;
 	func h = [this](size_t index) 
 	{  
@@ -155,7 +172,7 @@ std::vector<std::vector<double>> Grid::whyAreYouRunning() {
 		return (-6.) * double( (this->points_y[index + 1] - this->points_y[index]) / h(index + 1) -  (this->points_y[index] - this->points_y[index - 1]) / h(index) );
 	};
 
-	//MARK: - Forward move
+	// //MARK: - Forward move
 	const size_t N = numberofpoints_ - 1;
 	const size_t n = N - 1;
 	std::vector<double> alpha(n + 2, 0);
@@ -166,24 +183,43 @@ std::vector<std::vector<double>> Grid::whyAreYouRunning() {
 	beta[2]  = coeffF_i(1) / coeffC_i(1); // beta_2
 
 	/// i = 2...n-1 and i == n
-	for (size_t i = 2; i <= n; ++i) {
-		alpha[i + 1] = i < n ? coeffC_i_Plus_1(i) / ( coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]) : 0;
-		beta[i + 1]  = (coeffF_i(i) + coeffC_i_Minus_1(i) * beta[i]) / (coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]);
-
-		// std::cout << "h_{" << i << "} == " << h(i) << "\n";
-		// std::cout << "alpha_{" << i + 1 << "} == " << alpha[i] << "\n";
-		// std::cout << "beta_{" << i + 1 << "} == " << beta[i] << "\n";
-		// std::cout << "\n\n";
+	double value;
+	for (size_t i = 2; i <= n; ++i) 
+	{ 
+		value = coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i];
+		alpha[i + 1] = coeffC_i_Plus_1(i) / value;
+		beta[i + 1]  = (coeffF_i(i) + coeffC_i_Minus_1(i) * beta[i]) / value;
 	}
 
+	
 	//MARK: - Backward move
 	std::vector<double> c(N + 1, 0);
-	c[n] = beta[n + 1];
-	for (size_t i = n - 1; i >= 1; --i) 
+	c[n] = (coeffF_i(n+1) + coeffC_i_Minus_1(n+1) * beta[n+1]) / coeffC_i(n+1) - coeffC_i_Minus_1(n+1) * alpha[n+1];
+	for (int i = n - 1; i >= 0; --i) 
 	{
 		c[i] = alpha[i + 1] * c[i + 1] + beta[i + 1];
 	}
 
+	std::cout << c;
+	//---------------------------
+	// std::vector<double> A(n, 0);
+	// std::vector<double> B(n + 1 , 0);
+	// std::vector<double> C(n , 0);
+	// std::vector<double> D(n + 1 , 0);
+
+	// for(size_t i = 0; i < n ; ++i)
+	// {
+	// 	A[i] = coeffC_i_Minus_1(i + 1);
+	// 	B[i] = -coeffC_i(i + 1);
+	// 	C[i] = coeffC_i_Plus_1(i + 1);
+	// 	D[i] = -coeffF_i(i + 1);
+	// }
+	// B[n] = coeffC_i(n);
+	// D[n] = coeffF_i(n);
+
+	// std::vector<double> c = Banish::solve(A , B , C , D);
+
+	//---------------------------
 
 	//Remaining coefficients
 	std::vector<double> a(N, 0);
@@ -199,19 +235,15 @@ std::vector<std::vector<double>> Grid::whyAreYouRunning() {
 		b[i] = c[i] * step / 2 - d[i] * pow(step, 2) / 6 + (a[i] - a[i - 1]) / step;
 	}
 
-	//MARK: - Check
-	std::vector<std::vector<double>> result(N, std::vector<double>(4, 0));
-	for (size_t i = 1; i <= N; ++i) 
+	double intery , x;
+	points_inter_y.reserve(numberofpoints);
+	for(size_t i = 0; i < numberofpoints ; ++i)
 	{
-		const size_t offset = i - 1;
-		result[offset][0] = a[i];
-		result[offset][1] = b[i];
-		result[offset][2] = c[i] / 2;
-		result[offset][3] = d[i] / 6;
-		std::cout << "s_" << i << "(x) = " << a[i] << " + " << b[i] << " * (x - x_" << i << ")" << " + " << c[i] / 2 << " * (x - x_" << i << ")^2" << " + " << d[i] / 6 << " * (x - x_" << i << ")^3 \n\n";
+		x = unifgrid(i, leftval_ , rightval_, numberofpoints);
+		intery = interpolationSpline(x, a, b, c, d);
+		points_inter_y.push_back(intery);
 	}
 
-	return result;
 }
 
 Grid::Grid() {};

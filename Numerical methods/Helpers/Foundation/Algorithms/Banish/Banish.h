@@ -11,6 +11,6 @@ public:
 	template < typename T >
 	static std::vector<T> solve(std::vector<T> vecA, std::vector<T> vecB, std::vector<T> vecC, std::vector<T> vecD);
 
-}
+};
 
 #endif

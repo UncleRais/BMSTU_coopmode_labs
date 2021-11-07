@@ -55,7 +55,12 @@ public:
 
 	double funcnorm(fun f); 
 
-	std::vector<std::vector<double>> whyAreYouRunning();
+	size_t findIndex(double point) const;
+
+	double interpolationSpline(double point, const std::vector<double>& a, 
+	const std::vector<double>& b, const std::vector<double>& c, const std::vector<double>& d) const;
+
+	void calculateSpline(double leftval, double rightval, size_t numberofpoints);
 public:
 
 	Grid();

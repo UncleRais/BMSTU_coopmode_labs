@@ -11,6 +11,7 @@
 #include "./Simple/Simple.cpp"
 #include "./Jacobi/Jacobi.cpp"
 #include "./Relax/Relax.cpp"
+#include "./Banish/Banish.cpp"
 #include "../Math.cpp"
 
 #endif
