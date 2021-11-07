@@ -2,6 +2,7 @@
 #define GRID_CPP
 #include "./Grid.h"
 #include "../Foundation.cpp"
+#include <functional>
 
 double Grid::unifgrid(size_t i, double leftval, double rightval, size_t numberofpoints) const
 {
@@ -125,6 +126,92 @@ double Grid::funcnorm(fun f)
 		if(fabs(value - points_inter_y[i]) > maxval) maxval = fabs(value - points_inter_y[i]);
 	}
 	return maxval;
+}
+
+std::vector<std::vector<double>> Grid::whyAreYouRunning() {
+	typedef std::function<double(size_t)> func;
+	func h = [this](size_t index) 
+	{  
+		if (index < 1) 
+		{
+			return 0.;
+		}
+		return double(this->points_x[index] - this->points_x[index - 1]);
+	};
+
+	//MARK: - Samarsky (page 143 –> formula for c_i coefficients). These are just for convenience!
+	func coeffC_i_Minus_1 = h;
+
+	func coeffC_i = [h](size_t index) 
+	{ 
+		return (-2) * (h(index) + h(index + 1));
+	};
+
+	func coeffC_i_Plus_1 = [h](size_t index) { 
+		return h(index + 1);
+	};
+
+	func coeffF_i = [this, h](size_t index) { 
+		return (-6.) * double( (this->points_y[index + 1] - this->points_y[index]) / h(index + 1) -  (this->points_y[index] - this->points_y[index - 1]) / h(index) );
+	};
+
+	//MARK: - Forward move
+	const size_t N = numberofpoints_ - 1;
+	const size_t n = N - 1;
+	std::vector<double> alpha(n + 2, 0);
+	std::vector<double> beta(n + 2, 0);
+
+	/// i = 1
+	alpha[2] = coeffC_i_Plus_1(1) / coeffC_i(1); // alpha_2
+	beta[2]  = coeffF_i(1) / coeffC_i(1); // beta_2
+
+	/// i = 2...n-1 and i == n
+	for (size_t i = 2; i <= n; ++i) {
+		alpha[i + 1] = i < n ? coeffC_i_Plus_1(i) / ( coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]) : 0;
+		beta[i + 1]  = (coeffF_i(i) + coeffC_i_Minus_1(i) * beta[i]) / (coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]);
+
+		// std::cout << "h_{" << i << "} == " << h(i) << "\n";
+		// std::cout << "alpha_{" << i + 1 << "} == " << alpha[i] << "\n";
+		// std::cout << "beta_{" << i + 1 << "} == " << beta[i] << "\n";
+		// std::cout << "\n\n";
+	}
+
+	//MARK: - Backward move
+	std::vector<double> c(N + 1, 0);
+	c[n] = beta[n + 1];
+	for (size_t i = n - 1; i >= 1; --i) 
+	{
+		c[i] = alpha[i + 1] * c[i + 1] + beta[i + 1];
+	}
+
+
+	//Remaining coefficients
+	std::vector<double> a(N, 0);
+	std::vector<double> b(N, 0);
+	std::vector<double> d(N, 0);
+
+	a[0] = points_y[0];
+	for (size_t i = 1; i <= N; ++i) 
+	{
+		const auto step = h(i);
+		a[i] = points_y[i];
+		d[i] = (c[i] - c[i - 1]) / step;
+		b[i] = c[i] * step / 2 - d[i] * pow(step, 2) / 6 + (a[i] - a[i - 1]) / step;
+	}
+
+	//MARK: - Check
+	std::vector<std::vector<double>> result(N, std::vector<double>(4, 0));
+	for (size_t i = 1; i <= N; ++i) 
+	{
+		const size_t offset = i - 1;
+		result[offset][0] = a[i];
+		result[offset][1] = b[i];
+		result[offset][2] = c[i] / 2;
+		result[offset][3] = d[i] / 6;
+		std::cout << "s_" << i << "(x) = " << a[i] << " + " << b[i] << " * (x - x_" << i << ")" << " + " << c[i] / 2 << " * (x - x_" << i << ")^2" << " + " << d[i] / 6 << " * (x - x_" << i << ")^3 \n\n";
+	}
+
+	return result;
 }
 
 Grid::Grid() {};

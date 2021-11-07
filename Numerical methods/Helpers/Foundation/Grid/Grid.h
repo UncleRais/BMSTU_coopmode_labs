@@ -54,6 +54,8 @@ public:
 	void calculateLagrange(double leftval, double rightval, size_t numberofpoints);
 
 	double funcnorm(fun f); 
+
+	std::vector<std::vector<double>> whyAreYouRunning();
 public:
 
 	Grid();
