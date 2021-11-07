@@ -130,58 +130,56 @@ double Grid::funcnorm(fun f)
 
 void  Grid::whyAreYouRunning() {
 	typedef std::function<double(size_t)> func;
-
-	//x_i - x_{i - 1}
-	func h = [this](size_t index) { 
-		if (index >= 1 && index < numberofpoints_) {
-			return this->points_x[index] - this->points_x[index - 1];
+	func h = [this](size_t index) {  
+		if (index < 1) {
+			return 0.;
 		}
-		return 0.;
+		return double(this->points_x[index] - this->points_x[index - 1]);
 	};
 
 	//MARK: - Samarsky (page 143 –> formula for c_i coefficients). These are just for convenience!
 	func coeffC_i_Minus_1 = h;
 	func coeffC_i = [h](size_t index) { 
-		return (-1) * (h(index) + h(index + 1));
+		return (-2) * (h(index) + h(index + 1));
 	};
 	func coeffC_i_Plus_1 = [h](size_t index) { 
 		return h(index + 1);
 	};
 	func coeffF_i = [this, h](size_t index) { 
-		return 6. * double( (this->points_y[index + 1] - this->points_y[index]) / h(index + 1) -  (this->points_y[index] - this->points_y[index - 1]) / h(index) );
+		return (-6.) * double( (this->points_y[index + 1] - this->points_y[index]) / h(index + 1) -  (this->points_y[index] - this->points_y[index - 1]) / h(index) );
 	};
 
-	//MARK: - Galanin (page 56, WhyAreYouRunning algorithm adaptation for our problem)
-	func alpha = [this, coeffC_i_Minus_1, coeffC_i, coeffC_i_Plus_1, &alpha](size_t index) { 
-		if (index <= 1) {
-			return coeffC_i_Plus_1(0) / coeffC_i(0);
-		}
-		if (index >= this->points_x.size()) {
-			return 0.0;
-		}
-		return coeffC_i_Plus_1(index - 1) / (coeffC_i(index - 1) - coeffC_i_Minus_1(index - 1) * alpha(index - 1)); 
-	};
-	func beta = [coeffC_i_Minus_1, coeffC_i, coeffF_i, &beta, alpha](size_t index) { 
-		if (index <= 1) {
-			return coeffF_i(0) / coeffC_i(0);
-		}
-		return (coeffF_i(index - 1) + coeffC_i_Minus_1(index - 1) * beta(index - 1)) / (coeffC_i(index - 1) - coeffC_i_Minus_1(index - 1) * alpha(index - 1));
-	};
+	//MARK: - Forward move
+	const size_t N = numberofpoints_ - 1;
+	const size_t n = N - 1;
+	std::vector<double> alpha(n + 2, 0);
+	std::vector<double> beta(n + 2, 0);
 
-	std::vector<double> alphas = {};
-	std::vector<double> betas = {};
+	/// i = 1
+	alpha[2] = coeffC_i_Plus_1(1) / coeffC_i(1); // alpha_2
+	beta[2]  = coeffF_i(1) / coeffC_i(1); // beta_2
 
-	for (int i = 1; i <= points_x.size(); ++i) {
-		alphas.push_back(alpha(i + 1));
-		betas.push_back(beta(i + 1 ));
+	/// i = 2...n-1 and i == n
+	for (int i = 2; i <= n; ++i) {
+		alpha[i + 1] = i < n ? coeffC_i_Plus_1(i) / ( coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]) : 0;
+		beta[i + 1]  = (coeffF_i(i) + coeffC_i_Minus_1(i) * beta[i]) / (coeffC_i(i) - coeffC_i_Minus_1(i) * alpha[i]);
 
 		std::cout << "h_{" << i << "} == " << h(i) << "\n";
-		std::cout << "alpha_{" << i + 1 << "} == " << alphas[i] << "\n";
-		std::cout << "beta_{" << i + 1 << "} == " << betas[i] << "\n";
+		std::cout << "alpha_{" << i + 1 << "} == " << alpha[i] << "\n";
+		std::cout << "beta_{" << i + 1 << "} == " << beta[i] << "\n";
 		std::cout << "\n\n";
 	}
 
-	// func beta  = [this](size_t index) {  };
+	//MARK: - Backward move
+	std::vector<double> c(N + 1, 0);
+	std::vector<double> b(N + 1, 0);
+	std::vector<double> d(N + 1, 0);
+
+	c[n] = beta[n + 1];
+	for (size_t i = n - 1; i >= 1; --i) {
+		c[i] = alpha[i + 1] * c[i + 1] + beta[i + 1];
+	}
+
 }
 
 Grid::Grid() {};
