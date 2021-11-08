@@ -5,6 +5,7 @@
 #include <cmath>
 #include "../../Foundation.cpp"
 #include "../../Math.cpp"
+#include "../../Print/Print.cpp"
 
 template < typename T >
 std::vector<T> Banish::solve(std::vector<T> vecA, std::vector<T> vecB, std::vector<T> vecC, std::vector<T> vecD)
@@ -33,6 +34,8 @@ std::vector<T> Banish::solve(std::vector<T> vecA, std::vector<T> vecB, std::vect
 		result[i] = alpha[i] * result[i + 1] + beta[i];
 	}
 	result[0] = alpha[0] * result[1] + beta[0];
+	
+
 	return result;
 }
 

@@ -187,20 +187,18 @@ void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoint
 		C[i] = coeffC_i_Plus_1(i + 1);
 		D[i] = -coeffF_i(i + 1);
 	}
-	B[n - 1] = coeffC_i(n);
-	D[n - 1] = coeffF_i(n);
+	B[n - 1] = -coeffC_i(n);
+	D[n - 1] = -coeffF_i(n);
 
 	auto c = Banish::solve(A , B , C , D);
+	std::cout << c;
 	c.push_back(0);
 	c.insert(c.begin(), 0);
-	std::cout << c;
-
-	//---------------------------
 
 	//Remaining coefficients
-	std::vector<double> a(N, 0);
-	std::vector<double> b(N, 0);
-	std::vector<double> d(N, 0);
+	std::vector<double> a(N + 1, 0);
+	std::vector<double> b(N + 1, 0);
+	std::vector<double> d(N + 1, 0);
 
 	a[0] = points_y[0];
 	for (size_t i = 1; i <= N; ++i) 
