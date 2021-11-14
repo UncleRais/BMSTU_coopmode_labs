@@ -117,12 +117,11 @@ void Grid::calculateLagrange(double leftval, double rightval, size_t numberofpoi
 
 double Grid::funcnorm(fun f)
 {
-	double maxval = 0;
-	double value, left = points_x[0], right = points_x[size() - 1];
+	double value,maxval = 0;
 	size_t numberofpoints = intersize();
 	for(size_t i = 0; i < numberofpoints; ++i)
 	{
-		value = f(unifgrid(i , left, right, numberofpoints - 1));
+		value = f(unifgrid(i , leftval_, rightval_, numberofpoints));
 		if(fabs(value - points_inter_y[i]) > maxval) maxval = fabs(value - points_inter_y[i]);
 	}
 	return maxval;
@@ -191,7 +190,6 @@ void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoint
 	D[n - 1] = -coeffF_i(n);
 
 	auto c = Banish::solve(A , B , C , D);
-	std::cout << c;
 	c.push_back(0);
 	c.insert(c.begin(), 0);
 
@@ -208,16 +206,20 @@ void Grid::calculateSpline(double leftval, double rightval, size_t numberofpoint
 		d[i] = (c[i] - c[i - 1]) / step;
 		b[i] = c[i] * step / 2 - d[i] * pow(step, 2) / 6 + (a[i] - a[i - 1]) / step;
 	}
+	//std::cout << a[N] << " "<< b[N] << " "<< c[N] << " "<< d[N] << "\n";
+	//std::cout << a[N-1] << " "<< b[N-1] << " "<< c[N-1] << " "<< d[N-1]<< "\n";
 
 	double intery , x;
-	points_inter_y.reserve(numberofpoints);
-	for(size_t i = 0; i < numberofpoints ; ++i)
+	points_inter_y.reserve(numberofpoints - 1);
+	for(size_t i = 0; i < numberofpoints - 1 ; ++i)
 	{
 		x = unifgrid(i, leftval_ , rightval_, numberofpoints);
 		intery = interpolationSpline(x, a, b, c, d);
 		points_inter_y.push_back(intery);
 	}
-
+	x = unifgrid(numberofpoints - 1, leftval_ , rightval_, numberofpoints);
+	intery = -interpolationSpline(x, a, b, c, d);
+	points_inter_y.push_back(intery);
 }
 
 Grid::Grid() {};
