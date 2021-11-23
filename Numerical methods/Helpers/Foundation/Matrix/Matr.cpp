@@ -52,13 +52,13 @@ size_t Matr<T>::size() const {
 template<typename T> 
 T& Matr<T>::at(const size_t row, const size_t col) 
 {
-	return matrix_[rows_[row] * systemSize + cols_[col]];
+	return matrix_[rows_[row] * (systemSize + minor_) + cols_[col]];
 }
 
 template<typename T> 
 T Matr<T>::atvalue(const size_t row, const size_t col)  const 
 {
-	return matrix_[rows_[row] * systemSize + cols_[col]];
+	return matrix_[rows_[row] * (systemSize + minor_) + cols_[col]];
 }
 
 template<typename T> 
@@ -80,16 +80,14 @@ void Matr<T>::inverse()
 template<typename T> 
 void Matr<T>::minor()
 {
-	const size_t shrinked = systemSize - 1;
-	std::vector<T> buffer;
-	buffer.reserve(pow(shrinked, 2));
-	for (int i = 0; i < fullSize() - systemSize; ++i) 
-	{
-		if ((i + 1) % systemSize == 0) { continue; }
-		buffer.push_back(matrix_[i]);
-	}
-	systemSize = shrinked;
-	matrix_ = buffer;
+	--systemSize; ++minor_;
+}
+
+template<typename T> 
+void Matr<T>::resetMinor()
+{
+	systemSize += minor_;
+	minor_ = 0;
 }
 
 template<typename T> 
@@ -367,6 +365,7 @@ template<typename T>
 Matr<T>& Matr<T>::operator =(const Matr<T>& rightv)
 {
 	matrix_ = rightv.matrix_;
+	minor_ = rightv.minor_;
 	rows_ = rightv.rows_;
 	cols_ = rightv.cols_;
 	systemSize = rightv.systemSize;
@@ -381,11 +380,6 @@ Matr<T>::Matr(const std::vector<T>& matrix)
 {
 	try
 	{
-		// if ((modf(sqrt(matrix.size()), nullptr) > 0))
-		// {
-		// 	throw dimensionsIncongruity;
-		// } // PROBLEMS OCCURE HERE
-
 		matrix_ = matrix;
 		systemSize = sqrt(matrix.size());
 		rows_.reserve(systemSize);
@@ -414,6 +408,7 @@ Matr<T>::Matr(const Matr<T>& copy) {
 	rows_ = copy.rows_;
 	cols_ = copy.cols_;
 	systemSize = copy.systemSize;
+	minor_ = copy.minor_;
 }
 
 template<typename T>

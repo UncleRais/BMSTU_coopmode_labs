@@ -15,6 +15,8 @@ enum ErrorMatr {
 template<typename T> 
 class Matr {
 
+private:
+	size_t minor_ = 0;
 public:
 	std::vector<size_t> rows_ = {};
 	std::vector<size_t> cols_ = {};
@@ -48,6 +50,8 @@ public:
 	void inverse();
 
 	void minor();
+
+	void resetMinor();
 
 	Matr<T> inversed();
 

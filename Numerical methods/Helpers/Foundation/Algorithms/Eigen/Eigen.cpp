@@ -2,10 +2,11 @@
 #define EIGEN_CPP
 
 #include "./Eigen.h"
+#include "../../Math.cpp"
 #include <functional>
 
 template < typename T >
-std::vector<T> Eigen::values(Matr<T> matrix, const bool shift, const double eps) {
+std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const bool shift, const double eps) {
 	std::function<bool(const Matr<T>&)> closeToZero = [eps](const Matr<T>& A)
 	{
 		for(size_t i = 0; i < A.systemSize - 1; ++i)
@@ -15,9 +16,9 @@ std::vector<T> Eigen::values(Matr<T> matrix, const bool shift, const double eps)
 		return true;
 	};
 
+	Matr<T> copy(matrix);
 	std::vector<T> lambdas;
 	lambdas.reserve(matrix.systemSize);
-
 	while(matrix.systemSize > 0) {
 		const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0;
 		while(!closeToZero(matrix)) {
@@ -27,16 +28,37 @@ std::vector<T> Eigen::values(Matr<T> matrix, const bool shift, const double eps)
 		lambdas.push_back(matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1));
 		matrix.minor();
 	}
-
 	std::sort(lambdas.begin(), lambdas.end());
 
-	return lambdas;
-}
+	std::vector<std::vector<T>> vectors;
+	vectors.reserve(lambdas.size());
+	for (const auto& lambda: lambdas)
+	{
+		const auto B = copy - identityMatrix(copy.systemSize, lambda);
+		// std::cout << B << "\n";
+		std::vector<T> x(copy.systemSize, 1 / sqrt(copy.systemSize));
+		std::vector<T> y = Gauss::solve(B, x);
+		for (auto& i: y) { std::cout << i << "  "; }
+		const auto ort = norm(y);
+		for (auto& i: y) { i /= ort; }
 
-template < typename T >
-std::vector<T> Eigen::vectors(std::vector<T>) {
+		size_t it = 0;
+		while (it > 6) {
+			++it;
+			x = y;
+			y = Gauss::solve(B, x);
+			const auto ort = norm(y);
+			for (auto& i: y) { i /= ort; }
+		}
+		vectors.push_back(x);
+	}
 
-	return {};
+	std::vector<EigenPair<T>> pairs(lambdas.size());
+	for (size_t i = 0; i < lambdas.size(); ++i) {
+		pairs[i] = EigenPair<T>(lambdas[i], vectors[i]);
+	}
+
+	return pairs;
 }
 
 #endif

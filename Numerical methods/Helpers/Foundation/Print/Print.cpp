@@ -92,7 +92,22 @@ std::ostream& operator <<(std::ostream& str, const std::vector<T>& vec)
 		{			
 			str << std::setprecision(4) << std::setw(10) << vec[i]<< " ";
 		}
-	str << "|\n"; 
+		str << "|\n"; 
+
+	return str;
+}
+
+template<typename T>
+std::ostream& operator <<(std::ostream& str, const EigenPair<T>& eigen)
+{
+	str << eigen.value << "\n" << eigen.vector;
+	return str;
+}
+
+template<typename T>
+std::ostream& operator <<(std::ostream& str, const std::vector<EigenPair<T>>& pairs)
+{	
+	for (auto& pair: pairs) { str << std::setprecision(4) << std::setw(6) << pair.value << " <--> " << pair.vector; }
 	return str;
 }
 #endif
