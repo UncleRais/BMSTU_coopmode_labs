@@ -15,14 +15,30 @@ std::vector<T> Eigen::solve(Matr<T> matrix, const bool shift, const double eps) 
 		return true;
 	};
 
-	std::vector<T> lambdas(matrix.systemSize, 0);
+	std::vector<T> lambdas;
+	lambdas.reserve(matrix.systemSize);
+
 	const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0;
 	while(!closeToZero(matrix)) {
 		const auto identity = identityMatrix(matrix.systemSize, sigma);
 		matrix =  QR::semblance(matrix - identity) + identity;
 	}
+	lambdas.push_back(matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1));
+	matrix.minor();
 
-	return {};
+	while(matrix.systemSize > 0) {
+		const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0;
+		while(!closeToZero(matrix)) {
+			const auto identity = identityMatrix(matrix.systemSize, sigma);
+			matrix =  QR::semblance(matrix - identity) + identity;
+		}
+		lambdas.push_back(matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1));
+		matrix.minor();
+	}
+
+	std::sort(lambdas.begin(), lambdas.end());
+
+	return lambdas;
 }
 
 #endif

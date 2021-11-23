@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 	init(matrix, "./data/EIGEN20.dat");
 	std::cout << matrix << "\n";
 
-	Eigen::solve(matrix);
+	std::cout << Eigen::solve(matrix);
 
 	
 	// const std::string var = "20";
