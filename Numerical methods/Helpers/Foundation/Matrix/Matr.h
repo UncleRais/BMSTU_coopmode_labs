@@ -12,7 +12,6 @@ enum ErrorMatr {
 	linearDependence
 };
 
-
 template<typename T> 
 class Matr {
 
@@ -47,6 +46,8 @@ public:
 	void swapRows(const size_t first, const size_t second);
 
 	void inverse();
+
+	void minor();
 
 	Matr<T> inversed();
 

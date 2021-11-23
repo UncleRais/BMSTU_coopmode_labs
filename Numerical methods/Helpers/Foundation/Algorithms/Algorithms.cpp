@@ -13,5 +13,6 @@
 #include "./Relax/Relax.cpp"
 #include "./Banish/Banish.cpp"
 #include "../Math.cpp"
+#include "./Eigen/Eigen.cpp"
 
 #endif

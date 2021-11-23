@@ -10,10 +10,10 @@ enum ErrorVect {
 };
 
 template<typename T>
-Matr<T> identityMatrix(size_t n) {
+Matr<T> identityMatrix(const size_t n, const T multiplier = 1) {
 	std::vector<T> identity(n * n, 0);
 	for (size_t i = 0; i < n; ++i) 
-		identity[i * n + i] = T(1);
+		identity[i * n + i] = T(1 * multiplier);
 
 	return Matr<T>(identity);
 }

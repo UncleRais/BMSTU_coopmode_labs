@@ -78,6 +78,21 @@ void Matr<T>::inverse()
 }
 
 template<typename T> 
+void Matr<T>::minor()
+{
+	const size_t shrinked = systemSize - 1;
+	std::vector<T> buffer;
+	buffer.reserve(pow(shrinked, 2));
+	for (int i = 0; i < fullSize() - systemSize; ++i) 
+	{
+		if ((i + 1) % systemSize == 0) { continue; }
+		buffer.push_back(matrix_[i]);
+	}
+	systemSize = shrinked;
+	matrix_ = buffer;
+}
+
+template<typename T> 
 Matr<T> Matr<T>::inversed()
 {
 	std::vector<T> invmatrix_(systemSize * systemSize, 0);

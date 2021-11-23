@@ -74,12 +74,12 @@ std::ostream& operator <<(std::ostream& str, const Matr<T>& matrix)
 {
 	size_t size = matrix.size();
 	for (size_t i = 0; i < size; ++i)
-		{			
-			str <<"| "; 
-			for (size_t j = 0; j < size; ++j)
-				str << std::setprecision(4) << std::setw(10) << matrix.atvalue(i , j) << " ";
-			str << "|\n"; 
-		}
+	{			
+		str <<"| "; 
+		for (size_t j = 0; j < size; ++j)
+			str << std::setprecision(4) << std::setw(10) << matrix.atvalue(i , j) << " ";
+		str << "|\n"; 
+	}
 	return str;
 }
 

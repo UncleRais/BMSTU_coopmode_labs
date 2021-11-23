@@ -44,4 +44,29 @@ std::vector<T> QR::solve (Matr<T> matrix, std::vector<T> vec, bool printQR) {
 	return Gauss::solve(rMatrix, bStar, true);
 }
 
+template < typename T >
+Matr<T> QR::semblance(Matr<T> matrix) {
+	T c = 0;
+	T s = 0;
+	Matr<T> rMatrix(matrix);
+	for(size_t k = 0; k < rMatrix.size() - 1; ++k)
+	{
+		for(size_t i = k + 1; i < rMatrix.size(); ++i)
+		{
+			const T divider = sqrt( pow(rMatrix.atvalue(k, k), 2) + pow(rMatrix.atvalue(i, k), 2) );
+			c = rMatrix.atvalue(k, k) / divider;
+			s = rMatrix.atvalue(i, k) / divider;
+			for(size_t j = 0; j < rMatrix.size(); ++j)
+			{
+				const T a_kj = rMatrix.atvalue(k, j);
+				const T a_ij = rMatrix.atvalue(i, j);
+				rMatrix.at(k, j) = c * a_kj + s * a_ij;
+				rMatrix.at(i, j) = -s * a_kj + c * a_ij;
+			}
+		}
+	}
+
+	return rMatrix * matrix * rMatrix.inversed();
+}
+
 #endif

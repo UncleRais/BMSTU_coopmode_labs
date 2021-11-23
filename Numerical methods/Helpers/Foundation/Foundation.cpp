@@ -78,6 +78,50 @@ try {
 	}
 }
 
+template<typename T>
+void init(Matr<T>& matrix, const char * settings)
+{
+try { 
+		size_t systemSize;
+		std::ifstream iFile;
+		
+		iFile.open(settings);
+		if (!iFile.is_open()) {
+			throw matrixNotFound;
+		}
+		iFile >> systemSize;
+		matrix.setsize(systemSize);
+		matrix.reserve(systemSize);
+		double value;
+		for (size_t i = 0; i < systemSize; ++i)
+		{
+			matrix.push_back_rows(i); matrix.push_back_cols(i);
+			for (size_t j = 0; j < systemSize; ++j)
+			{
+				iFile >> value;
+				matrix.push_back(value);
+			}
+		}
+		iFile.close();
+	} catch (FileError error) {
+		std::string errorDescription;
+		switch (error) {
+			case settingsNotFound:
+				errorDescription = "Settings not found\n";
+				break;
+			case matrixNotFound:
+				errorDescription = "Matrix not found\n";
+				break;
+			case vectorNotFound:
+				errorDescription = "Vector not found\n";
+			default:
+			break;
+		}
+		std::cerr << errorDescription << std::endl;
+		exit(5);
+	}
+}
+
 
 template<typename T>
 void save(
