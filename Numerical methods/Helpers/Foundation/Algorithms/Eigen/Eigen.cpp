@@ -36,14 +36,13 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const bool shift, const d
 	{
 		const auto B = copy - identityMatrix(copy.systemSize, lambda);
 		// std::cout << B << "\n";
-		std::vector<T> x(copy.systemSize, 1 / sqrt(copy.systemSize));
-		std::vector<T> y = Gauss::solve(B, x);
-		for (auto& i: y) { std::cout << i << "  "; }
+		std::vector<T> x(copy.systemSize, 0); x[0] = 1;
+		auto y = Gauss::solve(B, x);
 		const auto ort = norm(y);
 		for (auto& i: y) { i /= ort; }
 
 		size_t it = 0;
-		while (it > 6) {
+		while (it < 6) {
 			++it;
 			x = y;
 			y = Gauss::solve(B, x);
