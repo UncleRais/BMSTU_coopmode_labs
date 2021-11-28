@@ -45,7 +45,8 @@ std::vector<T> QR::solve (Matr<T> matrix, std::vector<T> vec, bool printQR) {
 }
 
 template < typename T >
-Matr<T> QR::semblance(Matr<T> matrix) {
+Matr<T> QR::semblance(Matr<T> matrix) 
+{
 	T c = 0;
 	T s = 0;
 	Matr<T> rMatrix(matrix);

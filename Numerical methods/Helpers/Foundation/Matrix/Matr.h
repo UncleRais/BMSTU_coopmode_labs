@@ -78,6 +78,8 @@ public:
 	Matr<T> uppertriangular() const;
 
 	bool criteriaSylvester() const;
+
+	Matr<T> toHessenberg() const;
 public:
 	std::vector<T> operator *(const std::vector<T>& rightvector);
 

@@ -6,22 +6,24 @@
 #include <functional>
 
 template < typename T >
-std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const bool shift, const double eps) {
+std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> approx, const bool shift, const double eps) 
+{
 	std::function<bool(const Matr<T>&)> closeToZero = [eps](const Matr<T>& A)
 	{
 		for(size_t i = 0; i < A.systemSize - 1; ++i)
 			if (fabs(A.atvalue(A.systemSize - 1, i)) > eps)
 				return false;
-
 		return true;
 	};
 
 	Matr<T> copy(matrix);
 	std::vector<T> lambdas;
 	lambdas.reserve(matrix.systemSize);
-	while(matrix.systemSize > 0) {
+	while(matrix.systemSize > 0) 
+	{
 		const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0;
-		while(!closeToZero(matrix)) {
+		while(!closeToZero(matrix)) 
+		{
 			const auto identity = identityMatrix(matrix.systemSize, sigma);
 			matrix =  QR::semblance(matrix - identity) + identity;
 		}
@@ -34,17 +36,20 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const bool shift, const d
 	vectors.reserve(lambdas.size());
 	for (const auto& lambda: lambdas)
 	{
-		const auto B = copy - identityMatrix(copy.systemSize, lambda);
+		auto B = copy - identityMatrix(copy.systemSize, lambda);
 		// std::cout << B << "\n";
-		std::vector<T> x(copy.systemSize, 0); x[0] = 1;
+		std::vector<T> x(approx);
 		auto y = Gauss::solve(B, x);
 		const auto ort = norm(y);
 		for (auto& i: y) { i /= ort; }
 
+		//T templamb;  
 		size_t it = 0;
-		while (it < 6) {
+		while (it < 300) {
 			++it;
 			x = y;
+			//templamb = (copy * x) * x;
+			B = copy - identityMatrix(copy.systemSize, lambda);
 			y = Gauss::solve(B, x);
 			const auto ort = norm(y);
 			for (auto& i: y) { i /= ort; }

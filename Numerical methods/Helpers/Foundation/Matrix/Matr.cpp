@@ -5,6 +5,7 @@
 #include "../Algorithms/Gauss/Gauss.cpp"
 #include "../Foundation.cpp"
 #include <memory.h>
+#include <functional>
 
 template<typename T>
 void Matr<T>::setsize(size_t size)
@@ -285,6 +286,46 @@ bool Matr<T>::criteriaSylvester() const
 			return false;
 		}
 }
+
+
+template<typename T>
+Matr<T> Matr<T>::toHessenberg() const
+{
+	Matr<T> result(matrix_);
+
+	T alpha, beta, div, tozero, temp;
+	std::vector<T> help;
+
+	for(size_t l = 0; l < systemSize - 2; ++l)
+	{
+		for(size_t k = l + 2; k < systemSize; ++k)
+		{
+			tozero = result.atvalue(k, l);
+			temp = result.atvalue(l + 1, l);
+			div = sqrt(pow(tozero, 2) + pow(temp, 2));
+			alpha = temp/div;
+			beta = tozero/div;
+			for(size_t i = 0; i < systemSize; ++i)
+			{
+				if(i == l + 1||i == k){ continue; };
+				help = {result.atvalue(l + 1, i), result.atvalue(i, l + 1)};
+				result.at(l + 1, i) = alpha * result.atvalue(l + 1, i) + beta * result.atvalue(k, i);
+				result.at(i , l + 1) = alpha * result.atvalue(i, l + 1) + beta * result.atvalue(i, k);
+				result.at(k , i) = -beta * help[0] + alpha * result.atvalue(k, i);
+				result.at(i , k) = -beta * help[1] + alpha * result.atvalue(i, k);
+			}
+			help = {result.atvalue(l + 1, l + 1), result.atvalue(l + 1, k), result.atvalue(k, l + 1), result.atvalue(k, k)};
+			result.at(l + 1, l + 1) = pow(alpha, 2) * help[0] + alpha * beta *(help[1] + help[2]) + pow(beta, 2) * help[3];
+			result.at(l + 1, k) = pow(alpha, 2) * help[1] + alpha * beta *(-help[0] + help[3]) - pow(beta, 2) * help[2];
+			result.at(k, l + 1) = pow(alpha, 2) * help[2] + alpha * beta *(-help[0] + help[3]) - pow(beta, 2) * help[1];
+			result.at(k , k) = pow(alpha, 2) * help[3] - alpha * beta *(help[1] + help[2]) + pow(beta, 2) * help[0];
+		}
+	}
+	return(result);
+}
+
+
+
 
 template<typename T>
 Matr<T> Matr<T>::operator +(const Matr<T>& matrix)
