@@ -21,6 +21,8 @@ public:
 		Matr<T> matrix, const std::vector<T> approx, const bool shift = true, const double epsilon = 10e-3
 	);
 
+	template < typename T >
+	static EigenPair<T> raleigh(Matr<T> matrix, std::vector<T> approx);
 };
 
 #endif

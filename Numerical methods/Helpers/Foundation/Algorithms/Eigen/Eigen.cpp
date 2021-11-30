@@ -65,4 +65,27 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> appr
 	return pairs;
 }
 
+template < typename T >
+EigenPair<T> Eigen::raleigh(Matr<T> matrix, std::vector<T> approx) 
+{
+	const auto norm_approx = norm(approx);
+	for (auto& i: approx) { i /= norm_approx; }
+
+	const size_t iterations = 30;
+	T lambda = T(0);
+	for (size_t i = 0; i < iterations; ++i) {
+		const std::vector<T> buffer = matrix * approx;
+		lambda = 0;
+		for (size_t j = 0; j < approx.size(); ++j)
+		{
+			lambda = buffer[i] * approx[i];
+		}
+		approx = Gauss::solve((matrix - identityMatrix(matrix.systemSize, lambda)), approx);
+		const auto ort = norm(approx);
+		for (auto& i: approx) { i /= ort; }
+	}
+
+	return EigenPair<T>(lambda, approx);
+}
+
 #endif
