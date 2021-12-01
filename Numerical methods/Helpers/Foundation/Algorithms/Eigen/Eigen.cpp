@@ -78,7 +78,7 @@ EigenPair<T> Eigen::raleigh(Matr<T> matrix, std::vector<T> approx)
 		lambda = 0;
 		for (size_t j = 0; j < approx.size(); ++j)
 		{
-			lambda = buffer[i] * approx[i];
+			lambda += buffer[j] * approx[j];
 		}
 		approx = Gauss::solve((matrix - identityMatrix(matrix.systemSize, lambda)), approx);
 		const auto ort = norm(approx);
