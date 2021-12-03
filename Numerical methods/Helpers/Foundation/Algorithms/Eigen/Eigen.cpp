@@ -6,7 +6,7 @@
 #include <functional>
 
 template < typename T >
-std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> approx, const bool shift, const double eps) 
+std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> approx, const bool shift, const bool Hess, const double eps) 
 {
 	std::function<bool(const Matr<T>&)> closeToZero = [eps](const Matr<T>& A)
 	{
@@ -25,7 +25,7 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> appr
 		while(!closeToZero(matrix)) 
 		{
 			const auto identity = identityMatrix(matrix.systemSize, sigma);
-			matrix =  QR::semblance(matrix - identity) + identity;
+			matrix =  QR::semblance(matrix - identity, false) + identity;
 		}
 		lambdas.push_back(matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1));
 		matrix.minor();
@@ -45,7 +45,8 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> appr
 
 		//T templamb;  
 		size_t it = 0;
-		while (it < 300) {
+		while (it < 300) 
+		{
 			++it;
 			x = y;
 			//templamb = (copy * x) * x;
@@ -58,7 +59,8 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> appr
 	}
 
 	std::vector<EigenPair<T>> pairs(lambdas.size());
-	for (size_t i = 0; i < lambdas.size(); ++i) {
+	for (size_t i = 0; i < lambdas.size(); ++i) 
+	{
 		pairs[i] = EigenPair<T>(lambdas[i], vectors[i]);
 	}
 
@@ -73,7 +75,8 @@ EigenPair<T> Eigen::raleigh(Matr<T> matrix, std::vector<T> approx)
 
 	const size_t iterations = 30;
 	T lambda = T(0);
-	for (size_t i = 0; i < iterations; ++i) {
+	for (size_t i = 0; i < iterations; ++i) 
+	{
 		const std::vector<T> buffer = matrix * approx;
 		lambda = 0;
 		for (size_t j = 0; j < approx.size(); ++j)

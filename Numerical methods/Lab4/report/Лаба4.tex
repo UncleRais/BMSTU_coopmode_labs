@@ -65,7 +65,7 @@
     ищем собственные значения матрицы $\widetilde{A} = A - \sigma E,$ которые равны $\widetilde{\lambda_{i}} = \lambda_{i} - \sigma.$
     В таком случае скорость сходимости $QR-$алгоритма определяется величиной
     \[
-        |\frac{\widetilde{\lambda_{i}}}{\widetilde{\lambda_{j}}}|=|\frac{\lambda_{i}-\sigma}{\lambda_{j}-\sigma}|.
+        \left|\frac{\widetilde{\lambda_{i}}}{\widetilde{\lambda_{j}}}\right|=\left|\frac{\lambda_{i}-\sigma}{\lambda_{j}-\sigma}\right|.
     \]
 
     \subsection{Метод обратных итераций}
@@ -124,6 +124,21 @@
     \newpage
 
     \section{Результаты расчетов}
+
+\noindent\begin{center}%\hspace*{-10mm}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+QR&с приведением& без приведения\\
+
+разложение&к форме Хессенберга& к форме Хессенберга\\
+\hline
+Со сдвигом&Число итераций:  Число умножений:& Число итераций:  Число умножений: \\
+\hline
+Без сдвига&Число итераций:  Число умножений:& Число итераций:  Число умножений: \\
+\hline
+
+\end{tabular}
+\end{center}
 
 
     \section{Контрольные вопросы}

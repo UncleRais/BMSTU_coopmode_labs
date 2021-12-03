@@ -45,19 +45,22 @@ std::vector<T> QR::solve (Matr<T> matrix, std::vector<T> vec, bool printQR) {
 }
 
 template < typename T >
-Matr<T> QR::semblance(Matr<T> matrix) 
+Matr<T> QR::semblance(Matr<T> matrix, const bool Hess) 
 {
 	T c = 0;
 	T s = 0;
 	Matr<T> rMatrix(matrix);
+	size_t wherestop, from;
 	for(size_t k = 0; k < rMatrix.size() - 1; ++k)
 	{
-		for(size_t i = k + 1; i < rMatrix.size(); ++i)
+		wherestop = Hess ? k + 2 : rMatrix.size();
+		for(size_t i = k + 1; i < wherestop; ++i)
 		{
 			const T divider = sqrt( pow(rMatrix.atvalue(k, k), 2) + pow(rMatrix.atvalue(i, k), 2) );
 			c = rMatrix.atvalue(k, k) / divider;
 			s = rMatrix.atvalue(i, k) / divider;
-			for(size_t j = 0; j < rMatrix.size(); ++j)
+			from = Hess ? i - 1 : 0;
+			for(size_t j = from; j < rMatrix.size(); ++j)
 			{
 				const T a_kj = rMatrix.atvalue(k, j);
 				const T a_ij = rMatrix.atvalue(i, j);
@@ -66,8 +69,8 @@ Matr<T> QR::semblance(Matr<T> matrix)
 			}
 		}
 	}
-
-	return rMatrix * matrix * rMatrix.inversed();
+	Matr<T> qMatrix(matrix * rMatrix.inversed());
+	return qMatrix * matrix * qMatrix.transposed();
 }
 
 #endif

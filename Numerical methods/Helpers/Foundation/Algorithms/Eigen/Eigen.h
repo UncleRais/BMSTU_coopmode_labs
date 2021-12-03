@@ -18,7 +18,7 @@ class Eigen {
 public:
 	template < typename T >
 	static std::vector<EigenPair<T>> solve(
-		Matr<T> matrix, const std::vector<T> approx, const bool shift = true, const double epsilon = 10e-3
+		Matr<T> matrix, const std::vector<T> approx, const bool shift = true,  const bool Hess = false, const double epsilon = 10e-3
 	);
 
 	template < typename T >

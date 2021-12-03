@@ -10,7 +10,7 @@ public:
 	static std::vector<T> solve(Matr<T> matrix, std::vector<T> vec, bool printQR = false);
 
 	template < typename T >
-	static Matr<T> semblance(Matr<T> matrix);
+	static Matr<T> semblance(Matr<T> matrix,  const bool Hess = false);
 };
 
 #endif
