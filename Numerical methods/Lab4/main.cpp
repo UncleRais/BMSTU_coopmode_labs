@@ -7,21 +7,28 @@ int main(int argc, char** argv)
 
 	init(matrix, "./data/EIGEN20.dat");
 
-	 //Matr<double> matrix({1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1});
-
+	// Matr<double> matrix({1 , 3, 2 , 5 , 4 , 3, 2 ,1 , 1});
+	// std::cout << matrix.toHessenberg() << "\n";
 
 	const std::vector<double> approx = {0.01196 ,-0.04856 , -0.1471, 0.9879};
+	// std::cout << matrix << "\n";
+	// std::cout << matrix.toHessenberg() << "\n";
+	// matrix = QR::semblance(matrix.toHessenberg(), true);
+	// std::cout << matrix << "\n";
 
-	// auto eigenValues = Eigen::solve(matrix, approx, false, false);
-	// std::cout << eigenValues << "\n";
-	// eigenValues = Eigen::solve(matrix.transposed(), approx, false, false);
-	// std::cout << eigenValues << "\n";
-	// eigenValues = Eigen::solve(matrix, approx, true, false);
-	// std::cout << eigenValues << "\n";
-	 // auto eigenValues = Eigen::solve(matrix.toHessenberg(), approx, false, true);
-	 // std::cout << eigenValues << "\n";
- //    eigenValues = Eigen::solve(matrix.toHessenberg(), approx, true, true);
-	// std::cout << eigenValues << "\n";
+	// for(size_t i = 0; i < 10; ++i)
+	// 	{
+	// 	matrix = QR::semblance(matrix, true);
+	// 	std::cout << matrix << "\n";
+	// 	}
+	auto eigenValues = Eigen::solve(matrix, approx, false, false);
+	std::cout << eigenValues << "\n";
+	eigenValues = Eigen::solve(matrix, approx, true, false);
+	std::cout << eigenValues << "\n";
+    eigenValues = Eigen::solve(matrix.toHessenberg(), approx, false, true);
+	std::cout << eigenValues << "\n";
+    eigenValues = Eigen::solve(matrix.toHessenberg(), approx, true, true);
+	std::cout << eigenValues << "\n";
 
 	//std::cout << Eigen::raleigh(matrix, approx);
 

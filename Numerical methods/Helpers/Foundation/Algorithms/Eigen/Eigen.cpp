@@ -19,18 +19,31 @@ std::vector<EigenPair<T>> Eigen::solve(Matr<T> matrix, const std::vector<T> appr
 	Matr<T> copy(matrix);
 	std::vector<T> lambdas;
 	lambdas.reserve(matrix.systemSize);
+	size_t counter = 0;
 	while(matrix.systemSize > 0) 
 	{
-		const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0;
-		while(!closeToZero(matrix)) 
+		const T sigma = shift ? matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1) : 0.0;
+		while( !closeToZero(matrix))
 		{
-			const auto identity = identityMatrix(matrix.systemSize, sigma);
-			matrix =  QR::semblance(matrix - identity, false) + identity;
+			counter++;
+			const Matr<T> identity = identityMatrix(matrix.systemSize, sigma);
+			matrix = shift ? QR::semblance(matrix - identity, Hess) + identity : QR::semblance(matrix, Hess);
+			//std::cout << matrix << "\n";
 		}
 		lambdas.push_back(matrix.atvalue(matrix.systemSize - 1, matrix.systemSize - 1));
 		matrix.minor();
 	}
-	std::sort(lambdas.begin(), lambdas.end());
+	matrix.resetMinor();
+	std::cout << "Number of iterations: " << counter << "\n";
+	if(Hess)
+	{
+	std::cout << "Number of mult: " << counter * pow(matrix.systemSize, 2) << "\n";
+	} else
+	{
+	std::cout << "Number of mult: " << round(counter * pow(matrix.systemSize, 3) * 8 * 0.33) << "\n";
+	}
+
+	//std::sort(lambdas.begin(), lambdas.end());
 
 	std::vector<std::vector<T>> vectors;
 	vectors.reserve(lambdas.size());

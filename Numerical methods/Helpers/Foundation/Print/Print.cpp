@@ -100,14 +100,14 @@ std::ostream& operator <<(std::ostream& str, const std::vector<T>& vec)
 template<typename T>
 std::ostream& operator <<(std::ostream& str, const EigenPair<T>& eigen)
 {
-	str << eigen.value << "\n" << eigen.vector;
+	str <<eigen.value << "\n" << eigen.vector;
 	return str;
 }
 
 template<typename T>
 std::ostream& operator <<(std::ostream& str, const std::vector<EigenPair<T>>& pairs)
 {	
-	for (auto& pair: pairs) { str << std::setprecision(4) << std::setw(6) << pair.value << " <--> " << pair.vector; }
+	for (auto& pair: pairs) { str << std::setprecision(7) << std::setw(6) << pair.value << " <--> " << pair.vector; }
 	return str;
 }
 #endif

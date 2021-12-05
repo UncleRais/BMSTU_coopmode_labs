@@ -309,8 +309,8 @@ Matr<T> Matr<T>::toHessenberg() const
 			{
 				if(i == l + 1||i == k){ continue; };
 				help = {result.atvalue(l + 1, i), result.atvalue(i, l + 1)};
-				result.at(l + 1, i) = alpha * result.atvalue(l + 1, i) + beta * result.atvalue(k, i);
-				result.at(i , l + 1) = alpha * result.atvalue(i, l + 1) + beta * result.atvalue(i, k);
+				result.at(l + 1, i) = alpha * help[0] + beta * result.atvalue(k, i);
+				result.at(i , l + 1) = alpha * help[1] + beta * result.atvalue(i, k);
 				result.at(k , i) = -beta * help[0] + alpha * result.atvalue(k, i);
 				result.at(i , k) = -beta * help[1] + alpha * result.atvalue(i, k);
 			}
@@ -319,6 +319,13 @@ Matr<T> Matr<T>::toHessenberg() const
 			result.at(l + 1, k) = pow(alpha, 2) * help[1] + alpha * beta *(-help[0] + help[3]) - pow(beta, 2) * help[2];
 			result.at(k, l + 1) = pow(alpha, 2) * help[2] + alpha * beta *(-help[0] + help[3]) - pow(beta, 2) * help[1];
 			result.at(k , k) = pow(alpha, 2) * help[3] - alpha * beta *(help[1] + help[2]) + pow(beta, 2) * help[0];
+			//Matr<T> TT = identityMatrix(systemSize, 1.0);
+			// TT.at(l + 1, l + 1) = alpha;
+			// TT.at(k , l + 1) =  - beta;
+			// TT.at(l + 1 , k) = beta;
+			// TT.at(k , k) = alpha;  
+
+			// result = TT * result * TT.transposed();
 		}
 	}
 	return(result);
