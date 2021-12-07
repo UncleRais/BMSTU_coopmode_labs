@@ -14,5 +14,6 @@
 #include "./Banish/Banish.cpp"
 #include "../Math.cpp"
 #include "./Eigen/Eigen.cpp"
+#include "./NonlinearSolve/NonLin.cpp"
 
 #endif
