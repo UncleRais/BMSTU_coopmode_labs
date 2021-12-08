@@ -110,4 +110,15 @@ std::ostream& operator <<(std::ostream& str, const std::vector<EigenPair<T>>& pa
 	for (auto& pair: pairs) { str << std::setprecision(7) << std::setw(6) << pair.value << " <--> " << pair.vector; }
 	return str;
 }
+
+std::ostream& operator <<(std::ostream& str, const std::vector<segment>& segments)
+{
+str << "-----------------" << "\n";
+for (auto& seg: segments)
+{
+	str  << std::setprecision(7) << std::setw(1)<< "[ " << seg[0] << "; " << seg[1] << "]" << "\n";
+}
+str << "-----------------" << "\n";
+return str;
+}
 #endif

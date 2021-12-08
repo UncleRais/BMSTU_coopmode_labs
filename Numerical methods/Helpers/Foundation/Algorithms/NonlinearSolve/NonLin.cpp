@@ -7,6 +7,31 @@
 #include "../../Math.cpp"
 #include "../../Print/Print.cpp"
 
+std::vector<segment> NonLinearSolve::localization(double a, double b, fun f, size_t numberofpoints)
+{
+	std::vector<segment> res;
+
+	double h = (b - a)/numberofpoints, left, right;
+
+	segment points;
+
+	for (size_t i = 0; i < numberofpoints; ++i)
+	{
+		left = a + i*h;
+		right = a + (i + 1) * h; 
+		if (f(left) * f(right) < 0 )
+		{
+			points[0] = left;
+			points[1] = right;
+			res.push_back(points);
+		}
+	}
+
+	return res;
+
+}
+
+
 double NonLinearSolve::bisection(double a, double b, fun f, double epsilon)
 {
 	if(fabs(f(a)) < epsilon) return a;
@@ -50,4 +75,28 @@ while(fabs(x - prevx) > epsilon)
 return x;
 }
 
+std::vector<double> NonLinearSolve::solve(double a, double b, fun f, method name, size_t numberofpoints, double epsilon)
+{
+	std::vector<segment> segments = NonLinearSolve::localization(a, b, f, numberofpoints);
+	std::vector<double> solutions;
+	double sol, left, right; 
+	for(auto& seg: segments)
+	{
+		left = seg[0];
+		right = seg[1];
+		switch(name) 
+		{
+		case newtonmethod: 
+			sol = NonLinearSolve::newton(left, right, f, df, epsilon); 
+			break;
+		case bisectionmethod: 
+			sol = NonLinearSolve::bisection(left, right, f, epsilon); 
+			break;
+		default:
+			break;
+		};
+		solutions.push_back(sol);
+	}
+	return solutions;
+}
 #endif
