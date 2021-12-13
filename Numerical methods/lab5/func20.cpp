@@ -12,7 +12,7 @@ double func(double x)
 
 double _func1(const Point& x)
 {
-	return 6 * sqrt(x[0]) - 7 * sqrt(x[1]) - 65;
+	return 6 * pow(x[0],2) - 7 * pow(x[1],2) - 65;
 
 }
 double d_func1_dx(const Point& x)

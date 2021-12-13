@@ -39,32 +39,18 @@ Matr<double> NonLinearSolve::jacobi(const std::vector<vFunc>& F, const Point& po
 
 Point NonLinearSolve::system_newton(const std::vector<vFunc>& F) {
 	Point x_k = {0, 0};
-	Point x_k_next = {300, 5};
+	Point x_k_next = {-20545454, -105454500};
+	size_t iterations = 0;
 	while (norm(x_k_next - x_k) > 10e-3)
 	{
+		++iterations;
 		x_k = x_k_next;
 		auto dF_k = jacobi(F, x_k); 
-		for (size_t i = 0; i < dF_k.systemSize; ++i)
-			for (size_t j = 0; j < dF_k.systemSize; ++j)
-				std::cout << dF_k.at(i, j) << "  "; 
-		std::cout << "\n";
-
-		auto inv = dF_k.inversed();
-		for (size_t i = 0; i < dF_k.systemSize; ++i)
-			for (size_t j = 0; j < dF_k.systemSize; ++j)
-				std::cout << inv.at(i, j) << "  "; 
-		std::cout << "\n";
-
 		std::vector<double> F_k;
-		for (auto f: F) { F_k.push_back(f(x_k)); std::cout << f(x_k) << "   ";}
-		std::cout << "\n";
+		for (auto f: F) { F_k.push_back(f(x_k)); }
 		x_k_next = x_k - dF_k.inversed()*F_k;
-
-		for (auto& x: x_k_next) { std::cout << x << "  "; }
-		std::cout << "\n";
-
-		std::cout << "\n\n";
 	}
+	std::cout << iterations << "\n";
 	return x_k_next;
 }
 
