@@ -7,6 +7,51 @@
 #include "../../Math.cpp"
 #include "../../Print/Print.cpp"
 
+double NonLinearSolve::d_vFunc(vFunc f, const Point& point, const Partial& partial, double epsilon)
+	{
+		std::function<double(const Point&)>result = [f](const Point& _point){ return f(_point);};
+		for (size_t i = 0; i < point.size(); ++i) 
+		{
+			if (!partial[i]) { continue; }
+		 	result = [result, partial, epsilon](const Point& _point)
+		 	{ 
+		 		Point delta(_point); for (size_t i = 0; i < delta.size(); ++i){ delta[i] += partial[i] ? epsilon : 0; };
+		 		return (result(delta) - result(_point))/epsilon;
+		 	};
+		 	result(point);
+		}
+
+		return result(point);
+	}
+
+Matr<double> NonLinearSolve::jacobi(const std::vector<vFunc>& F, const Point& point) {
+	std::vector<double> values(F.size()*point.size(), 0);
+	for (size_t i = 0; i < F.size(); ++i) 
+		for (size_t j = 0; j < point.size(); ++j)
+		{
+			Partial partial(point.size(), false);
+			partial[j] = true;
+			values[i*point.size()+j] = NonLinearSolve::d_vFunc(F[i], point, partial);
+		}
+	
+	return Matr<double>(values);	
+}
+
+Point NonLinearSolve::system_newton(const std::vector<vFunc>& F) {
+	Point x_k = {0, 0};
+	Point x_k_next = {55, 55};
+	while (norm(x_k_next - x_k) > 10e-3)
+	{
+		x_k = x_k_next;
+		auto dF_k = jacobi(F, x_k); 
+		std::vector<double> F_k;
+		for (auto f: F) { F_k.push_back(f(x_k)); }
+		x_k_next = x_k - dF_k.inversed()*F_k;
+		// for (auto x: dF_k.inversed()*F_k) { std::cout << x << "  "; }
+	}
+	return x_k_next;
+}
+
 std::vector<segment> NonLinearSolve::localization(double a, double b, fun f, size_t numberofpoints)
 {
 	std::vector<segment> res;
