@@ -1,7 +1,7 @@
 #include "../Helpers/Foundation/Foundation.cpp"
 #include "../Helpers/Foundation/Math.cpp"
 // #include "funcsin.cpp"
-#include "func23.cpp"
+#include "func20.cpp"
 
 int main(int argc, char** argv) 
 {
