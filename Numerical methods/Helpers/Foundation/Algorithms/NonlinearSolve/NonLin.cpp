@@ -3,9 +3,24 @@
 
 #include "./NonLin.h"
 #include <cmath>
+#include <fstream>
+#include <iomanip>
 #include "../../Foundation.cpp"
 #include "../../Math.cpp"
 #include "../../Print/Print.cpp"
+
+void NonLinearSolve::convergeArea(const std::vector<vFunc>& F, const std::vector<vFunc>& dF, const size_t max_iterations, const std::string& path, const bool print) {
+	std::ofstream file;
+	file.open(path + "convergeArea.dat");
+	for (double x = -100; x <= 100; ++x)
+		for (double y = -100; y <= 100; ++y)
+		{
+			const auto result = NonLinearSolve::system_newton(F, dF, max_iterations, {x, y});
+			if (print) { std::cout << std::setw(5)  << x << " " << " " << std::setw(5) << y << " " << "   " << result[2] << "\n"; }
+			file << x << "   " << y << "   " << result[2] << std::endl;
+		}
+	file.close();
+}
 
 double NonLinearSolve::d_vFunc(vFunc f, const Point& point, const Partial& partial, double epsilon)
 	{
@@ -37,20 +52,32 @@ Matr<double> NonLinearSolve::jacobi(const std::vector<vFunc>& F, const Point& po
 	return Matr<double>(values);	
 }
 
-Point NonLinearSolve::system_newton(const std::vector<vFunc>& F) {
-	Point x_k = {0, 0};
-	Point x_k_next = {-20545454, -105454500};
+Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vector<vFunc>& dF, const size_t max_iterations, const Point x_0, const double epsilon) {
+	Point x_k = x_0;
+	Point x_k_next = x_0;
 	size_t iterations = 0;
-	while (norm(x_k_next - x_k) > 10e-3)
+	while ((norm(x_k_next - x_k) > 10e-3 && iterations <= max_iterations) || iterations == 0) 
 	{
 		++iterations;
 		x_k = x_k_next;
-		auto dF_k = jacobi(F, x_k); 
-		std::vector<double> F_k;
-		for (auto f: F) { F_k.push_back(f(x_k)); }
-		x_k_next = x_k - dF_k.inversed()*F_k;
+		try {
+			Matr<double> dF_k;
+			if (dF.size() < 2*F.size()) {
+				dF_k = jacobi(F, x_k);
+			} else {
+				std::vector<double> partials(dF.size(), 0);
+				for (size_t i = 0; i < dF.size(); ++i) { partials[i] = dF[i](x_k); }
+					dF_k = Matr<double>(partials);
+			}
+			std::vector<double> F_k;
+			for (auto f: F) { F_k.push_back(f(x_k)); }
+			x_k_next = x_k - dF_k.inversed()*F_k;
+		} catch (...) {
+			x_k.push_back(double(max_iterations + 1));
+			return x_k;
+		}
 	}
-	std::cout << iterations << "\n";
+	x_k_next.push_back(double(iterations));
 	return x_k_next;
 }
 

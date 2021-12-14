@@ -12,7 +12,7 @@ double func(double x)
 
 double _func1(const Point& x) 
 {
-	return sqrt(x[0]) * ( sqrt(x[0]+11) + 2 * sqrt(x[1])) - 78 * sqrt(x[1]);
+	return pow(x[0],2) * ( pow(x[0]+11,2) + 2 * pow(x[1],2)) - 78 * pow(x[1],2);
 }
 double d_func1_dx(const Point& x)
 {
@@ -26,7 +26,7 @@ double d_func1_dy(const Point& x)
 
 double _func2(const Point& x)
 {
-	return 2 * sqrt(x[0]) + 1.5 * sqrt(x[1]) - 14;
+	return 2 * pow(x[0],2) + 1.5 * pow(x[1],2) - 14;
 }
 double d_func2_dx(const Point& x)
 {

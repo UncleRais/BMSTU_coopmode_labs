@@ -3,6 +3,7 @@
 
 #include <array>
 #include "../Algorithms.cpp"
+#include <string>
 
 //MARK: - 1D
 typedef double(*fun)(double);
@@ -29,7 +30,9 @@ public:
 
 	static Matr<double> jacobi(const std::vector<vFunc>& F, const Point& point);
 
-	static Point system_newton(const std::vector<vFunc>& F);
+	static Point system_newton(const std::vector<vFunc>& F, const std::vector<vFunc>& dF, const size_t max_iterations, const Point x_0, double epsilon = 1e-5);
+
+	static void convergeArea(const std::vector<vFunc>& F, const std::vector<vFunc>& dF, const size_t max_iterations, const std::string& path, const bool print = false);
 
 	static double bisection(double a, double b, fun f, double epsilon = 1e-5);
 

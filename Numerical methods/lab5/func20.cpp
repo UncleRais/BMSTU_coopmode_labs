@@ -17,11 +17,11 @@ double _func1(const Point& x)
 }
 double d_func1_dx(const Point& x)
 {
-	return 3/sqrt(x[0]);
+	return 12*x[0];
 }
 double d_func1_dy(const Point& x)
 {
-	return -7/(2*sqrt(x[1]));
+	return -14*x[1];
 }
 
 
