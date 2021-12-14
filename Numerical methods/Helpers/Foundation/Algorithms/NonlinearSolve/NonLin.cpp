@@ -56,7 +56,7 @@ Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vect
 	Point x_k = x_0;
 	Point x_k_next = x_0;
 	size_t iterations = 0;
-	while ((norm(x_k_next - x_k) > 10e-3 && iterations <= max_iterations) || iterations == 0) 
+	while ((norm(x_k_next - x_k) > epsilon && iterations <= max_iterations) || iterations == 0) 
 	{
 		++iterations;
 		x_k = x_k_next;
