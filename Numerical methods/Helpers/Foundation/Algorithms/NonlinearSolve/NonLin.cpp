@@ -106,7 +106,7 @@ std::vector<segment> NonLinearSolve::localization(double a, double b, fun f, siz
 }
 
 
-double NonLinearSolve::bisection(double a, double b, fun f, double epsilon)
+double NonLinearSolve::bisection(double a, double b, fun f, double epsilon, bool count)
 {
 	if(fabs(f(a)) < epsilon) return a;
 	if(fabs(f(b)) < epsilon) return b;
@@ -121,7 +121,11 @@ double NonLinearSolve::bisection(double a, double b, fun f, double epsilon)
 		size_t k = 1;
 		while( delta/(pow(2, k)) > eps )
 		{
-			if(fabs(f(x)) < epsilon) return x;
+			if(fabs(f(x)) < epsilon) 
+				{
+					if(count) std::cout<< "Iterations: " << k - 1<< "\n";
+					return x;
+				}
 			if(f(x) * f(left) < 0)
 			{
 			right = x;
@@ -132,21 +136,55 @@ double NonLinearSolve::bisection(double a, double b, fun f, double epsilon)
 			x = (right + left) / 2;
 			k++;
 		}
+		if(count) std::cout<< "Iterations: " << k - 1<< "\n";
 		return x;
 	}
 
 }
 
 
-double NonLinearSolve::newton(double a, double b, fun f, dfun dF, double epsilon)
+double NonLinearSolve::newton(double a, double b, fun f, dfun dF, double epsilon, bool count)
 {
 double prevx = 0, x = (f(a) * b - f(b) * a) / (f(a) - f(b));
+size_t counter = 0;
 while(fabs(x - prevx) > epsilon)
 {
 	prevx = x;
 	x = prevx - f(prevx) / dF(f , prevx, epsilon);
+	if(count) counter ++;
 }
+if(count) std::cout<< "Iterations: " << counter << "\n";
 return x;
+}
+
+double NonLinearSolve::chord(double a, double b, fun f, double epsilon, bool count)
+{
+double left = a, right = b, x;
+size_t counter = 0;
+while (fabs(right - left) > epsilon)
+    {
+    	if (fabs(f(right)) < epsilon) 
+    	{
+    		if(count) std::cout<< "Iterations: " << counter << "\n";
+    		return right;
+    	}
+    	if (fabs(f(left)) < epsilon) 
+    	{
+    		if(count) std::cout<< "Iterations: " << counter << "\n";
+    		return left;
+    	}
+    	x = right - (right - left) * f(right) / (f(right) - f(left));
+    	if( f(x)*f(left) < 0)
+    	{
+    		right = x; 
+    	} else
+    	{
+    		left = x;
+    	}
+    	if(count) counter ++;
+    }
+    if(count) std::cout<< "Iterations: " << counter << "\n";
+    return (right - left)/2;
 }
 
 std::vector<double> NonLinearSolve::solve(double a, double b, fun f, method name, size_t numberofpoints, double epsilon)

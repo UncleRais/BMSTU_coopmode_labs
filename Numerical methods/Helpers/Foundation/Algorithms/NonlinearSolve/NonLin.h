@@ -34,9 +34,11 @@ public:
 
 	static void convergeArea(const std::vector<vFunc>& F, const std::vector<vFunc>& dF, const size_t max_iterations, const std::string& path, const bool print = false);
 
-	static double bisection(double a, double b, fun f, double epsilon = 1e-5);
+	static double bisection(double a, double b, fun f, double epsilon = 1e-5, bool count = false);
 
-	static double newton(double a, double b, fun f, dfun dF = df, double epsilon = 1e-5);
+	static double newton(double a, double b, fun f, dfun dF = df, double epsilon = 1e-5, bool count = false);
+
+	static double chord(double a, double b, fun f, double epsilon = 1e-5, bool count = false);
 
 	static std::vector<segment> localization(double a, double b, fun f, size_t numberofpoints = 10);
 
