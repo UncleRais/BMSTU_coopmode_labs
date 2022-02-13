@@ -147,13 +147,21 @@ double NonLinearSolve::newton(double a, double b, fun f, dfun dF, double epsilon
 {
 double prevx = 0, x = (f(a) * b - f(b) * a) / (f(a) - f(b));
 size_t counter = 0;
+std::vector<double> appr = {x};
 while(fabs(x - prevx) > epsilon)
 {
 	prevx = x;
 	x = prevx - f(prevx) / dF(f , prevx, epsilon);
+	appr.push_back(x);
 	if(count) counter ++;
 }
 if(count) std::cout<< "Iterations: " << counter << "\n";
+size_t N = appr.size(); 
+if(N >= 4) 
+	{
+		std::cout <<std::setprecision(20)<< appr[N-4] << " " << appr[N-3] << " " << appr[N-2] << " " << appr[N-1] << "\n";
+		std::cout << log(fabs(appr[N-2]-appr[N-1])/fabs(appr[N-3]-appr[N-1]))/log(fabs(appr[N-3]-appr[N-1])/fabs(appr[N-4]-appr[N-1])) << "\n";
+	}
 return x;
 }
 
@@ -161,19 +169,27 @@ double NonLinearSolve::chord(double a, double b, fun f, double epsilon, bool cou
 {
 double left = a, right = b, x;
 size_t counter = 0;
+std::vector<double> appr = {};
 while (fabs(right - left) > epsilon)
     {
     	if (fabs(f(right)) < epsilon) 
     	{
     		if(count) std::cout<< "Iterations: " << counter << "\n";
+    		size_t N = appr.size(); 
+			if(N >= 4) std::cout <<std::setprecision(20)<< appr[N-4] << " " << appr[N-3] << " " << appr[N-2] << " " << appr[N-1] << "\n";
+			std::cout << log(fabs(appr[N-2]-appr[N-1])/fabs(appr[N-3]-appr[N-1]))/log(fabs(appr[N-3]-appr[N-1])/fabs(appr[N-4]-appr[N-1])) << "\n";
     		return right;
     	}
     	if (fabs(f(left)) < epsilon) 
     	{
     		if(count) std::cout<< "Iterations: " << counter << "\n";
+    		size_t N = appr.size(); 
+			if(N >= 4) std::cout <<std::setprecision(20)<< appr[N-4] << " " << appr[N-3] << " " << appr[N-2] << " " << appr[N-1] << "\n";
+			std::cout << log(fabs(appr[N-2]-appr[N-1])/fabs(appr[N-3]-appr[N-1]))/log(fabs(appr[N-3]-appr[N-1])/fabs(appr[N-4]-appr[N-1])) << "\n";
     		return left;
     	}
     	x = right - (right - left) * f(right) / (f(right) - f(left));
+    	appr.push_back(x);
     	if( f(x)*f(left) < 0)
     	{
     		right = x; 
@@ -184,6 +200,9 @@ while (fabs(right - left) > epsilon)
     	if(count) counter ++;
     }
     if(count) std::cout<< "Iterations: " << counter << "\n";
+    size_t N = appr.size(); 
+	if(N >= 4) std::cout <<std::setprecision(20)<< appr[N-4] << " " << appr[N-3] << " " << appr[N-2] << " " << appr[N-1] << "\n";
+	std::cout << log(fabs(appr[N-2]-appr[N-1])/fabs(appr[N-3]-appr[N-1]))/log(fabs(appr[N-3]-appr[N-1])/fabs(appr[N-4]-appr[N-1])) << "\n";
     return (right - left)/2;
 }
 
