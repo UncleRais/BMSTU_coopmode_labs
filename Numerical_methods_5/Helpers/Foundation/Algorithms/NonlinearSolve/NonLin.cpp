@@ -60,11 +60,14 @@ Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vect
 	{
 		++iterations;
 		x_k = x_k_next;
-		try {
+		try 
+		{
 			Matr<double> dF_k;
-			if (dF.size() < 2*F.size()) {
+			if (dF.size() < 2*F.size()) 
+			{
 				dF_k = jacobi(F, x_k);
-			} else {
+			} else 
+			{
 				std::vector<double> partials(dF.size(), 0);
 				for (size_t i = 0; i < dF.size(); ++i) { partials[i] = dF[i](x_k); }
 					dF_k = Matr<double>(partials);
@@ -72,7 +75,8 @@ Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vect
 			std::vector<double> F_k;
 			for (auto f: F) { F_k.push_back(f(x_k)); }
 			x_k_next = x_k - dF_k.inversed()*F_k;
-		} catch (...) {
+		} catch (...) 
+		{
 			x_k.push_back(double(max_iterations + 1));
 			return x_k;
 		}

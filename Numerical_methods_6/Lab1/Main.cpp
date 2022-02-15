@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv) 
 {
-	typedef double(*funtwo)(double, double);
-	std::vector<funtwo> rightpart({f1,f2});
-	ODE::NDsolve(rightpart, cond);
+	typedef double(*funtwo)(std::vector<double>&);
+	std::vector<funtwo> rightpart({f1, f2});
+	ODE::NDsolve(rightpart, cond, ODE::ExplicitEuler_);
 }
