@@ -4,10 +4,17 @@
 #include "../Helpers/Foundation/Algorithms/ODE/ODE.cpp"
 #include "sys20.cpp"
 
-
+/*
+ExplicitEuler_,
+ImplicitEuler_,
+Symmetrical_,
+Runge_Kutta_4_,
+Runge_Kutta_2_,
+Adams_Bashforth_,
+*/
 int main(int argc, char** argv) 
 {
 	typedef double(*funtwo)(std::vector<double>&);
 	std::vector<funtwo> rightpart({f1, f2});
-	ODE::NDsolve(rightpart, cond, ODE::ExplicitEuler_);
+	ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_2_);
 }
