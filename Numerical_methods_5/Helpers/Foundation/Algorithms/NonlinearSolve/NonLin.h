@@ -4,6 +4,7 @@
 #include <array>
 #include "../Algorithms.cpp"
 #include <string>
+#include <functional>
 
 //MARK: - 1D
 typedef double(*fun)(double);
@@ -13,7 +14,7 @@ typedef std::array<double , 2> segment;
 //MARK: - N-D
 typedef std::vector<double> Point;
 typedef std::vector<bool> Partial;
-typedef double(*vFunc)(const Point&);
+typedef std::function<double(const Point&)> vFunc;
 typedef double(*d_vFunc)(fun, const Point&, const Partial&);
 typedef std::array<double, 2> vector2D;
 

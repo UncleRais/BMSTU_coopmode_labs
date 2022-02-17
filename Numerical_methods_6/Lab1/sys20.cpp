@@ -1,7 +1,7 @@
 #ifndef SYS20
 #define SYS20
 #include <cmath>
-/*Модель Лотки-Вольтерры динамики системы «хищник-жертва»*/
+/*Hunter-Prey model by Lotka-Volterra*/
 
 double r[2] = {0.4, 0.1}; /*{r1, r2}*/
 double b[2][2] = {0.05, 0.1, 0.08, 0.003}; /*{b11, b12, b21, b22}*/

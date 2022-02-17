@@ -1,14 +1,13 @@
 #ifndef ODE_H
 #define ODE_H
 
+#include "../../../../../Numerical_methods_5/Helpers/Foundation/Foundation.cpp"
+#include "../../../../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
+
 typedef double(*funtwo)(std::vector<double>&);
 
-
-
 class ODE {
-
 public:
-
 enum MethodType {
 	ExplicitEuler_,
 	ImplicitEuler_,

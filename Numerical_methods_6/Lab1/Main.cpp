@@ -16,5 +16,5 @@ int main(int argc, char** argv)
 {
 	typedef double(*funtwo)(std::vector<double>&);
 	std::vector<funtwo> rightpart({f1, f2});
-	ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_2_);
+	ODE::NDsolve(rightpart, cond, ODE::ImplicitEuler_);
 }

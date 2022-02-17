@@ -2,6 +2,10 @@
 #define ODE_CPP
 #include "./ODE.h"
 
+//MARK: Let's make a deal
+// t - time iterator, current t is a timestamp
+// i - node iterator, current t is a dimensional point
+
 template < typename T >
 void ODE::NDsolve(std::vector<funtwo>& rightpart, std::vector<T>& cond, MethodType name, T epsilon)
 {
@@ -12,6 +16,7 @@ void ODE::NDsolve(std::vector<funtwo>& rightpart, std::vector<T>& cond, MethodTy
 		std::cout << "ExplicitEuler finised.";
 		break;
 	case ImplicitEuler_:
+		ImplicitEuler(rightpart, cond, epsilon);
 		std::cout << "ImplicitEuler finised.";
 		break;
 	case Symmetrical_:
@@ -39,20 +44,20 @@ void ODE::ExplicitEuler(std::vector<funtwo>& rightpart, std::vector<T>& cond, T 
 	std::ofstream file;
 	file.open("./output/ExplicitEuler.dat");
 
-	int numberofpoints = 1000, systemsize = rightpart.size(); 
-	T h = (cond[1] - cond[0])/(numberofpoints - 1);
+	int timestamps = 1000, systemsize = rightpart.size(); 
+	T h = (cond[1] - cond[0])/(timestamps - 1);
 	std::vector<std::vector<T>> x(systemsize);
 	for(int i = 0; i < systemsize; ++i)
 	{
-		x[i].reserve(numberofpoints);
+		x[i].reserve(timestamps);
 		x[i].push_back(cond[i + 2]);
 	}
 
 	std::vector<T> xT;
 	xT.reserve(systemsize);
-	for(int i = 0; i < numberofpoints - 2; ++i)
+	for(int t = 0; t < timestamps - 2; ++t)
 	{
-		for(int k = 0; k < systemsize; ++k) {xT[k]=x[k][i];};
+		for(int i = 0; i < systemsize; ++i) {xT[i]=x[i][t];}; /* [equation][timestamp] */
 		for(int j = 0; j < systemsize; ++j)
 		{
 			x[j].push_back(xT[j] + h * rightpart[j](xT));
@@ -60,7 +65,7 @@ void ODE::ExplicitEuler(std::vector<funtwo>& rightpart, std::vector<T>& cond, T 
 		}
 		file << std::endl;
 	}
-	file << x[0][numberofpoints - 3] << ' ' << x[1][numberofpoints - 3] << std::endl;
+	file << x[0][timestamps - 3] << ' ' << x[1][timestamps - 3] << std::endl;
 
 	file.close();
 }
@@ -71,16 +76,38 @@ void ODE::ImplicitEuler(std::vector<funtwo>& rightpart, std::vector<T>& cond, T 
 	std::ofstream file;
 	file.open("./output/ImplicitEuler.dat");
 
-	int numberofpoints = 1000, systemsize = rightpart.size(); 
-	T h = (cond[1] - cond[0])/(numberofpoints - 1);
+	int timestamps = 1000, systemsize = rightpart.size(); 
+	T h = (cond[1] - cond[0])/(timestamps - 1);
 	std::vector<std::vector<T>> x(systemsize);
 	for(int i = 0; i < systemsize; ++i)
 	{
-		x[i].reserve(numberofpoints);
+		x[i].reserve(timestamps);
 		x[i].push_back(cond[i + 2]);
 	}
 
-	/*решение неявным методом Эйлера*/
+	std::vector<T> xT;
+	xT.reserve(systemsize);
+	std::vector<vFunc> shifted;
+	for (int i = 0; i < systemsize; ++i)
+	{
+		auto f = [&rightpart, &xT, i, h](const Point& x) -> double {
+			auto iamsofuckingfedupwithcpp = x;
+			return double(x[i] - xT[i] - h*rightpart[i](iamsofuckingfedupwithcpp));
+		};
+		shifted.push_back(f);
+	}
+	for(int t = 0; t < timestamps - 2; ++t)
+	{ 
+		for (int i = 0; i < systemsize; ++i) { xT[i] = x[i][t]; }
+		Point next = NonLinearSolve::system_newton(shifted, {}, 30, {-5, 5});
+		for (int i = 0; i < systemsize; ++i) 
+		{ 
+			x[i].push_back(next[i]);
+			file << xT[i] << ' ';
+		}
+		file << std::endl;
+	}
+	file << x[0][timestamps - 3] << ' ' << x[1][timestamps - 3] << std::endl;
 
 	file.close();
 }
