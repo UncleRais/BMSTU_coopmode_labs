@@ -3,7 +3,7 @@
 #include "./ODE.h"
 
 //MARK: Let's make a deal
-// t - time iterator, current t is a timestamp
+// t – time iterator, current t is a timestamp
 // i - node iterator, current t is a dimensional point
 
 template < typename T >
@@ -57,7 +57,7 @@ void ODE::ExplicitEuler(std::vector<funtwo>& rightpart, std::vector<T>& cond, T 
 	xT.reserve(systemsize);
 	for(int t = 0; t < timestamps - 2; ++t)
 	{
-		for(int i = 0; i < systemsize; ++i) {xT[i]=x[i][t];}; /* [equation][timestamp] */
+		for(int i = 0; i < systemsize; ++i) {xT[i]=x[i][t];};
 		for(int j = 0; j < systemsize; ++j)
 		{
 			x[j].push_back(xT[j] + h * rightpart[j](xT));
