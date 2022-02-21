@@ -5,7 +5,7 @@
 
 double r[2] = {0.4, 0.1}; /*{r1, r2}*/
 double b[2][2] = {0.05, 0.1, 0.08, 0.003}; /*{b11, b12, b21, b22}*/
-std::vector<double> cond = {0.0, 160.0, 1.0, 4.0}; /*{t0 , tn, x1(t0), x2(t0)}*/
+std::vector<double> cond = {0.0, 150.0, 1.0, 4.0}; /*{t0 , tn, x1(t0), x2(t0)}*/
 
 double f1 (std::vector<double>& x)
 {

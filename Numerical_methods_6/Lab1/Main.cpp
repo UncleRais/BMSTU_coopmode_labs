@@ -2,7 +2,7 @@
 #include "../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
 #include "../Helpers/Foundation/Algorithms/Algorithms.cpp"
 #include "../Helpers/Foundation/Algorithms/ODE/ODE.cpp"
-#include "sys20.cpp"
+#include "task3.cpp"
 
 /*
 ExplicitEuler_,
@@ -11,10 +11,11 @@ Symmetrical_,
 Runge_Kutta_4_,
 Runge_Kutta_2_,
 Adams_Bashforth_,
+Forecast_correction_,
 */
 int main(int argc, char** argv) 
 {
 	typedef double(*funtwo)(std::vector<double>&);
-	std::vector<funtwo> rightpart({f1, f2});
-	ODE::NDsolve(rightpart, cond, ODE::ImplicitEuler_);
+	std::vector<funtwo> rightpart({f1, f2, f3});
+	ODE::NDsolve(rightpart, cond, ODE::ExplicitEuler_);
 }
