@@ -22,7 +22,7 @@ enum MethodType {
 };
 
 template < typename T >
-static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-3);
+static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-3, bool order = true);
 
 template < typename T >
 static Portrait ExplicitEuler(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
@@ -42,7 +42,7 @@ static Portrait Runge_Kutta_4(const std::vector<funtwo>& rightpart, const std::v
 
 template < typename T >
 static Portrait Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  			   int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+						  			   int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-10);
 
 template < typename T >
 static void Adams_Bashforth(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
@@ -53,6 +53,10 @@ static void Forecast_correction(const std::vector<funtwo>& rightpart, const std:
 
 template < typename T >
 static void save(std::vector<std::vector<T>>& portrait, std::string path);
+
+template < typename T >
+static void save(std::vector<T>& portrait, std::string path);
+
 };
 
 #endif

@@ -7,7 +7,7 @@
 // i - node iterator, current t is a dimensional point
 
 template < typename T >
-void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon)
+void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon, bool order)
 {
 	int timestamps = 1000, systemsize = rightpart.size(); 
 	T h = (cond[1] - cond[0])/(timestamps - 1);
@@ -17,7 +17,7 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 		x[i].reserve(timestamps);
 		x[i].push_back(cond[i + 2]);
 	}
-	Portrait portrait;
+	Portrait portrait; 
 	switch (name)
 	{
 	case ExplicitEuler_:
@@ -46,8 +46,8 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 		break;
 	case Runge_Kutta_4_adaptive_:
 		portrait = Runge_Kutta_4_adaptive(rightpart, cond, timestamps, systemsize, h, x, epsilon);
-		save(portrait, "./output/Runge_Kutta_4_____.dat");
-		std::cout << "Runge_Kutta_4 finised.";
+		save(portrait, "./output/Runge_Kutta_4_adaptive.dat");
+		std::cout << "Runge_Kutta_4_adaptive finised.";
 		break;
 	case Adams_Bashforth_:
 		Adams_Bashforth(rightpart, cond, timestamps, systemsize, h, x, epsilon);
@@ -60,6 +60,10 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 	default:
 		std::cout << "Unknown method! Please, check MethodType.";
 		break;
+	}
+	if(order) 
+	{
+		double q = 0.5;
 	}
 }
 
@@ -253,7 +257,8 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 		}
 		return cond;
 	};
-
+	std::vector<T> norms;
+	std::vector<T> steps;
 	for(int t = 0; t < timestamps-2; ++t) {
 		std::vector<T> cond; for(int i = 0; i < systemsize; ++i) { cond.push_back(x[i][t]); }
 		T tao = h;
@@ -263,12 +268,16 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 			divider += 1;
 			tao = h/divider;
 			auto closer = split(cond, tao, divider);
-			auto _norm = norm(next - next)/(pow(2, divider) - 1);
+			auto _norm = norm(next - closer)/(pow(2, divider) - 1);
 			if(_norm <= epsilon) {
+				norms.push_back(_norm);
+				steps.push_back(tao);
 				break;
 			}
 			next = closer;
 		}
+		save(norms, "./output/Runge_Kutta_4_norms.dat");
+		save(steps, "./output/Runge_Kutta_4_steps.dat");
 		for(int i = 0; i < systemsize; ++i) { x[i].push_back(next[i]); }
 	}
 	return x;
@@ -429,6 +438,15 @@ void ODE::save(std::vector<std::vector<T>>& portrait, std::string path) {
 		}
 		file << std::endl;
 	}
+	file.close();
+}
+
+template < typename T >
+void ODE::save(std::vector<T>& portrait, std::string path) {
+	std::ofstream file;
+	file.open(path);
+	int counter = 0;
+	for(const auto &value: portrait) { file << ++counter << ' ' << value << std::endl;  }
 	file.close();
 }
 
