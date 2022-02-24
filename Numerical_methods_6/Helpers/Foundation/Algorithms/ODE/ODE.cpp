@@ -17,19 +17,22 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 		x[i].reserve(timestamps);
 		x[i].push_back(cond[i + 2]);
 	}
-
+	Portrait portrait;
 	switch (name)
 	{
 	case ExplicitEuler_:
-		ExplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		portrait = ExplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/ExplicitEuler.dat");
 		std::cout << "ExplicitEuler finised.";
 		break;
 	case ImplicitEuler_:
-		ImplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		portrait = ImplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/ImplicitEuler.dat");
 		std::cout << "ImplicitEuler finised.";
 		break;
 	case Symmetrical_:
-		Symmetrical(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		portrait = Symmetrical(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/Symmetrical.dat");
 		std::cout << "Symmetrical finised.";
 		break;
 	case Runge_Kutta_2_:
@@ -37,7 +40,13 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 		std::cout << "Runge_Kutta_2 finised.";
 		break;
 	case Runge_Kutta_4_:
-		Runge_Kutta_4(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		portrait = Runge_Kutta_4(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/Runge_Kutta_4.dat");
+		std::cout << "Runge_Kutta_4 finised.";
+		break;
+	case Runge_Kutta_4_adaptive_:
+		portrait = Runge_Kutta_4_adaptive(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/Runge_Kutta_4_____.dat");
 		std::cout << "Runge_Kutta_4 finised.";
 		break;
 	case Adams_Bashforth_:
@@ -55,7 +64,7 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 }
 
 template < typename T >
-void ODE::ExplicitEuler(const std::vector<funtwo>& rightpart, 
+Portrait ODE::ExplicitEuler(const std::vector<funtwo>& rightpart, 
 						const std::vector<T>& cond, 
 						int timestamps,
 						int systemsize,
@@ -63,9 +72,6 @@ void ODE::ExplicitEuler(const std::vector<funtwo>& rightpart,
 						std::vector<std::vector<T>>& x, 
 						T epsilon)
 {
-	std::ofstream file;
-	file.open("./output/ExplicitEuler.dat");
-
 	std::vector<T> xT;
 	xT.reserve(systemsize);
 	for(int t = 0; t < timestamps - 2; ++t)
@@ -74,18 +80,15 @@ void ODE::ExplicitEuler(const std::vector<funtwo>& rightpart,
 		for(int j = 0; j < systemsize; ++j)
 		{
 			x[j].push_back(xT[j] + h * rightpart[j](xT));
-			file << xT[j] << ' ';
 		}
-		file << std::endl;
 	}
-	for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
-	file << std::endl;
 
-	file.close();
+	return x;
+	// for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
 }
 
 template < typename T >
-void ODE::ImplicitEuler(const std::vector<funtwo>& rightpart, 
+Portrait ODE::ImplicitEuler(const std::vector<funtwo>& rightpart, 
 						const std::vector<T>& cond, 
 						int timestamps,
 						int systemsize,
@@ -93,9 +96,6 @@ void ODE::ImplicitEuler(const std::vector<funtwo>& rightpart,
 						std::vector<std::vector<T>>& x, 
 						T epsilon)
 {
-	std::ofstream file;
-	file.open("./output/ImplicitEuler.dat");
-
 	std::vector<T> xT;
 	xT.reserve(systemsize);
 	std::vector<vFunc> shifted;
@@ -115,17 +115,15 @@ void ODE::ImplicitEuler(const std::vector<funtwo>& rightpart,
 		for (int i = 0; i < systemsize; ++i) 
 		{ 
 			x[i].push_back(next[i]);
-			file << xT[i] << ' ';
 		}
-		file << std::endl;
 	}
-	for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
-	file << std::endl;
-	file.close();
+
+	return x;
+	// for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
 }
 
 template < typename T >
-void ODE::Symmetrical(const std::vector<funtwo>& rightpart, 
+Portrait ODE::Symmetrical(const std::vector<funtwo>& rightpart, 
 					  const std::vector<T>& cond, 
 					  int timestamps,
 					  int systemsize,
@@ -133,9 +131,6 @@ void ODE::Symmetrical(const std::vector<funtwo>& rightpart,
 					  std::vector<std::vector<T>>& x, 
 					  T epsilon)
 {
-	std::ofstream file;
-	file.open("./output/Symmetrical.dat");
-
 	std::vector<T> xT;
 	xT.reserve(systemsize);
 	std::vector<vFunc> shifted;
@@ -155,14 +150,11 @@ void ODE::Symmetrical(const std::vector<funtwo>& rightpart,
 		for (int i = 0; i < systemsize; ++i) 
 		{ 
 			x[i].push_back(next[i]);
-			file << xT[i] << ' ';
 		}
-		file << std::endl;
 	}
-	for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
-	file << std::endl;
 
-	file.close();
+	return x;
+	// for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
 }
 
 template < typename T >
@@ -200,25 +192,20 @@ void ODE::Runge_Kutta_2(const std::vector<funtwo>& rightpart,
 }
 
 template < typename T >
-void ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart, 
-						const std::vector<T>& cond, 
-						int timestamps,
-						int systemsize,
-						T h,
-						std::vector<std::vector<T>>& x, 
-						T epsilon)
+Portrait ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart, 
+							const std::vector<T>& cond, 
+							int timestamps,
+							int systemsize,
+							T h,
+							std::vector<std::vector<T>>& x, 
+							T epsilon)
 {
-	std::ofstream file;
-	file.open("./output/Runge_Kutta_4.dat");
-
 	std::vector<T> xT(systemsize), help(systemsize);
 	std::vector<std::vector<T>> K(4);
 	for (int i = 0; i < 4; ++i) {K[i] = help;};
-
 	for(int i = 0; i < timestamps - 2; ++i)
 	{
 		for(int k = 0; k < systemsize; ++k) {xT[k] = x[k][i]; };
-
 		for(int k = 0; k < systemsize; ++k) 
 			{
 				K[0][k] = rightpart[k](xT);
@@ -229,19 +216,64 @@ void ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart,
 				help = xT + h* K[2];
 				K[3][k] = rightpart[k](help);
 			};
-
 	 	for(int j = 0; j < systemsize; ++j)
 	 	{
 	 		x[j].push_back(xT[j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
-	 		file << xT[j] << ' ';
 	 	}
-	 	file << std::endl;
 	}
-	 for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
-	file << std::endl;
 
+	return x;
+}
 
-	file.close();
+template < typename T >
+Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, 
+									 const std::vector<T>& cond, 
+									 int timestamps,
+									 int systemsize,
+									 T h,
+									 std::vector<std::vector<T>>& x, 
+									 T epsilon)
+{
+	const auto split = [&rightpart, systemsize](std::vector<T> cond, T h, int timestamps) -> std::vector<T> {
+		std::vector<T> help(systemsize);
+		std::vector<std::vector<T>> K(4);
+		for (int i = 0; i < 4; ++i) {K[i] = help;};
+		for(int t = 0; t < timestamps; ++t) {
+			for(int i = 0; i < systemsize; ++i) {
+				K[0][i] = rightpart[i](cond);
+				help = cond + h/2 * K[0];
+				K[1][i] = rightpart[i](help);
+				help = cond + h/2 * K[1];
+				K[2][i] = rightpart[i](help);
+				help = cond + h* K[2];
+				K[3][i] = rightpart[i](help);
+
+				cond[i] = cond[i] + h/6 * (K[0][i] + 2*K[1][i] + 2*K[2][i] + K[3][i]);
+			}
+		}
+		return cond;
+	};
+
+	for(int t = 0; t < timestamps-2; ++t) {
+		std::vector<T> cond; for(int i = 0; i < systemsize; ++i) { cond.push_back(x[i][t]); }
+		T tao = h;
+		int divider = 1;
+		auto next = split(cond, tao, divider);
+		while(true) {
+			divider += 1;
+			tao = h/divider;
+			auto closer = split(cond, tao, divider);
+			auto _norm = norm(next - next)/(pow(2, divider) - 1);
+			if(_norm <= epsilon) {
+				break;
+			}
+			next = closer;
+		}
+		for(int i = 0; i < systemsize; ++i) { x[i].push_back(next[i]); }
+	}
+	return x;
+
+	// return Runge_Kutta_4(rightpart, cond, timestamps, systemsize, h, x, epsilon);
 }
 
 template < typename T >
@@ -383,6 +415,20 @@ void ODE::Forecast_correction(const std::vector<funtwo>& rightpart,
 	}
 	for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
 	file << std::endl;
+	file.close();
+}
+
+template < typename T >
+void ODE::save(std::vector<std::vector<T>>& portrait, std::string path) {
+	std::ofstream file;
+	file.open(path);
+	const int timestamps = portrait[0].size();
+	for(int t = 0; t < timestamps; ++t) {
+		for(int i = 0; i < portrait.size(); ++i) {
+			file << portrait[i][t] << ' '; 
+		}
+		file << std::endl;
+	}
 	file.close();
 }
 
