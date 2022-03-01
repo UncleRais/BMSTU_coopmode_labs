@@ -22,7 +22,7 @@ enum MethodType {
 };
 
 template < typename T >
-static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-3, bool order = true);
+static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-7, bool order = true);
 
 template < typename T >
 static Portrait ExplicitEuler(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,

@@ -242,66 +242,55 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 		}
 		return cond;
 	};
+
+	const auto lastPoint = [](std::vector<std::vector<T>> portrait) -> std::vector<T> {
+		const auto last = portrait.size() - 1;
+		return portrait[last];
+	};
+	const auto deeper = [](std::vector<T> point) -> std::vector<std::vector<T>> {
+		std::vector<std::vector<T>> portrait;
+		portrait.push_back(point);
+		return portrait;
+	};
+
 	std::vector<T> norms;
 	std::vector<T> steps;
 	std::vector<T> previous;
 	T stepper = T(0);
 	T tao = h;
+	int divider = 1;
 	while(stepper < cond[1])
 	{
 		auto last = x.size() - 1;
 		previous = x[last++];
 		x.push_back({});
-		int divider = 1;
 		auto next = split(previous, tao, divider);
-		while(true)
+		bool execute = true;
+		while(execute)
 		{
 			divider +=1;
 			tao /= 2;
-			auto closer = split(previous, tao, 1);
-			auto _norm = norm(next - closer);///(pow(2, divider) - 1);
+			auto closer = split(previous, tao, divider);
+			auto _norm = norm(next - closer)/(pow(2, 4) - 1);
 			if(_norm <= epsilon)
 			{
 				if(_norm <= pow(epsilon, 2))
 				{
+					divider -= 1;
 					tao *= 2;
 				}
 				norms.push_back(_norm);
 				steps.push_back(tao);
-				next = closer;
-				break;
+				execute = false;
 			}
 			next = closer;
 		}
 		for(int i = 0; i < systemsize; ++i) { x[last].push_back(next[i]); }
-		stepper += tao;
+		stepper += h;
 	}
 	save(norms, "./output/Runge_Kutta_4_norms.dat");
 	save(steps, "./output/Runge_Kutta_4_steps.dat");
-	// for(int t = 0; t < timestamps-2; ++t) {
-	// 	std::vector<T> cond; for(int i = 0; i < systemsize; ++i) { cond.push_back(x[i][t]); }
-	// 	T tao = h;
-	// 	int divider = 1;
-	// 	auto next = split(cond, tao, divider);
-	// 	while(true) {
-	// 		divider += 1;
-	// 		tao = h/divider;
-	// 		auto closer = split(cond, tao, divider);
-	// 		auto _norm = norm(next - closer)/(pow(2, divider) - 1);
-	// 		if(_norm <= epsilon) {
-	// 			norms.push_back(_norm);
-	// 			steps.push_back(tao);
-	// 			break;
-	// 		}
-	// 		next = closer;
-	// 	}
-	// 	save(norms, "./output/Runge_Kutta_4_norms.dat");
-	// 	save(steps, "./output/Runge_Kutta_4_steps.dat");
-	// 	for(int i = 0; i < systemsize; ++i) { x[i].push_back(next[i]); }
-	// }
 	return x;
-
-	// return Runge_Kutta_4(rightpart, cond, timestamps, systemsize, h, x, epsilon);
 }
 
 template < typename T >
