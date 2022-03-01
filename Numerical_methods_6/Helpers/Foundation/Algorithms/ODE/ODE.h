@@ -26,30 +26,30 @@ static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& 
 
 template < typename T >
 static Portrait ExplicitEuler(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 template < typename T >
 static Portrait ImplicitEuler(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 template < typename T >
 static Portrait Symmetrical(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 template < typename T >
-static void Runge_Kutta_2(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+static Portrait Runge_Kutta_2(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
+						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 template < typename T >
 static Portrait Runge_Kutta_4(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 
 template < typename T >
-static Portrait Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						  			   int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-10);
+static Portrait Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, const std::vector<T>& cond,
+						  			   int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-10);
 
 template < typename T >
-static void Adams_Bashforth(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						   int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+static Portrait Adams_Bashforth(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
+						   int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 template < typename T >
-static void Forecast_correction(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
-						        int systemsize, T h, std::vector<std::vector<T>>& x, T epsilon = 1e-3);
+static Portrait Forecast_correction(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
+						        int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 
 template < typename T >
 static void save(std::vector<std::vector<T>>& portrait, std::string path);
