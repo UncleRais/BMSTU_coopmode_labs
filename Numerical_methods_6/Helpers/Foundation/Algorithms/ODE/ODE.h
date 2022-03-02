@@ -24,6 +24,9 @@ enum MethodType {
 template < typename T >
 static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-10);
 
+template < typename T >
+static void Phase(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-10);
+
 // template < typename T >
 // static void order(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-7);
 

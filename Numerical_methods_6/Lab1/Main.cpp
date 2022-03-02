@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 {
 	typedef double(*funtwo)(std::vector<double>&);
 	std::vector<funtwo> rightpart({f1, f2});
-	ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_4_adaptive_);
+	// ODE::NDsolve(rightpart, cond, ODE::ExplicitEuler_);
+	ODE::Phase(rightpart, cond, ODE::ImplicitEuler_);
 	// ODE::NDsolve(rightpart, cond, ODE::Symmetrical_);
 }

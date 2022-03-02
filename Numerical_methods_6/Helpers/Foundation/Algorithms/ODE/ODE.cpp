@@ -53,7 +53,6 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 	case Adams_Bashforth_:
 		portrait = Adams_Bashforth(rightpart, cond, timestamps, systemsize, h, x, epsilon);
 		save(portrait, "./output/Adams_Bashforth.dat");
-		std::cout << "Adams_Bashforth finised.";
 		break;
 	case Forecast_correction_:
 		portrait = Forecast_correction(rightpart, cond, timestamps, systemsize, h, x, epsilon);
@@ -63,6 +62,64 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 	default:
 		std::cout << "Unknown method! Please, check MethodType.";
 		break;
+	}
+}
+
+template < typename T >
+void ODE::Phase(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon)
+{
+	int timestamps = 1000, systemsize = rightpart.size(); 
+	T h = (cond[1] - cond[0])/(timestamps - 1);
+	std::vector<std::vector<T>> x;
+    std::vector<std::vector<T>> C;
+	for(T i = 0; i < 30; i += 0.5 ) { C.push_back({-30, i}); }
+	for(T i = 0; i < 30; i += 0.5 ) { C.push_back({i, -30}); }
+	for(T i = 0; i < 30; i += 0.5 ) { C.push_back({30, i}); }
+	for(T i = 0; i < 30; i += 0.5 ) { C.push_back({i, 30}); }
+	for(int r = 0; r < C.size(); ++r)
+	{
+		std::vector<std::vector<T>> x;
+		x.push_back(C[r]);
+		Portrait portrait; 
+		switch (name)
+		{
+		case ExplicitEuler_:
+			portrait = ExplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseExplicitEuler/r=" + std::to_string(r) + ".dat");
+			break;
+		case ImplicitEuler_:
+			portrait = ImplicitEuler(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseImplicitEuler/r=" + std::to_string(r) + ".dat");
+			break;
+		case Symmetrical_:
+			portrait = Symmetrical(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseSymmetrical/r=" + std::to_string(r) + ".dat");
+			break;
+		case Runge_Kutta_2_:
+			portrait = Runge_Kutta_2(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseRK2/r=" + std::to_string(r) + ".dat");
+			break;
+		case Runge_Kutta_4_:
+			portrait = Runge_Kutta_4(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseRK4/r=" + std::to_string(r) + ".dat");
+			break;
+		case Runge_Kutta_4_adaptive_:
+			portrait = Runge_Kutta_4_adaptive(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseRK4_adaptive/r=" + std::to_string(r) + ".dat");
+			break;
+		case Adams_Bashforth_:
+			portrait = Adams_Bashforth(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseAB/r=" + std::to_string(r) + ".dat");
+			break;
+		case Forecast_correction_:
+			portrait = Forecast_correction(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+			save(portrait, "./output/phaseFC/r=" + std::to_string(r) + ".dat");
+			break;
+		default:
+			std::cout << "Unknown method! Please, check MethodType.";
+			break;
+		}
+		std:: cout << "Finished r = " << r << std::endl;
 	}
 }
 
@@ -225,10 +282,10 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 		return portrait[last];
 	};
 
-	std::vector<T> norms;
-	std::vector<T> steps;
 	T tao = h;
 	int divider = 1;
+	std::vector<T> norms;
+	std::vector<T> steps;
 	for(int t = 0; t < timestamps; ++t)
 	{
 		auto next = lastPoint(Runge_Kutta_4(rightpart, cond, divider, systemsize, tao, {x[t]}, epsilon));
@@ -241,10 +298,11 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 			auto _norm = norm(next - closer)/(pow(2, 4) - 1);
 			if(_norm <= epsilon)
 			{
-				if(_norm <= epsilon/1000)
+				if(_norm <= epsilon/4)
 				{
 					divider /= 2;
 					tao *= 2;
+					closer = next;
 				}
 				norms.push_back(_norm);
 				steps.push_back(tao);
