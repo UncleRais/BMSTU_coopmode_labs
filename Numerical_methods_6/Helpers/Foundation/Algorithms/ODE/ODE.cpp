@@ -7,7 +7,7 @@
 // i - node iterator, current t is a dimensional point
 
 template < typename T >
-void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon, bool order)
+void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon)
 {
 	int timestamps = 1000, systemsize = rightpart.size(); 
 	T h = (cond[1] - cond[0])/(timestamps - 1);
@@ -46,25 +46,23 @@ void ODE::NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& co
 		std::cout << "Runge_Kutta_4 finised.";
 		break;
 	case Runge_Kutta_4_adaptive_:
-		portrait = Runge_Kutta_4_adaptive(rightpart, cond, systemsize, h, x, epsilon);
+		portrait = Runge_Kutta_4_adaptive(rightpart, cond, timestamps, systemsize, h, x, epsilon);
 		save(portrait, "./output/Runge_Kutta_4_adaptive.dat");
 		std::cout << "Runge_Kutta_4_adaptive finised.";
 		break;
 	case Adams_Bashforth_:
 		portrait = Adams_Bashforth(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/Adams_Bashforth.dat");
 		std::cout << "Adams_Bashforth finised.";
 		break;
 	case Forecast_correction_:
 		portrait = Forecast_correction(rightpart, cond, timestamps, systemsize, h, x, epsilon);
+		save(portrait, "./output/Forecast_correction.dat");
 		std::cout << "Forecast_correction finised.";
 		break;
 	default:
 		std::cout << "Unknown method! Please, check MethodType.";
 		break;
-	}
-	if(order) 
-	{
-		// double q = 0.5;
 	}
 }
 
@@ -77,11 +75,10 @@ Portrait ODE::ExplicitEuler(const std::vector<funtwo>& rightpart,
 						std::vector<std::vector<T>> x, 
 						T epsilon)
 {
-	for(int t = 0; t < timestamps - 2; ++t)
+	for(int t = 0; t < timestamps; ++t)
 	{
-	 	auto previous = x[t];
 		x.push_back({});
-		for(int j = 0; j < systemsize; ++j) { x[t+1].push_back(previous[j] + h * rightpart[j](previous));}
+		for(int j = 0; j < systemsize; ++j) { x[t+1].push_back(x[t][j] + h * rightpart[j](x[t]));}
 	}
 	return x;
 }
@@ -106,7 +103,7 @@ Portrait ODE::ImplicitEuler(const std::vector<funtwo>& rightpart,
 		};
 		shifted.push_back(f);
 	}
-	for(int t = 0; t < timestamps - 2; ++t)
+	for(int t = 0; t < timestamps; ++t)
 	{ 
 	 	previous = x[t];
 		x.push_back({});
@@ -118,7 +115,6 @@ Portrait ODE::ImplicitEuler(const std::vector<funtwo>& rightpart,
 	}
 
 	return x;
-	// for (int i = 0; i < systemsize; ++i ) file << x[i][timestamps - 3] << ' ';
 }
 
 template < typename T >
@@ -141,7 +137,7 @@ Portrait ODE::Symmetrical(const std::vector<funtwo>& rightpart,
 		};
 		shifted.push_back(f);
 	}
-	for(int t = 0; t < timestamps - 2; ++t)
+	for(int t = 0; t < timestamps; ++t)
 	{ 
 		x.push_back({});
 		previous = x[t];
@@ -165,7 +161,7 @@ Portrait ODE::Runge_Kutta_2(const std::vector<funtwo>& rightpart,
 {
 
 	std::vector<T> previous(systemsize), K(systemsize), help(systemsize);
-	for(int t = 0; t < timestamps - 2; ++t)
+	for(int t = 0; t < timestamps; ++t)
 	{
 		x.push_back({});
 		previous = x[t];
@@ -192,7 +188,7 @@ Portrait ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart,
 	std::vector<T> previous(systemsize), help(systemsize);
 	std::vector<std::vector<T>> K(4);
 	for (int i = 0; i < 4; ++i) {K[i] = help;};
-	for(int t = 0; t < timestamps - 2; ++t)
+	for(int t = 0; t < timestamps; ++t)
 	{
 		previous = x[t];
 		x.push_back({});
@@ -218,65 +214,36 @@ Portrait ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart,
 template < typename T >
 Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, 
 									 const std::vector<T>& cond, 
+									 int timestamps,
 									 int systemsize,
 									 T h,
 									 std::vector<std::vector<T>> x, 
 									 T epsilon)
 {
-	const auto split = [&rightpart, systemsize](std::vector<T> cond, T h, int timestamps) -> std::vector<T> {
-		std::vector<T> help(systemsize);
-		std::vector<std::vector<T>> K(4);
-		for (int i = 0; i < 4; ++i) {K[i] = help;};
-		for(int t = 0; t < timestamps; ++t) {
-			for(int i = 0; i < systemsize; ++i) {
-				K[0][i] = rightpart[i](cond);
-				help = cond + h/2 * K[0];
-				K[1][i] = rightpart[i](help);
-				help = cond + h/2 * K[1];
-				K[2][i] = rightpart[i](help);
-				help = cond + h* K[2];
-				K[3][i] = rightpart[i](help);
-
-				cond[i] = cond[i] + h/6 * (K[0][i] + 2*K[1][i] + 2*K[2][i] + K[3][i]);
-			}
-		}
-		return cond;
-	};
-
 	const auto lastPoint = [](std::vector<std::vector<T>> portrait) -> std::vector<T> {
 		const auto last = portrait.size() - 1;
 		return portrait[last];
 	};
-	const auto deeper = [](std::vector<T> point) -> std::vector<std::vector<T>> {
-		std::vector<std::vector<T>> portrait;
-		portrait.push_back(point);
-		return portrait;
-	};
 
 	std::vector<T> norms;
 	std::vector<T> steps;
-	std::vector<T> previous;
-	T stepper = T(0);
 	T tao = h;
 	int divider = 1;
-	while(stepper < cond[1])
+	for(int t = 0; t < timestamps; ++t)
 	{
-		auto last = x.size() - 1;
-		previous = x[last++];
-		x.push_back({});
-		auto next = split(previous, tao, divider);
+		auto next = lastPoint(Runge_Kutta_4(rightpart, cond, divider, systemsize, tao, {x[t]}, epsilon));
 		bool execute = true;
 		while(execute)
 		{
-			divider +=1;
 			tao /= 2;
-			auto closer = split(previous, tao, divider);
+			divider *= 2;
+			auto closer = lastPoint(Runge_Kutta_4(rightpart, cond, divider, systemsize, tao, {x[t]}, epsilon));
 			auto _norm = norm(next - closer)/(pow(2, 4) - 1);
 			if(_norm <= epsilon)
 			{
-				if(_norm <= pow(epsilon, 2))
+				if(_norm <= epsilon/1000)
 				{
-					divider -= 1;
+					divider /= 2;
 					tao *= 2;
 				}
 				norms.push_back(_norm);
@@ -285,8 +252,7 @@ Portrait ODE::Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart,
 			}
 			next = closer;
 		}
-		for(int i = 0; i < systemsize; ++i) { x[last].push_back(next[i]); }
-		stepper += h;
+		x.push_back(next);
 	}
 	save(norms, "./output/Runge_Kutta_4_norms.dat");
 	save(steps, "./output/Runge_Kutta_4_steps.dat");
@@ -303,49 +269,35 @@ Portrait ODE::Adams_Bashforth(const std::vector<funtwo>& rightpart,
 						  T epsilon)
 {
 	std::vector<T> help(systemsize);
-	std::vector<std::vector<T>> xT(4);
 	std::vector<std::vector<T>> K(4);
-	for (int i = 0; i < 4; ++i) {K[i] = help; xT[i] = help;};
-
-	for(int i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i) {K[i] = help;};
+	for(int t = 0; t < 4; ++t)
 	{
-		for(int k = 0; k < systemsize; ++k) {xT[i][k] = x[k][i]; };
-
+		x.push_back({});
 		for(int k = 0; k < systemsize; ++k) 
 			{
-				K[0][k] = rightpart[k](xT[i]);
-				help = xT[i] + h/2 * K[0];
+				K[0][k] = rightpart[k](x[t]);
+				help = x[t] + h/2 * K[0];
 				K[1][k] = rightpart[k](help);
-				help = xT[i] + h/2 * K[1];
+				help = x[t] + h/2 * K[1];
 				K[2][k] = rightpart[k](help);
-				help = xT[i] + h* K[2];
+				help = x[t] + h* K[2];
 				K[3][k] = rightpart[k](help);
 			};
-
 	 	for(int j = 0; j < systemsize; ++j)
 	 	{
-	 		x[j].push_back(xT[i][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
+	 		x[t+1].push_back(x[t][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
 	 	}
 	}
 
-	int ind[4] = {0,1,2,3};
-	auto shift = [](int (& ind)[4]) -> void
+	 for(int t = 4; t < timestamps; ++t)
 	{
-		int a = ind[0];
-		for (int i = 0; i < 3; ++i) ind[i] = ind[i + 1];
-		ind[3] = a;
-	};
-
-	 for(int i = 4; i < timestamps - 2; ++i)
-	{
-	 	for(int k = 0; k < systemsize; ++k) {xT[ind[3]][k] = x[k][i]; };
-
+		x.push_back({});
 	   	for(int j = 0; j < systemsize; ++j)
 	   	{
-	   		x[j].push_back(xT[ind[3]][j] + h/24 * (55*rightpart[j](xT[ind[3]]) - 59*rightpart[j](xT[ind[2]]) 
-	   			+ 37*rightpart[j](xT[ind[1]]) - 9*rightpart[j](xT[ind[0]])));
+	   		x[t+1].push_back(x[t][j] + h/24 * (55*rightpart[j](x[t]) - 59*rightpart[j](x[t-1]) 
+	   			+ 37*rightpart[j](x[t-2]) - 9*rightpart[j](x[t-3])));
 	  	}
-	   	shift(ind);
 	}
 
 	return x;
@@ -361,58 +313,41 @@ Portrait ODE::Forecast_correction(const std::vector<funtwo>& rightpart,
 						      T epsilon)
 {
 	std::vector<T> help(systemsize);
-	std::vector<std::vector<T>> xT(4);
 	std::vector<std::vector<T>> K(4);
-	for (int i = 0; i < 4; ++i) {K[i] = help; xT[i] = help;};
-
-	for(int i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i) {K[i] = help;};
+	for(int t = 0; t < 4; ++t)
 	{
-		for(int k = 0; k < systemsize; ++k) {xT[i][k] = x[k][i]; };
-
+		x.push_back({});
 		for(int k = 0; k < systemsize; ++k) 
 			{
-				K[0][k] = rightpart[k](xT[i]);
-				help = xT[i] + h/2 * K[0];
+				K[0][k] = rightpart[k](x[t]);
+				help = x[t] + h/2 * K[0];
 				K[1][k] = rightpart[k](help);
-				help = xT[i] + h/2 * K[1];
+				help = x[t] + h/2 * K[1];
 				K[2][k] = rightpart[k](help);
-				help = xT[i] + h* K[2];
+				help = x[t] + h* K[2];
 				K[3][k] = rightpart[k](help);
 			};
-
 	 	for(int j = 0; j < systemsize; ++j)
 	 	{
-	 		x[j].push_back(xT[i][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
+	 		x[t+1].push_back(x[t][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
 	 	}
 	}
-
-	int ind[4] = {0,1,2,3};
-	auto shift = [](int (& ind)[4]) -> void
-	{
-		int a = ind[0];
-		for (int i = 0; i < 3; ++i) ind[i] = ind[i + 1];
-		ind[3] = a;
-	};
-
 	std::vector<T> forecast(systemsize);
-	std::vector<vFunc> shifted(systemsize);
-	for(int i = 4; i < timestamps - 2; ++i)
+	for(int t = 4; t < timestamps; ++t)
 	{
-	 	for(int k = 0; k < systemsize; ++k) {xT[ind[3]][k] = x[k][i]; };
-
+		x.push_back({});
 	   	for(int j = 0; j < systemsize; ++j)
 	   	{
-	   		forecast[j] = xT[ind[3]][j] + h/24 * (55*rightpart[j](xT[ind[3]]) - 59*rightpart[j](xT[ind[2]]) 
-	   			+ 37*rightpart[j](xT[ind[1]]) - 9*rightpart[j](xT[ind[0]]));
+	   		forecast[j] = x[t][j] + h/24 * (55*rightpart[j](x[t]) - 59*rightpart[j](x[t-1]) 
+	   			+ 37*rightpart[j](x[t-2]) - 9*rightpart[j](x[t-3]));
 	  	}
 
 		for (int i = 0; i < systemsize; ++i) 
 		{ 
-			x[i].push_back(xT[ind[3]][i] + h/24*( 9*rightpart[i](forecast) + 19*rightpart[i](xT[ind[3]])
-			- 5*rightpart[i](xT[ind[2]]) + rightpart[i](xT[ind[1]])) ); 
+			x[t+1].push_back(x[t][i] + h/24*( 9*rightpart[i](forecast) + 19*rightpart[i](x[t])
+			- 5*rightpart[i](x[t-1]) + rightpart[i](x[t-2])) ); 
 		};
-		shift(ind);
-
 	}
 
 	return x;

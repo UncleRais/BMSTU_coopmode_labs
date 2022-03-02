@@ -22,7 +22,10 @@ enum MethodType {
 };
 
 template < typename T >
-static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-7, bool order = true);
+static void NDsolve(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-10);
+
+// template < typename T >
+// static void order(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, MethodType name, T epsilon = 1e-7);
 
 template < typename T >
 static Portrait ExplicitEuler(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
@@ -41,7 +44,7 @@ static Portrait Runge_Kutta_4(const std::vector<funtwo>& rightpart, const std::v
 						  int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-3);
 
 template < typename T >
-static Portrait Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, const std::vector<T>& cond,
+static Portrait Runge_Kutta_4_adaptive(const std::vector<funtwo>& rightpart, const std::vector<T>& cond, int timestamps,
 						  			   int systemsize, T h, std::vector<std::vector<T>> x, T epsilon = 1e-10);
 
 template < typename T >
