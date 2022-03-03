@@ -15,11 +15,11 @@ Portrait ODE::NDsolve(const std::vector<funtwo>& rightpart,
 {
 	int systemsize = rightpart.size(); 
 	int timestamps = (cond[1] - cond[0])/h + 1;
-	std::vector<std::vector<T>> x(systemsize);
+	std::vector<std::vector<T>> x;
+	x.push_back({});
 	for(int i = 0; i < systemsize; ++i)
 	{
-		x[i].reserve(timestamps);
-		x[i].push_back(cond[i + 2]);
+		x[0].push_back(cond[i + 2]);
 	} 
 	Portrait end;
 	switch (name)
@@ -123,7 +123,6 @@ void ODE::Phase(const std::vector<funtwo>& rightpart, const std::vector<T>& cond
 }
 
 
-
 template < typename T >
 Portrait ODE::ExplicitEuler(const std::vector<funtwo>& rightpart,  
 						int timestamps,
@@ -178,7 +177,7 @@ Portrait ODE::Symmetrical(const std::vector<funtwo>& rightpart,
 					  int timestamps,
 					  int systemsize,
 				      T h,
-					  std::vector<std::vector<T>>& x, 
+					  std::vector<std::vector<T>> x, 
 					  T epsilon)
 
 {
@@ -253,19 +252,19 @@ Portrait ODE::Runge_Kutta_4(const std::vector<funtwo>& rightpart,
 		x.push_back({});
 		for(int k = 0; k < systemsize; ++k) 
 		{
-			K[0][k] = rightpart[k](xT);
+			K[0][k] = rightpart[k](previous);
 		}
-		help = xT + h/2 * K[0];
+		help = previous + h/2 * K[0];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[1][k] = rightpart[k](help);
 		}
-		help = xT + h/2 * K[1];
+		help = previous + h/2 * K[1];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[2][k] = rightpart[k](help);
 		}
-		help = xT + h * K[2];
+		help = previous + h * K[2];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[3][k] = rightpart[k](help);
@@ -401,25 +400,27 @@ Portrait ODE::Adams_Bashforth(const std::vector<funtwo>& rightpart,
 {
 	std::vector<T> help(systemsize);
 	std::vector<std::vector<T>> K(4);
-	for (int i = 0; i < 4; ++i) {K[i] = help;};
+	std::vector<T> previous;
+ 	for (int i = 0; i < 4; ++i) {K[i] = help;};
 	for(int t = 0; t < 4; ++t)
 	{
 		x.push_back({});
+		previous = x[t];
 		for(int k = 0; k < systemsize; ++k) 
 		{
-			K[0][k] = rightpart[k](xT[i]);
+			K[0][k] = rightpart[k](previous);
 		}
-		help = xT[i] + h/2 * K[0];
+		help = previous + h/2 * K[0];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[1][k] = rightpart[k](help);
 		}
-		help = xT[i] + h/2 * K[1];
+		help = previous + h/2 * K[1];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[2][k] = rightpart[k](help);
 		}
-		help = xT[i] + h * K[2];
+		help = previous + h * K[2];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[3][k] = rightpart[k](help);
@@ -427,7 +428,7 @@ Portrait ODE::Adams_Bashforth(const std::vector<funtwo>& rightpart,
 	 	for(int j = 0; j < systemsize; ++j)
 	 	{
 	 		//x[j].push_back(xT[i][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
-	 		x[t+1].push_back(x[t][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
+	 		x[t+1].push_back(previous[j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
 	 	}
 	}
 
@@ -470,25 +471,27 @@ Portrait ODE::Forecast_correction(const std::vector<funtwo>& rightpart,
 {
 	std::vector<T> help(systemsize);
 	std::vector<std::vector<T>> K(4);
+	std::vector<T> previous;
 	for (int i = 0; i < 4; ++i) {K[i] = help;};
 	for(int t = 0; t < 4; ++t)
 	{
 		x.push_back({});
+		previous = x[t];
 		for(int k = 0; k < systemsize; ++k) 
 		{
-			K[0][k] = rightpart[k](xT[i]);
+			K[0][k] = rightpart[k](previous);
 		}
-		help = xT[i] + h/2 * K[0];
+		help = previous + h/2 * K[0];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[1][k] = rightpart[k](help);
 		}
-		help = xT[i] + h/2 * K[1];
+		help = previous + h/2 * K[1];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[2][k] = rightpart[k](help);
 		}
-		help = xT[i] + h * K[2];
+		help = previous + h * K[2];
 		for(int k = 0; k < systemsize; ++k) 
 		{
 			K[3][k] = rightpart[k](help);
@@ -497,7 +500,7 @@ Portrait ODE::Forecast_correction(const std::vector<funtwo>& rightpart,
 	 	for(int j = 0; j < systemsize; ++j)
 	 	{
 	 		//x[j].push_back(xT[i][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
-	 		x[t+1].push_back(x[t][j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
+	 		x[t+1].push_back(previous[j] + h/6 * (K[0][j] + 2*K[1][j] + 2*K[2][j] + K[3][j]));
 	 	}
 	}
 
