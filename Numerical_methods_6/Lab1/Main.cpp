@@ -31,9 +31,9 @@ int main(int argc, char** argv)
 
 	double hh = 0.03;
 	double q = 0.5;
-	s1 = ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_4_, hh, 1e-3);
-	s2 = ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_4_, q * hh, 1e-3);
-	s3 = ODE::NDsolve(rightpart, cond, ODE::Runge_Kutta_4_, q * q * hh, 1e-3);
+	s1 = ODE::NDsolve(rightpart, cond, ODE::Forecast_correction_, hh, 1e-3);
+	s2 = ODE::NDsolve(rightpart, cond, ODE::Forecast_correction_, q * hh, 1e-3);
+	s3 = ODE::NDsolve(rightpart, cond, ODE::Forecast_correction_, q * q * hh, 1e-3);
 	double x1 = s1[16][0], x2 = s2[32][0], x3 = s3[64][0];
 	std::cout << "Order : " << log((x3 - x2)/(x2 - x1))/log(q) << "\n";
 }
