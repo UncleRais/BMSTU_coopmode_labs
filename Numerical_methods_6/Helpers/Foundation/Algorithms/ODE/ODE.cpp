@@ -61,12 +61,12 @@ Portrait ODE::Phase(const std::vector<funtwo>& rightpart, const std::vector<T>& 
 	auto _cond = cond;
 	Portrait result = {};
 	int counter = 0;
-	const T start1 = -4;
-	const T end1 = 4;
-	const T start2 = -4;
-	const T end2 = 4;
+	const T start1 = -1;
+	const T end1 = 1;
+	const T start2 = -1;
+	const T end2 = 1;
 	const T stepper1 = 0.1;
-	const T stepper2 = 1;
+	const T stepper2 = 0.1;
 	result.push_back({ T(int( ((end1-start1)/stepper1 * (end2-start2))/stepper2 )), (cond[1] - cond[0])/h + 1 });
 	for(T r = start1; r <= end1; r += stepper1){
 		_cond[2] = r;
