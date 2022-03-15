@@ -3,26 +3,25 @@
 #include "./heat_transfer_eq_solve.h"
 
 template < typename T >
-Portrait ODE::NDsolve(const std::vector<funtwo>& rightpart, 
-				  	  const std::vector<T>& cond, 
-				  	  MethodType name, 
-				  	  T h,
-				 	  T epsilon)
+Portrait heat_transfer_eq_solve<T>::NDsolve(T epsilon)
 {
-	int systemsize = rightpart.size(); 
-	int timestamps = (cond[1] - cond[0])/h + 1;
-	std::vector<std::vector<T>> x;
-	x.push_back({});
-	for(int i = 0; i < systemsize; ++i)
-	{
-		x[0].push_back(cond[i + 2]);
-	} 
-	Portrait end;
-	return(end);
+	Portrait result;
+	return(result);
 }
 
 template < typename T >
-void ODE::save(std::vector<std::vector<T>>& portrait, std::string path) {
+void heat_transfer_eq_solve<T>::parameters_info()
+{
+	std::cout << "Beam characteristics:\n";
+	std::cout << "c = " << c << ", rho = " << rho << ", L = " << L <<";\n"; 
+	std::cout << "Boundary conditions:\n";
+	std::cout << "alpha = " << alpha << ", beta = " << beta << ", gamma = " << gamma << ",\n";
+	std::cout << "x1 = " << x1 << ", x2 = " << x2 << ", k1 = " << k1 << ", k2 = " << k2 << ",\n";
+	std::cout << "Q = " << Q << ", t0 = " << t0 << ", T0 = " << T0 << ";\n";
+}
+
+template < typename T >
+void heat_transfer_eq_solve<T>::save(std::vector<std::vector<T>>& portrait, std::string path) {
 	std::ofstream file;
 	file.open(path);
 	for(const auto &point: portrait)
@@ -37,7 +36,7 @@ void ODE::save(std::vector<std::vector<T>>& portrait, std::string path) {
 }
 
 template < typename T >
-void ODE::save(std::vector<T>& portrait, std::string path) {
+void heat_transfer_eq_solve<T>::save(std::vector<T>& portrait, std::string path) {
 	std::ofstream file;
 	file.open(path);
 	int counter = 0;

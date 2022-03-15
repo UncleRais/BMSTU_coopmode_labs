@@ -2,6 +2,8 @@
 #define ODE_CPP
 #include "./ODE.h"
 
+#include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/NonLinearSolve/NonLin.cpp"
+
 //MARK: Let's make a deal
 // t – time iterator, current t is a timestamp
 // i - node iterator, current t is a dimensional point
