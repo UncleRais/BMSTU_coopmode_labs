@@ -12,7 +12,7 @@ template < typename T >
 Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime, int NumX, 
 											   T LatterTime, T sigma)
 { 
-	int NumberOfResults = 30;
+	int NumberOfResults = 1;
 	T h = L/(NumX - 1);
 	T tau = LatterTime/(NumTime - 1);
 	T coef_cp = tau/(h * c * rho);
@@ -21,12 +21,17 @@ Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime,
 	Portrait<T> result;
 	std::vector<T> prev(NumX, T0), actual(NumX, 0), coef_a(NumX - 1);
 
+	result.x.reserve(NumX);
+
 	for(int i = 0; i < NumX - 1; i++)
 		coef_a[i] = K(0, h*(i + 1/2));
-	result.reserve(NumberOfResults);
+	for(int i = 0; i < NumX; i++)
+		result.x.push_back(i * h);
+
+	result.time.reserve(NumberOfResults);
 
 	TimeLayer<T> time_layer (prev, 0);
-	result.push_back(time_layer);
+	result.time.push_back(time_layer);
 
 	//Явный метод на четырехточечном шаблоне
 	if( sigma < std::numeric_limits<T>::min()) 
@@ -46,12 +51,12 @@ Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime,
 			}
 			mu_right = prev[NumX - 1] + 2 * (P(j*tau) - omega_plus)*coef_cp;
 			
-			actual[0] = left * mu_left + (1 - left) * (T0 + 1);
+			actual[0] = left * mu_left + (1 - left) * T0;
 			actual[NumX - 1] = right * mu_right  + (1 - right) * T0;
 			if(!(j % NumberOfResults)) 
 				{
 					time_layer = {actual , j * tau};
-					result.push_back(time_layer);
+					result.time.push_back(time_layer);
 				}
 			prev = actual;
 		}
@@ -77,19 +82,34 @@ void heat_transfer_eq_solve<T>::parameters_info() const
 }
 
 template < typename T >
-void heat_transfer_eq_solve<T>::save(const std::vector<TimeLayer<T>>& portrait, const std::string path)
+void heat_transfer_eq_solve<T>::save(const Portrait<T>& portrait, const std::string path)
 {
 	std::ofstream file;
 	file.open(path);
-	for(const auto &point: portrait)
-	{
-		for(const auto &coordinate: point.x)
+
+	/*Запись для анализа "глазами"*/
+	// for(const auto &point: portrait.x)
+	// {
+	// 	file << point << ' ';
+	// }
+	// file << std::endl;
+	// for(const auto &point: portrait.time)
+	// {
+	// 	for(const auto &coordinate: point.temp)
+	// 	{
+	// 		file << coordinate << ' ';
+	// 	}
+	// 	file << point.t << ' '; 
+	// 	file << std::endl;
+	// }
+
+
+	for(size_t i = 0; i < portrait.time.size(); ++i)
+		for(size_t j = 0; j < portrait.x.size(); ++j)
 		{
-			file << coordinate << ' ';
+			file << portrait.x[j] << ' ' << portrait.time[i].t << ' ' << portrait.time[i].temp[j];
+			file << std::endl;
 		}
-		file << point.t << ' '; 
-		file << std::endl;
-	}
 	file.close();
 }
 

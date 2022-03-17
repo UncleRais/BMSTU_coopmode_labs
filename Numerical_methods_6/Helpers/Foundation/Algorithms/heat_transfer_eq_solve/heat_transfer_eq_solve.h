@@ -7,14 +7,18 @@
 template<class T>
 struct TimeLayer
 {
-    std::vector<T> x;
+    std::vector<T> temp;
     T t;
 
-    TimeLayer(std::vector<T> xx, T tt): x(xx), t(tt) {};
+    TimeLayer(std::vector<T> tempp, T tt): temp(tempp), t(tt) {};
 };
 
 template<class T>
-using Portrait = std::vector<TimeLayer<T>>;
+struct Portrait
+{
+    std::vector<TimeLayer<T>> time;
+    std::vector<T> x;
+};
 
 
 template < typename T > 
@@ -88,7 +92,7 @@ Portrait<T> NDsolve(int left, int right, int NumTime, int NumX, T LatterTime, T 
 
 void parameters_info() const;
 
-static void save(const std::vector<TimeLayer<T>>& portrait, const std::string path);
+static void save(const Portrait<T>& portrait, const std::string path);
 
 static void save(const std::vector<T>& portrait, const std::string path);
 

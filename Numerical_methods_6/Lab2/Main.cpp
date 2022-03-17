@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {
 	heat_transfer_eq_solve<double> solution(cond, 1, 1);
 	//solution.parameters_info();
-	auto sol = solution.NDsolve(0, 0, 300, 10, 1.0);
+	auto sol = solution.NDsolve(0, 1, 300, 20, 0.1);
 	std::string path = "./output/solution.dat";
 	heat_transfer_eq_solve<double>::save(sol, path);
 }
