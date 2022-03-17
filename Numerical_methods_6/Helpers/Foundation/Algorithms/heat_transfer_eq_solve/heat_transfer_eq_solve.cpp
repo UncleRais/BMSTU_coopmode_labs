@@ -22,10 +22,11 @@ Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime,
 	std::vector<T> prev(NumX, T0), actual(NumX, 0), coef_a(NumX - 1);
 
 	for(int i = 0; i < NumX - 1; i++)
-		coef_a[i] = K(0, i + h/2);
-
+		coef_a[i] = K(0, h*(i + 1/2));
 	result.reserve(NumberOfResults);
-	result.push_back(prev);
+
+	TimeLayer<T> time_layer (prev, 0);
+	result.push_back(time_layer);
 
 	//Явный метод на четырехточечном шаблоне
 	if( sigma < std::numeric_limits<T>::min()) 
@@ -34,17 +35,24 @@ Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime,
 		{
 			omega_minus = coef_a[0] * (prev[1] - prev[0]) / h;
 			mu_left = prev[0] + 2 * (omega_minus - P(j*tau))*coef_cp;
+			//std::cout << j << "\n";
 			for(int i = 1; i < NumX - 1; ++i)
 			{
 				omega_plus = coef_a[i] * (prev[i + 1] - prev[i]) / h;
+				//std:: cout << omega_minus << " / " << omega_plus << "\n";
+				//omega_minus = coef_a[i - 1] * (prev[i] - prev[i - 1]) / h;
 				actual[i] = prev[i] + coef_cp * (omega_plus - omega_minus);
 				omega_minus = omega_plus;
 			}
-			mu_right = prev[NumX - 1] + 2 * (P(j*tau) - omega_minus)*coef_cp;
+			mu_right = prev[NumX - 1] + 2 * (P(j*tau) - omega_plus)*coef_cp;
 			
-			actual[0] = left * mu_left + (1 - left) * T0;
+			actual[0] = left * mu_left + (1 - left) * (T0 + 1);
 			actual[NumX - 1] = right * mu_right  + (1 - right) * T0;
-			if(j % NumberOfResults) result.push_back(actual);
+			if(!(j % NumberOfResults)) 
+				{
+					time_layer = {actual , j * tau};
+					result.push_back(time_layer);
+				}
 			prev = actual;
 		}
 
@@ -69,16 +77,17 @@ void heat_transfer_eq_solve<T>::parameters_info() const
 }
 
 template < typename T >
-void heat_transfer_eq_solve<T>::save(const std::vector<std::vector<T>>& portrait, const std::string path)
+void heat_transfer_eq_solve<T>::save(const std::vector<TimeLayer<T>>& portrait, const std::string path)
 {
 	std::ofstream file;
 	file.open(path);
 	for(const auto &point: portrait)
 	{
-		for(const auto &coordinate: point)
+		for(const auto &coordinate: point.x)
 		{
 			file << coordinate << ' ';
 		}
+		file << point.t << ' '; 
 		file << std::endl;
 	}
 	file.close();

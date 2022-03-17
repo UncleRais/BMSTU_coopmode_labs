@@ -5,7 +5,16 @@
 #include "../../../../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
 
 template<class T>
-using Portrait = std::vector<std::vector<T>>;
+struct TimeLayer
+{
+    std::vector<T> x;
+    T t;
+
+    TimeLayer(std::vector<T> xx, T tt): x(xx), t(tt) {};
+};
+
+template<class T>
+using Portrait = std::vector<TimeLayer<T>>;
 
 
 template < typename T > 
@@ -79,7 +88,7 @@ Portrait<T> NDsolve(int left, int right, int NumTime, int NumX, T LatterTime, T 
 
 void parameters_info() const;
 
-static void save(const std::vector<std::vector<T>>& portrait, const std::string path);
+static void save(const std::vector<TimeLayer<T>>& portrait, const std::string path);
 
 static void save(const std::vector<T>& portrait, const std::string path);
 
