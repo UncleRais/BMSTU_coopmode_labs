@@ -45,7 +45,7 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 
 		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
 		help0 = coef_cp / 2 + sigma * coef_a[0] / h;
-		B[0] = sigma * coef_a[0] / h / help0;
+		B[0] = right*sigma * coef_a[0] / h / help0;
 		C[0] = -1;
 		mu_left = (prev[0] * coef_cp / 2 - sigma * P((j + 1) * tau) + (1 - sigma) * (omega[0] - P(j * tau)) ) / help0;
 		F[0] = -(left * mu_left + (1 - left) * T0);
@@ -58,18 +58,12 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 			B[i] = sigm_a_i;
 			F[i] = -(prev[i] * coef_cp + (1 - sigma) * (omega[i] - omega[i - 1]));
 		} 
-		A[NumX - 2] = (sigma * coef_a[NumX - 2] / h) / helpN;
+		A[NumX - 2] = right*(sigma * coef_a[NumX - 2] / h) / helpN;
 		C[NumX - 1] = -1;
 		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P(j * tau) + (1 - sigma) * (P((j - 1)*tau) - omega[NumX - 2])) / helpN;
 		F[NumX - 1] =  -(right * mu_right  + (1 - right) * T0);
 
-		//std::cout << A << "\n";
-		//std::cout << C << "\n";
-		//std::cout << B << "\n";
-		//std::cout << F << "\n";
-
 		actual = Banish::solve(A , C , B , F);
-
 
 		if(!(j % NumberOfResults)) 
  		{
