@@ -4,23 +4,6 @@
 //#include "../../../../../Numerical_methods_5/Helpers/Foundation/Foundation.cpp"
 #include "../../../../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
 
-template<class T>
-struct TimeLayer
-{
-    std::vector<T> temp;
-    T t;
-
-    TimeLayer(std::vector<T> tempp, T tt): temp(tempp), t(tt) {};
-};
-
-template<class T>
-struct Portrait
-{
-    std::vector<TimeLayer<T>> time;
-    std::vector<T> x;
-};
-
-
 template < typename T > 
 class heat_transfer_eq_solve 
 {
@@ -88,13 +71,9 @@ heat_transfer_eq_solve(const std::vector<T>& cond, int flow, int conductivity)
     }
 };
 
-Portrait<T> NDsolve(int left, int right, int NumTime, int NumX, T LatterTime, T sigma = 0);
+void NDsolve(const std::string path, int left, int right, size_t NumTime, size_t NumX, size_t NumberOfResult, T LatterTime, T sigma);
 
 void parameters_info() const;
-
-static void save(const Portrait<T>& portrait, const std::string path);
-
-static void save(const std::vector<T>& portrait, const std::string path);
 
 };
 

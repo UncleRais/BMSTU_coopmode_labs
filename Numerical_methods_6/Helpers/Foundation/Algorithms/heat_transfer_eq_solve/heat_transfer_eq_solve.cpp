@@ -4,70 +4,85 @@
 #include <climits>
 #include <limits> 
 
+
+#include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/Banish/Banish.cpp"
 #include "./heat_transfer_eq_solve.h"
 
-
 template < typename T >
- /*Не могу заменить std::vector<std::vector<T>> на Portrait, выдает ошибку, надо исправить*/
-Portrait<T> heat_transfer_eq_solve<T>::NDsolve(int left, int right, int NumTime, int NumX, 
-											   T LatterTime, T sigma)
+void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int right, 
+										size_t NumTime,  size_t NumX, size_t NumberOfResults,
+										T LatterTime, T sigma)
 { 
-	int NumberOfResults = 1;
+	std::ofstream file;
+	file.open(path);
+
 	T h = L/(NumX - 1);
 	T tau = LatterTime/(NumTime - 1);
-	T coef_cp = tau/(h * c * rho);
-	T omega_plus, omega_minus, mu_left, mu_right; 
+	T coef_cp = (h * c * rho)/tau;
+	T mu_left, mu_right, sigm_a_i, sigm_a_i_1, help0, helpN;
 
-	Portrait<T> result;
-	std::vector<T> prev(NumX, T0), actual(NumX, 0), coef_a(NumX - 1);
+	std::vector<T> prev(NumX, T0), actual(NumX), coef_a(NumX - 1), omega(NumX - 1), 
+	A(NumX - 1), C(NumX), B(NumX - 1), F(NumX), x;
+	x.reserve(NumX);
 
-	result.x.reserve(NumX);
+	for(size_t i = 0; i < NumX; i++)
+		x.push_back(i * h);
 
-	for(int i = 0; i < NumX - 1; i++)
-		coef_a[i] = K(0, h*(i + 1/2));
-	for(int i = 0; i < NumX; i++)
-		result.x.push_back(i * h);
-
-	result.time.reserve(NumberOfResults);
-
-	TimeLayer<T> time_layer (prev, 0);
-	result.time.push_back(time_layer);
-
-	//Явный метод на четырехточечном шаблоне
-	if( sigma < std::numeric_limits<T>::min()) 
+	for(size_t i = 0; i < NumX; i++)
 	{
-		for(int j = 1; j < NumTime; ++j)
+		file << x[i] << ' ' << 0 << ' ' << prev[i];
+		file << std::endl;
+	}
+
+	for(size_t j = 1; j < NumTime; j++)
+	{
+		for(size_t i = 0; i < NumX - 1; i++)
 		{
-			omega_minus = coef_a[0] * (prev[1] - prev[0]) / h;
-			mu_left = prev[0] + 2 * (omega_minus - P(j*tau))*coef_cp;
-			//std::cout << j << "\n";
-			for(int i = 1; i < NumX - 1; ++i)
-			{
-				omega_plus = coef_a[i] * (prev[i + 1] - prev[i]) / h;
-				//std:: cout << omega_minus << " / " << omega_plus << "\n";
-				//omega_minus = coef_a[i - 1] * (prev[i] - prev[i - 1]) / h;
-				actual[i] = prev[i] + coef_cp * (omega_plus - omega_minus);
-				omega_minus = omega_plus;
-			}
-			mu_right = prev[NumX - 1] + 2 * (P(j*tau) - omega_plus)*coef_cp;
-			
-			actual[0] = left * mu_left + (1 - left) * T0;
-			actual[NumX - 1] = right * mu_right  + (1 - right) * T0;
-			if(!(j % NumberOfResults)) 
-				{
-					time_layer = {actual , j * tau};
-					result.time.push_back(time_layer);
-				}
-			prev = actual;
+			coef_a[i] = K(0, h*(i + 1/2));
+			omega[i] = coef_a[i] * (prev[i + 1] - prev[i]) / h;
+
 		}
 
-	}
-	else
-	//Неявный метод на шеститочечном шаблоне (sigma = 1, четырехточечный)
-	{
+		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
+		help0 = coef_cp / 2 + sigma * coef_a[0] / h;
+		B[0] = sigma * coef_a[0] / h / help0;
+		C[0] = -1;
+		mu_left = (prev[0] * coef_cp / 2 - sigma * P((j + 1) * tau) + (1 - sigma) * (omega[0] - P(j * tau)) ) / help0;
+		F[0] = -(left * mu_left + (1 - left) * T0);
+		for(size_t i = 1; i < NumX - 1; i++)
+		{	
+			sigm_a_i_1 = sigma * coef_a[i - 1] / h;
+			sigm_a_i = sigma * coef_a[i] / h;
+			A[i - 1] = sigm_a_i_1;
+			C[i] = -(sigm_a_i_1 + sigm_a_i + coef_cp);
+			B[i] = sigm_a_i;
+			F[i] = -(prev[i] * coef_cp + (1 - sigma) * (omega[i] - omega[i - 1]));
+		} 
+		A[NumX - 2] = (sigma * coef_a[NumX - 2] / h) / helpN;
+		C[NumX - 1] = -1;
+		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P(j * tau) + (1 - sigma) * (P((j - 1)*tau) - omega[NumX - 2])) / helpN;
+		F[NumX - 1] =  -(right * mu_right  + (1 - right) * T0);
 
+		//std::cout << A << "\n";
+		//std::cout << C << "\n";
+		//std::cout << B << "\n";
+		//std::cout << F << "\n";
+
+		actual = Banish::solve(A , C , B , F);
+
+
+		if(!(j % NumberOfResults)) 
+ 		{
+ 			for(size_t i = 0; i < NumX; i++)
+ 			{
+				file << x[i] << ' ' << j * tau << ' ' << actual[i];
+				file << std::endl;
+			}
+ 		}
+		prev = actual;
 	}
-	return(result);
+	file.close();
+
 }
 
 template < typename T >
@@ -79,48 +94,6 @@ void heat_transfer_eq_solve<T>::parameters_info() const
 	std::cout << "alpha = " << alpha << ", beta = " << beta << ", gamma = " << gamma << ",\n";
 	std::cout << "x1 = " << x1 << ", x2 = " << x2 << ", k1 = " << k1 << ", k2 = " << k2 << ",\n";
 	std::cout << "Q = " << Q << ", t0 = " << t0 << ", T0 = " << T0 << ";\n";
-}
-
-template < typename T >
-void heat_transfer_eq_solve<T>::save(const Portrait<T>& portrait, const std::string path)
-{
-	std::ofstream file;
-	file.open(path);
-
-	/*Запись для анализа "глазами"*/
-	// for(const auto &point: portrait.x)
-	// {
-	// 	file << point << ' ';
-	// }
-	// file << std::endl;
-	// for(const auto &point: portrait.time)
-	// {
-	// 	for(const auto &coordinate: point.temp)
-	// 	{
-	// 		file << coordinate << ' ';
-	// 	}
-	// 	file << point.t << ' '; 
-	// 	file << std::endl;
-	// }
-
-
-	for(size_t i = 0; i < portrait.time.size(); ++i)
-		for(size_t j = 0; j < portrait.x.size(); ++j)
-		{
-			file << portrait.x[j] << ' ' << portrait.time[i].t << ' ' << portrait.time[i].temp[j];
-			file << std::endl;
-		}
-	file.close();
-}
-
-template < typename T >
-void heat_transfer_eq_solve<T>::save(const std::vector<T>& portrait, const std::string path)
-{
-	std::ofstream file;
-	file.open(path);
-	int counter = 0;
-	for(const auto &value: portrait) { file << ++counter << ' ' << value << std::endl;  }
-	file.close();
 }
 
 #endif
