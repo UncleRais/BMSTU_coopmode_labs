@@ -10,5 +10,5 @@ int main(int argc, char** argv)
 	heat_transfer_eq_solve<double> solution(cond, 1, 1);
 	//solution.parameters_info();
 	std::string path = "./output/solution.dat";
-	solution.NDsolve(path, 0, 1, 300, 10, 10, 0.1, 0);
+	solution.NDsolve(path, 1, 0, 300, 10, 10, 1, 1);
 }

@@ -40,7 +40,6 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 		{
 			coef_a[i] = K(0, h*(i + 1/2));
 			omega[i] = coef_a[i] * (prev[i + 1] - prev[i]) / h;
-
 		}
 
 		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
@@ -61,7 +60,7 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 		A[NumX - 2] = right*(sigma * coef_a[NumX - 2] / h) / helpN;
 		C[NumX - 1] = -1;
 		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P(j * tau) + (1 - sigma) * (P((j - 1)*tau) - omega[NumX - 2])) / helpN;
-		F[NumX - 1] =  -(right * mu_right  + (1 - right) * T0);
+		F[NumX - 1] =  -(right * mu_right  + (1 - right) * (T0));
 
 		actual = Banish::solve(A , C , B , F);
 
