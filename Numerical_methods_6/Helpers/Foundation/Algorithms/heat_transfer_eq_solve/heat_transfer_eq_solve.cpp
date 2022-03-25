@@ -13,25 +13,37 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 										size_t NumTime,  size_t NumX, size_t NumberOfResults,
 										T LatterTime, T sigma)
 { 
-	std::ofstream file;
-	file.open(path);
+	std::ofstream file_x_time_temp;
+	//std::ofstream file_conservative_energy;
+	file_x_time_temp.open(path);
+	//file_conservative_energy.open("./output/conserv_energy.dat");
+
+
 
 	T h = L/(NumX - 1);
 	T tau = LatterTime/(NumTime - 1);
 	T coef_cp = (h * c * rho)/tau;
 	T mu_left, mu_right, sigm_a_i, sigm_a_i_1, help0, helpN;
 
-	std::vector<T> prev(NumX, T0), actual(NumX), coef_a(NumX - 1), omega(NumX - 1), 
+	if(tau <= pow(h,2) * pow(L , 2) * c * rho / 2 / k2 / pow(NumX, 2)) {std::cout << "Явный метод устойчив!" << std::endl;}
+		else {std::cout << "Явный метод не устойчив!" << std::endl;};
+
+	std::vector<T> prev(NumX), actual(NumX), coef_a(NumX - 1), omega(NumX - 1), 
 	A(NumX - 1), C(NumX), B(NumX - 1), F(NumX), x;
 	x.reserve(NumX);
 
-	for(size_t i = 0; i < NumX; i++)
-		x.push_back(i * h);
+
 
 	for(size_t i = 0; i < NumX; i++)
 	{
-		file << x[i] << ' ' << 0 << ' ' << prev[i];
-		file << std::endl;
+		x.push_back(i * h);
+		prev[i] = InitTemp(i * h);
+	}
+
+	for(size_t i = 0; i < NumX; i++)
+	{
+		file_x_time_temp << x[i] << ' ' << 0 << ' ' << prev[i];
+		file_x_time_temp << std::endl;
 	}
 
 	for(size_t j = 1; j < NumTime; j++)
@@ -64,17 +76,27 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 
 		actual = Banish::solve(A , C , B , F);
 
+		// T sum_energy = 0;
+
+		// for(size_t i = 0 ; i < actual.size() - 1; ++i)
+		// {
+		// 	sum_energy += (actual[i] + actual[i+1]) * h /2;
+		// }
+
+		// file_conservative_energy << 1 - sum_energy << std::endl;
+
 		if(!(j % NumberOfResults)) 
  		{
  			for(size_t i = 0; i < NumX; i++)
  			{
-				file << x[i] << ' ' << j * tau << ' ' << actual[i];
-				file << std::endl;
+				file_x_time_temp << x[i] << ' ' << j * tau << ' ' << actual[i];
+				file_x_time_temp << std::endl;
 			}
  		}
 		prev = actual;
 	}
-	file.close();
+	file_x_time_temp.close();
+	//file_conservative_energy.close();
 
 }
 
