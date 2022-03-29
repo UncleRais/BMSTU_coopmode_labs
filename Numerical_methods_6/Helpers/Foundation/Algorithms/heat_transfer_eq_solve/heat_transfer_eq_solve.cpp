@@ -18,8 +18,6 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 	file_x_time_temp.open(path);
 	//file_conservative_energy.open("./output/conserv_energy.dat");
 
-
-
 	T h = L/(NumX - 1);
 	T tau = LatterTime/(NumTime - 1);
 	T coef_cp = (h * c * rho)/tau;
@@ -31,8 +29,6 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 	std::vector<T> prev(NumX), actual(NumX), coef_a(NumX - 1), omega(NumX - 1), 
 	A(NumX - 1), C(NumX), B(NumX - 1), F(NumX), x;
 	x.reserve(NumX);
-
-
 
 	for(size_t i = 0; i < NumX; i++)
 	{
@@ -51,11 +47,11 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 		for(size_t i = 0; i < NumX - 1; i++)
 		{
 			coef_a[i] = K(0, h*(i + 1/2));
-			omega[i] = coef_a[i] * (prev[i + 1] - prev[i]) / h;
+			omega[i] = coef_a[i] * (prev[i+1] - prev[i]) / h;
 		}
 
-		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
 		help0 = coef_cp / 2 + sigma * coef_a[0] / h;
+		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
 		B[0] = right*sigma * coef_a[0] / h / help0;
 		C[0] = -1;
 		mu_left = (prev[0] * coef_cp / 2 - sigma * P((j + 1) * tau) + (1 - sigma) * (omega[0] - P(j * tau)) ) / help0;
@@ -98,6 +94,75 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 	file_x_time_temp.close();
 	//file_conservative_energy.close();
 
+}
+
+template < typename T >
+void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, bool right_flow, size_t timestamps, size_t nodes, size_t results, T finish, T sigma) {
+	std::ofstream file;
+	file.open(path);
+
+	T h = L/(nodes - 1);
+	T tau = finish/(timestamps - 1);
+	T r = (h*c*rho)/tau;
+
+	std::vector<T> previous(nodes), next(nodes, 0), x(nodes); //previos & next are 'u' or temperature
+	for(size_t i = 0; i < nodes; i++)
+	{
+		const auto node = i*h;
+		const auto resting_heat = InitTemp(node);
+		x[i] = node;
+		previous[i] = resting_heat;
+		file << node << ' ' << 0 << ' ' << resting_heat;
+		file << std::endl;
+	}
+
+	std::vector<T> A(nodes-1), B(nodes), C(nodes-1), F(nodes);
+	for(size_t j = 1; j < timestamps; ++j)
+	{
+		if(left_flow) {
+			const T a1 = (K(previous[1], 0)+K(previous[0], 0))/2;
+			B[0] = -(r/2 + a1*sigma/h);
+			C[0] = a1*sigma/h;
+			F[0] = -(previous[0]*r/2+sigma*P(tau*(j))+(1-sigma)*(a1*(previous[1]-previous[0])/h-P(tau*(j-1))));
+		} else {
+			B[0] = 1.0;
+			C[0] = 0.0;
+			F[0] = InitTemp(x[0]);
+		}
+
+		for(size_t i = 1; i < nodes-1; ++i) {
+			const T a  = (K(previous[i], 0)+K(previous[i-1], 0))/2;
+			const T ap = (K(previous[i+1], 0)+K(previous[i], 0))/2;
+			A[i-1] = ap*sigma/h;
+			B[i]   = -(ap*sigma/h-a*sigma/h+r);
+			C[i-1] = a*sigma/h;
+			F[i]   = -(previous[i]*r+(1-sigma)*( ap*(previous[i+1]-previous[i])/h-a*(previous[i]-previous[i-1])/h)); 
+		}
+
+		if(right_flow) {
+			const T aN = (K(previous[nodes-1], 0)+K(previous[nodes-2], 0))/2;
+			A[nodes-2] = -aN*sigma/h;
+			B[nodes-1] = r/2 + aN*sigma/h;
+			F[nodes-1] = previous[nodes-1]*r/2 + sigma*P(tau*(j))+(1-sigma)*(P(tau*(j-1))-aN*(previous[nodes-1] - previous[nodes-2])/h);
+		} else {
+			A[nodes-2] = 0.0;
+			B[nodes-1] = 1.0;
+			F[nodes-1] = InitTemp(x[nodes-1]);
+		}
+
+		next = Banish::solve(A, B, C, F);
+		if(!(j%results)) 
+ 		{
+ 			for(size_t i = 0; i < nodes; ++i)
+ 			{
+				file << x[i] << ' ' << j*tau << ' ' << next[i];
+				file << std::endl;
+			}
+ 		}
+		previous = next;
+	}
+
+	file.close();
 }
 
 template < typename T >

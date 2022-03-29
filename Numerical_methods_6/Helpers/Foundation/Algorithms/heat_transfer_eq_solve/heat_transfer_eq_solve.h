@@ -63,7 +63,7 @@ heat_transfer_eq_solve(const std::vector<T>& cond, int flow, int conductivity)
          if( 0.5*t0 < t && t < t0){ return (2*Q*(t0 - t)); } else { return(0); } };
         break;
         case 5:
-        P = [this](T t) -> T 
+        P = [](T t) -> T 
         { return(0); };
         break;
     }
@@ -84,6 +84,7 @@ heat_transfer_eq_solve(const std::vector<T>& cond, int flow, int conductivity)
 };
 
 void NDsolve(const std::string path, int left, int right, size_t NumTime, size_t NumX, size_t NumberOfResult, T LatterTime, T sigma);
+void TEST(const std::string path, bool left_flow, bool right_flow, size_t timestamps, size_t nodes, size_t results, T finish, T sigma);
 
 void parameters_info() const;
 
