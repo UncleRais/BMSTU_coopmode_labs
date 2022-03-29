@@ -105,13 +105,13 @@ void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, boo
 	T tau = finish/(timestamps - 1);
 	T r = (h*c*rho)/tau;
 
-	std::vector<T> previous(nodes), next(nodes, 0), x(nodes); //previos & next are 'u' or temperature
+	std::vector<T> temperature(nodes), x(nodes);
 	for(size_t i = 0; i < nodes; i++)
 	{
 		const auto node = i*h;
 		const auto resting_heat = InitTemp(node);
 		x[i] = node;
-		previous[i] = resting_heat;
+		temperature[i] = resting_heat;
 		file << node << ' ' << 0 << ' ' << resting_heat;
 		file << std::endl;
 	}
@@ -120,10 +120,10 @@ void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, boo
 	for(size_t j = 1; j < timestamps; ++j)
 	{
 		if(left_flow) {
-			const T a1 = (K(previous[1], 0)+K(previous[0], 0))/2;
+			const T a1 = (K(temperature[1], 0)+K(temperature[0], 0))/2;
 			B[0] = -(r/2 + a1*sigma/h);
 			C[0] = a1*sigma/h;
-			F[0] = -(previous[0]*r/2+sigma*P(tau*(j))+(1-sigma)*(a1*(previous[1]-previous[0])/h-P(tau*(j-1))));
+			F[0] = -(temperature[0]*r/2 + sigma*P(tau*(j))+(1-sigma)*(a1*(temperature[1]-temperature[0])/h-P(tau*(j-1))));
 		} else {
 			B[0] = 1.0;
 			C[0] = 0.0;
@@ -131,35 +131,34 @@ void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, boo
 		}
 
 		for(size_t i = 1; i < nodes-1; ++i) {
-			const T a  = (K(previous[i], 0)+K(previous[i-1], 0))/2;
-			const T ap = (K(previous[i+1], 0)+K(previous[i], 0))/2;
+			const T a  = (K(temperature[i], 0)+K(temperature[i-1], 0))/2;
+			const T ap = (K(temperature[i+1], 0)+K(temperature[i], 0))/2;
 			A[i-1] = ap*sigma/h;
 			B[i]   = -(ap*sigma/h-a*sigma/h+r);
 			C[i-1] = a*sigma/h;
-			F[i]   = -(previous[i]*r+(1-sigma)*( ap*(previous[i+1]-previous[i])/h-a*(previous[i]-previous[i-1])/h)); 
+			F[i]   = -(temperature[i]*r+(1-sigma)*( ap*(temperature[i+1]-temperature[i])/h-a*(temperature[i]-temperature[i-1])/h)); 
 		}
 
 		if(right_flow) {
-			const T aN = (K(previous[nodes-1], 0)+K(previous[nodes-2], 0))/2;
+			const T aN = (K(temperature[nodes-1], 0)+K(temperature[nodes-2], 0))/2;
 			A[nodes-2] = -aN*sigma/h;
 			B[nodes-1] = r/2 + aN*sigma/h;
-			F[nodes-1] = previous[nodes-1]*r/2 + sigma*P(tau*(j))+(1-sigma)*(P(tau*(j-1))-aN*(previous[nodes-1] - previous[nodes-2])/h);
+			F[nodes-1] = temperature[nodes-1]*r/2 + sigma*P(tau*(j))+(1-sigma)*(P(tau*(j-1))-aN*(temperature[nodes-1] - temperature[nodes-2])/h);
 		} else {
 			A[nodes-2] = 0.0;
 			B[nodes-1] = 1.0;
 			F[nodes-1] = InitTemp(x[nodes-1]);
 		}
 
-		next = Banish::solve(A, B, C, F);
+		temperature = Banish::solve(A, B, C, F);
 		if(!(j%results)) 
  		{
  			for(size_t i = 0; i < nodes; ++i)
  			{
-				file << x[i] << ' ' << j*tau << ' ' << next[i];
+				file << x[i] << ' ' << j*tau << ' ' << temperature[i];
 				file << std::endl;
 			}
  		}
-		previous = next;
 	}
 
 	file.close();
