@@ -134,7 +134,7 @@ void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, boo
 			const T a  = (K(temperature[i], 0)+K(temperature[i-1], 0))/2;
 			const T ap = (K(temperature[i+1], 0)+K(temperature[i], 0))/2;
 			A[i-1] = ap*sigma/h;
-			B[i]   = -(ap*sigma/h-a*sigma/h+r);
+			B[i]   = -(ap*sigma/h+a*sigma/h+r);
 			C[i-1] = a*sigma/h;
 			F[i]   = -(temperature[i]*r+(1-sigma)*( ap*(temperature[i+1]-temperature[i])/h-a*(temperature[i]-temperature[i-1])/h)); 
 		}
