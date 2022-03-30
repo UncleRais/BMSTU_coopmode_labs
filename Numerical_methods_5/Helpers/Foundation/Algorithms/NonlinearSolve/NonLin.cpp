@@ -30,8 +30,11 @@ double NonLinearSolve::d_vFunc(vFunc f, const Point& point, const Partial& parti
 			if (!partial[i]) { continue; }
 		 	result = [result, partial, epsilon](const Point& _point)
 		 	{ 
-		 		Point delta(_point); for (size_t i = 0; i < delta.size(); ++i){ delta[i] += partial[i] ? epsilon : 0; };
-		 		return (result(delta) - result(_point))/epsilon;
+		 		Point XPlusDelta(_point); 
+		 		Point XMinusDelta(_point); 
+		 		for (size_t i = 0; i < XPlusDelta.size(); ++i){ XPlusDelta[i] += partial[i] ? epsilon : 0;
+		 		XMinusDelta[i] -= partial[i] ? epsilon : 0; };
+		 		return (result(XPlusDelta) - result(XMinusDelta))/(2*epsilon);
 		 	};
 		 	result(point);
 		}
@@ -66,6 +69,7 @@ Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vect
 			if (dF.size() < 2*F.size()) 
 			{
 				dF_k = jacobi(F, x_k);
+
 			} else 
 			{
 				std::vector<double> partials(dF.size(), 0);
@@ -74,14 +78,21 @@ Point NonLinearSolve::system_newton(const std::vector<vFunc>& F, const std::vect
 			}
 			std::vector<double> F_k;
 			for (auto f: F) { F_k.push_back(f(x_k)); }
+			for(size_t i = 0; i < 10; i++ ) 
+			{
+				for(size_t j = 0; j < 10; j++ )
+				std::cout << dF_k.atvalue(i,j) << " ";
+			std::cout << "\n";
+			}
+
 			x_k_next = x_k - dF_k.inversed()*F_k;
 		} catch (...) 
 		{
-			x_k.push_back(double(max_iterations + 1));
+			//x_k.push_back(double(max_iterations + 1));
 			return x_k;
 		}
 	}
-	x_k_next.push_back(double(iterations));
+	//x_k_next.push_back(double(iterations));
 	return x_k_next;
 }
 
