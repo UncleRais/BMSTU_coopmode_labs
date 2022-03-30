@@ -6,27 +6,28 @@
 
 
 #include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/Banish/Banish.cpp"
+#include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/NonLinearSolve/NonLin.cpp"
 #include "./heat_transfer_eq_solve.h"
 
 template < typename T >
-void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int right, 
+void heat_transfer_eq_solve<T>::NPDsolve_Linear(const std::string path, int left, int right, 
 										size_t NumTime,  size_t NumX, size_t NumberOfResults,
 										T LatterTime, T sigma)
 { 
 	std::ofstream file_x_time_temp;
-	//std::ofstream file_conservative_energy;
+	std::ofstream file_conservative_energy;
 	file_x_time_temp.open(path);
-	//file_conservative_energy.open("./output/conserv_energy.dat");
+	file_conservative_energy.open("./output/conserv_energy.dat");
 
 	T h = L/(NumX - 1);
 	T tau = LatterTime/(NumTime - 1);
 	T coef_cp = (h * c * rho)/tau;
 	T mu_left, mu_right, sigm_a_i, sigm_a_i_1, help0, helpN;
 
-	if(tau <= pow(h,2) * pow(L , 2) * c * rho / 2 / k2 / pow(NumX, 2)) {std::cout << "Явный метод устойчив!" << std::endl;}
-		else {std::cout << "Явный метод не устойчив!" << std::endl;};
+	//if(tau <= pow(h,2) * pow(L , 2) * c * rho / 2 / k2 / pow(NumX, 2)) {std::cout << "Явный метод устойчив!" << std::endl;}
+	//	else {std::cout << "Явный метод не устойчив!" << std::endl;};
 
-	std::vector<T> prev(NumX), actual(NumX), coef_a(NumX - 1), omega(NumX - 1), 
+	std::vector<T> prev(NumX), coef_a(NumX - 1), omega(NumX - 1), 
 	A(NumX - 1), C(NumX), B(NumX - 1), F(NumX), x;
 	x.reserve(NumX);
 
@@ -34,10 +35,6 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 	{
 		x.push_back(i * h);
 		prev[i] = InitTemp(i * h);
-	}
-
-	for(size_t i = 0; i < NumX; i++)
-	{
 		file_x_time_temp << x[i] << ' ' << 0 << ' ' << prev[i];
 		file_x_time_temp << std::endl;
 	}
@@ -46,13 +43,14 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 	{
 		for(size_t i = 0; i < NumX - 1; i++)
 		{
-			coef_a[i] = K(0, h*(i + 1/2));
+			coef_a[i] = ( K(prev[i], h*i) + K(prev[i+1], h*(i + 1)) )/2;
+			//coef_a[i] = K(prev[i+1], h*(i + 1/2));
 			omega[i] = coef_a[i] * (prev[i+1] - prev[i]) / h;
 		}
 
 		help0 = coef_cp / 2 + sigma * coef_a[0] / h;
 		helpN = coef_cp / 2 + sigma * coef_a[NumX - 2] / h;
-		B[0] = right*sigma * coef_a[0] / h / help0;
+		B[0] = left*sigma * coef_a[0] / h / help0;
 		C[0] = -1;
 		mu_left = (prev[0] * coef_cp / 2 - sigma * P((j + 1) * tau) + (1 - sigma) * (omega[0] - P(j * tau)) ) / help0;
 		F[0] = -(left * mu_left + (1 - left) * T0);
@@ -70,31 +68,111 @@ void heat_transfer_eq_solve<T>::NDsolve(const std::string path, int left, int ri
 		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P(j * tau) + (1 - sigma) * (P((j - 1)*tau) - omega[NumX - 2])) / helpN;
 		F[NumX - 1] =  -(right * mu_right  + (1 - right) * (T0));
 
-		actual = Banish::solve(A , C , B , F);
+		prev = Banish::solve(A , C , B , F);
 
-		// T sum_energy = 0;
+		T sum_energy = 0;
 
-		// for(size_t i = 0 ; i < actual.size() - 1; ++i)
-		// {
-		// 	sum_energy += (actual[i] + actual[i+1]) * h /2;
-		// }
+		for(size_t i = 0 ; i < prev.size() - 1; ++i)
+		{
+			sum_energy += (prev[i] + prev[i+1]) * h /2;
+		}
 
-		// file_conservative_energy << 1 - sum_energy << std::endl;
+		file_conservative_energy << sum_energy << std::endl;
 
 		if(!(j % NumberOfResults)) 
  		{
  			for(size_t i = 0; i < NumX; i++)
  			{
-				file_x_time_temp << x[i] << ' ' << j * tau << ' ' << actual[i];
+				file_x_time_temp << x[i] << ' ' << j * tau << ' ' << prev[i];
 				file_x_time_temp << std::endl;
 			}
  		}
-		prev = actual;
 	}
 	file_x_time_temp.close();
-	//file_conservative_energy.close();
+	file_conservative_energy.close();
 
 }
+
+template < typename T >
+void heat_transfer_eq_solve<T>::NPDsolve_NONLinear(const std::string path, int left, int right, 
+										size_t NumTime,  size_t NumX, size_t NumberOfResults,
+										T LatterTime)
+{ 
+	std::ofstream file_x_time_temp;
+	file_x_time_temp.open(path);
+
+	T h = L/(NumX - 1);
+	T tau = LatterTime/(NumTime - 1);
+	T coef_cp = (h * c * rho)/tau;
+
+	std::vector<T> prev(NumX), x;
+	x.reserve(NumX);
+
+	for(size_t i = 0; i < NumX; i++)
+	{
+		x.push_back(i * h);
+		prev[i] = InitTemp(i * h);
+		file_x_time_temp << x[i] << ' ' << 0 << ' ' << prev[i];
+		file_x_time_temp << std::endl;
+	}
+
+	std::vector<vFunc> shifted;
+
+	for(size_t j = 1; j < NumTime; j++)
+	{
+		shifted.resize(0);
+
+		auto f = [&](const Point& TT) -> double
+			{
+				T alpha = (K(TT[0], 0) + K(TT[1], 0))/2;
+				T help0 = coef_cp / 2 + alpha / h;
+				T B = left * alpha / h / help0;
+				T mu_left = (prev[0] * coef_cp / 2 - P((j + 1) * tau)) / help0;
+				return double(TT[0] - (left * mu_left + (1 - left) * T0) - B * TT[1]);
+			};
+		shifted.push_back(f);
+
+		for (size_t i = 1; i < NumX - 1; ++i)
+			{
+				auto p = [&](const Point& TT) -> double
+				 {
+				 	return ( TT[i] - prev[i] - 1/coef_cp/2 * 
+				 	( (K(TT[i+1], 0) + K(TT[i], 0))*(TT[i+1] - TT[i])/h - (K(TT[i], 0) + K(TT[i-1], 0)) * (TT[i] - TT[i-1])/h ) );
+				 };
+				 shifted.push_back(p);
+			}
+
+		auto g = [&](const Point& TT) -> double
+			{
+				T alpha = (K(TT[NumX-2], 0) + K(TT[NumX-1], 0))/2;
+				T helpN = coef_cp / 2 +  alpha / h;
+				T A = right * alpha / h / helpN;
+				T mu_right = (prev[NumX - 1] * coef_cp / 2 + P(j * tau)) / helpN;
+				return double(TT[NumX-1] -(right * mu_right  + (1 - right) * (T0)) - A * TT[NumX - 2]);
+			};
+		shifted.push_back(g);
+		prev = NonLinearSolve::system_newton(shifted, {}, 40, prev);
+
+		if(!(j % NumberOfResults)) 
+ 		{
+ 			for(size_t i = 0; i < NumX; i++)
+ 			{
+				file_x_time_temp << x[i] << ' ' << j * tau << ' ' << prev[i];
+				file_x_time_temp << std::endl;
+			}
+ 		}
+	}
+	file_x_time_temp.close();
+}
+
+
+
+
+
+
+
+
+
 
 template < typename T >
 void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, bool right_flow, size_t timestamps, size_t nodes, size_t results, T finish, T sigma) {

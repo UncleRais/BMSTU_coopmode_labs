@@ -27,7 +27,7 @@ class NonLinearSolve {
 public:
 	static double df (fun f, double point, double epsilon = 1e-5) {return( (f(point+epsilon)-f(point))/epsilon);};
 
-	static double d_vFunc(vFunc f, const Point& point, const Partial& partial, double epsilon = 1e-5);
+	static double d_vFunc(vFunc f, const Point& point, const Partial& partial, double epsilon = 2e-8);
 
 	static Matr<double> jacobi(const std::vector<vFunc>& F, const Point& point);
 
