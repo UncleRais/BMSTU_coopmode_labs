@@ -167,13 +167,6 @@ void heat_transfer_eq_solve<T>::NPDsolve_NONLinear(const std::string path, int l
 
 
 
-
-
-
-
-
-
-
 template < typename T >
 void heat_transfer_eq_solve<T>::TEST(const std::string path, bool left_flow, bool right_flow, size_t timestamps, size_t nodes, size_t results, T finish, T sigma) {
 	std::ofstream file;
