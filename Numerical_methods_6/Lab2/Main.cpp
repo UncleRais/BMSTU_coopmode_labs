@@ -7,10 +7,10 @@
 
 int main(int argc, char** argv) 
 {
-	heat_transfer_eq_solve<double> solution(cond, 1, 2);
+	heat_transfer_eq_solve<double> solution(cond, 1, 1);
 	std::string path = "./output/solution.dat";
 	//solution.parameters_info();
 	//solution.NPDsolve_Linear(path, 0, 1, 1000, 10, 100, 1, 1);
-	solution.NPDsolve_NONLinear(path, 1, 1, 2, 10, 10, 1);
-	//solution.TEST(path, false, true, 1000, 10, 100, 1, 1);
+	// solution.NPDsolve_NONLinear(path, 1, 1, 2, 10, 10, 1);
+	solution.TESTNN(path, true, false, 300, 100, 10, 2, 1);
 }
