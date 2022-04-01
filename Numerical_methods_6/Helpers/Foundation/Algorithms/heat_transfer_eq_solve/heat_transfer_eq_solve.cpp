@@ -65,7 +65,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_Linear(const std::string path, int left
 		} 
 		A[NumX - 2] = right*(sigma * coef_a[NumX - 2] / h) / helpN;
 		C[NumX - 1] = -1;
-		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P(j * tau) + (1 - sigma) * (P((j - 1)*tau) - omega[NumX - 2])) / helpN;
+		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P((j+1) * tau) + (1 - sigma) * (P((j)*tau) - omega[NumX - 2])) / helpN;
 		F[NumX - 1] =  -(right * mu_right  + (1 - right) * (T0));
 
 		prev = Banish::solve(A , C , B , F);
