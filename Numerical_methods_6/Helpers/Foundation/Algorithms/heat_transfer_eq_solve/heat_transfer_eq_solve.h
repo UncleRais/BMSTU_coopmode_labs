@@ -21,6 +21,7 @@ T c,   //Удельная теплоемкость
 
 func1d P; // Поток на границе
 func1d InitTemp; //Начальная температура стержня
+func1d LBound,RBound; //Температура на граничном условии
 func2d K; // Теплороводность
 
 public:
@@ -36,8 +37,27 @@ heat_transfer_eq_solve(const std::vector<T>& cond, int flow, int conductivity)
     Q = static_cast<T>(10);  
     t0 = static_cast<T>(0.5); 
 
-    InitTemp = [this](T x) -> T  //Постоянная температура в начальный момент времени 
-    { return(T0); };
+    // InitTemp = [this](T x) -> T  //Постоянная температура в начальный момент времени 
+    // { return(T0); };
+
+    InitTemp = [this](T x) -> T
+    { return(sin( 3.14159 * x)); };
+
+    LBound = [this](T t) -> T 
+    {
+        return(0); 
+    };
+
+    RBound = [this](T t) -> T 
+    {
+        return(0); 
+    };
+
+    // LBound = [this](T t) -> T 
+    // {
+    //     T u0 = pow(gamma * pow(5,2)/ beta, 1/gamma );
+    //     return(u0 * pow(t, 1/gamma)); 
+    // };
 
 
     // InitTemp = [this](T x) -> T  // В начале температура распределена линейно вдоль стержня (слева T0 справа T0 + 1)

@@ -53,7 +53,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_Linear(const std::string path, int left
 		B[0] = left*sigma * coef_a[0] / h / help0;
 		C[0] = -1;
 		mu_left = (prev[0] * coef_cp / 2 + sigma * P((j + 1) * tau) + (1 - sigma) * (omega[0] + P(j * tau)) ) / help0;
-		F[0] = -(left * mu_left + (1 - left) * T0);
+		F[0] = -(left * mu_left + (1 - left) * LBound(j*tau));
 		for(size_t i = 1; i < NumX - 1; i++)
 		{	
 			sigm_a_i_1 = sigma * coef_a[i - 1] / h;
@@ -66,7 +66,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_Linear(const std::string path, int left
 		A[NumX - 2] = right*(sigma * coef_a[NumX - 2] / h) / helpN;
 		C[NumX - 1] = -1;
 		mu_right = (prev[NumX - 1] * coef_cp / 2 + sigma * P((j+1) * tau) + (1 - sigma) * (P((j)*tau) - omega[NumX - 2])) / helpN;
-		F[NumX - 1] =  -(right * mu_right  + (1 - right) * (T0));
+		F[NumX - 1] =  -(right * mu_right  + (1 - right) * (RBound(j*tau)));
 
 		prev = Banish::solve(A , C , B , F);
 
@@ -128,7 +128,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_Newton(const std::string path, int left
 				T help0 = coef_cp / 2 + alpha / h;
 				T B = left * alpha / h / help0;
 				T mu_left = (prev[0] * coef_cp / 2 - P((j + 1) * tau)) / help0;
-				return double(TT[0] - (left * mu_left + (1 - left) * T0) - B * TT[1]);
+				return double(TT[0] - (left * mu_left + (1 - left) * LBound(j*tau)) - B * TT[1]);
 			};
 		shifted.push_back(f);
 
@@ -148,7 +148,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_Newton(const std::string path, int left
 				T helpN = coef_cp / 2 +  alpha / h;
 				T A = right * alpha / h / helpN;
 				T mu_right = (prev[NumX - 1] * coef_cp / 2 + P(j * tau)) / helpN;
-				return double(TT[NumX-1] -(right * mu_right  + (1 - right) * (T0)) - A * TT[NumX - 2]);
+				return double(TT[NumX-1] -(right * mu_right  + (1 - right) * (RBound(j*tau))) - A * TT[NumX - 2]);
 			};
 		shifted.push_back(g);
 		prev = NonLinearSolve::system_newton(shifted, {}, 40, prev);
@@ -198,7 +198,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_NONLinear(const std::string path, bool 
 			} else {
 				B[0] = -1.0;
 				C[0] = 0.0;
-				F[0] = -InitTemp(x[0]);
+				F[0] = -LBound(j*tau);
 			}
 
 			for(size_t i = 1; i < nodes-1; ++i) {
@@ -218,7 +218,7 @@ void heat_transfer_eq_solve<T>::NPDsolve_NONLinear(const std::string path, bool 
 			} else {
 				A[nodes-2] = 0.0;
 				B[nodes-1] = -1.0;
-				F[nodes-1] = -InitTemp(x[nodes-1]);
+				F[nodes-1] = -RBound(j*tau);
 			}
 
 			temperature = Banish::solve(A, B, C, F);
