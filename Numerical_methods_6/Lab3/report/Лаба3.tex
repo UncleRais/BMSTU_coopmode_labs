@@ -1,0 +1,63 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage[]{float}
+
+\usepackage[oglav, boldsect, eqwhole, figwhole, %
+   remarks, hyperref, hyperprint]{fn2kursstyle}
+
+\frenchspacing
+\righthyphenmin=2
+
+%вставка рисунков
+\newcommand{\Picture}[4]
+{
+\begin{figure}[H]
+\noindent 
+\centering\includegraphics[width = #2\textwidth]{pic/#1}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+%Командна для римских прописных 
+\newcommand{\RomanNumeralCaps}[1]
+    {\MakeUppercase{\romannumeral #1}}
+
+\title{Численное решение краевых задач для одномерного волнового уравнения}
+\group{ФН2-62Б}
+\author{A.\,И.~Токарев}
+\secauthor{Ю.\,А.~Сафронов}
+\supervisor{}
+\date{2021}
+
+\def\hmath$#1${\texorpdfstring{{\rmfamily\textit{#1}}}{#1}}
+
+\begin{document}
+\maketitle
+\tableofcontents 
+\newpage
+
+\section{Исходные данные}
+
+\newpage
+\section{Контрольные вопросы}
+\begin{enumerate}
+\item Предложите разностные схемы, отличные от схемы <<крест>>,
+для численного решения задачи.
+
+\item Постройте разностную схему с весами для уравнения колебаний струны. Является ли такая схема устойчивой и монотонной?
+
+\item Предложите способ контроля точности полученного решения.
+
+\item Приведите пример трехслойной схемы для уравнения теплопроводности. Как реализовать вычисления по такой разностной схеме? Является ли эта схема устойчивой?
+
+
+\end{enumerate}
+
+
+\newpage
+
+\end{document} 
