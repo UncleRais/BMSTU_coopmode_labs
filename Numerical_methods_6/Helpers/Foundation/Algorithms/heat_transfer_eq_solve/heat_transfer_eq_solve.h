@@ -100,6 +100,10 @@ heat_transfer_eq_solve(const std::vector<T>& cond, int flow, int conductivity)
          K = [this](T temp, T x) -> T 
          { return (alpha + beta * pow(temp, gamma)); };
         break;
+        case 3 :
+        K = [this](T temp, T x) -> T 
+         { return (k1); };
+        break;
     }
 };
 
