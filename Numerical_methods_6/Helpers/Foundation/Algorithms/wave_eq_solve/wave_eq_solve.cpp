@@ -11,7 +11,7 @@ void wave_eq_solve<T>::solve(const std::string path, size_t timestamps, size_t s
 
 	const size_t nodes = sections + 1;
 	const T h = L / sections, tau = finish_time / timestamps;
-	const T lol =  tau * tau * a * a, sigma = lol / h / h; //Эти константы нужны для упрощения вычилсений
+	const T lol =  tau * tau * a * a, sigma = lol / h / h; //Эти константы нужны для упрощения вычислений
 
 	std::vector<T> prev1(nodes), prev2(nodes), actual(nodes), x;
 	x.reserve(nodes);

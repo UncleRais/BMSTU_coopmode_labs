@@ -2,7 +2,7 @@
 #include "../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
 #include "../../Numerical_methods_6/Helpers/Foundation/Algorithms/wave_eq_solve/wave_eq_solve.cpp"
 
-#include "var23.cpp"
+#include "test1.cpp"
 
 
 int main(int argc, char** argv) 
