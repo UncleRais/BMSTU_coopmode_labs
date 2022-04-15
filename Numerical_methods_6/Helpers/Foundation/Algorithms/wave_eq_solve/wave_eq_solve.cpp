@@ -10,19 +10,21 @@ void wave_eq_solve<T>::solve(const std::string path, size_t timestamps, size_t s
 	file_x_time_y.open(path);
 
 	const size_t nodes = sections + 1;
-	const T h = L / sections, tau = finish_time / timestamps;
+	const T h = (L - start) / sections, tau = finish_time / timestamps;
 	const T lol =  tau * tau * a * a, sigma = lol / h / h; //Эти константы нужны для упрощения вычислений
 
 	std::vector<T> prev1(nodes), prev2(nodes), actual(nodes), x;
 	x.reserve(nodes);
 
+
+
 	T node;
 	for(size_t i = 0; i < nodes; ++i)
 	{
-	node = i * h;
+	node = start + i * h;
 	x.push_back(node);
 	prev1[i] = InitShape(node);
-	prev2[i] = prev1[i] + tau * InitVelocity(node) + lol / 2 * InitShapeXX(node);
+	prev2[i] = prev1[i] + tau * InitVelocity(node) + lol / 2 * InitShapeXX(node, h);
 	file_x_time_y << node << ' ' << 0 << ' ' << prev1[i];
 	file_x_time_y << std::endl;
 	}

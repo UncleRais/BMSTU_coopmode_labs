@@ -15,16 +15,17 @@ typedef std::function <T (T , T)> func2d;
 
 func1d InitVelocity;  //Начальная скорость всех точек струны
 func1d InitShape;     //Начальная форма струны
-func1d InitShapeXX;   //Вторая производная начальной формы струны
+func2d InitShapeXX;   //Вторая производная начальной формы струны
 func1d LeftBoundary;  //Закон движения левого конца струны
 func1d RightBoundary; //Закон движения правого конца струны
 T a, 			//Фазовая скорость
   L, 			//Длина струны
+  start,  //Начало струны
   finish_time;  //Время колебаний
 
 public:
 
-wave_eq_solve(func1d f, func1d fxx, func1d g, func1d phi, func1d xi, T L_, T time, T a_)
+wave_eq_solve(func1d f, func2d fxx, func1d g, func1d phi, func1d xi,T start_, T L_, T time, T a_)
 {
     InitShape = f; 
     InitShapeXX = fxx;
@@ -32,6 +33,7 @@ wave_eq_solve(func1d f, func1d fxx, func1d g, func1d phi, func1d xi, T L_, T tim
     LeftBoundary = phi;
     RightBoundary = xi; 
     L = L_;
+    start = start_;
     finish_time = time;
     a = a_;
 };
