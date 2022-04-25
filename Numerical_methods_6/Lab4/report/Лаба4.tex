@@ -1,0 +1,77 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage[]{float}
+
+\usepackage[oglav, boldsect, eqwhole, figwhole, %
+   remarks, hyperref, hyperprint]{fn2kursstyle}
+
+\frenchspacing
+\righthyphenmin=2
+
+%вставка рисунков
+\newcommand{\Picture}[4]
+{
+\begin{figure}[H]
+\noindent 
+\centering\includegraphics[width = #2\textwidth]{pic/#1}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+%Командна для римских прописных 
+\newcommand{\RomanNumeralCaps}[1]
+    {\MakeUppercase{\romannumeral #1}}
+
+\title{Численное решение краевых задач для двумерного уравения Пуассона}
+\group{ФН2-62Б}
+\author{A.\,И.~Токарев}
+\secauthor{Ю.\,А.~Сафронов}
+\supervisor{}
+\date{2021}
+
+\def\hmath$#1${\texorpdfstring{{\rmfamily\textit{#1}}}{#1}}
+
+\begin{document}
+\maketitle
+\tableofcontents 
+\newpage
+
+\section{Погрешность на точном решении}
+
+Требуется рассмотреть погрешность разностной схемы на точном решении и проверить порядок аппроксимации. Рассмотрим первый тестовый пример:
+
+\[
+\]
+
+\centerline{ЗДЕСЬ ПРИМЕР}
+
+Проведем рассчет на равномерной сетке для разных шагов во времени и пространству, для этих решений построим таблицу с погрешностью на точном решении в норме $C$ пространства непрерывных функций:
+
+\centerline{ЗДЕСЬ ТАБЛИЦА С ПОРЯДКАМИ}
+%\Picture{погр.png}{1}{Значение рядом со стрелочкой показывает, во сколько раз уменьшилась ошибка или уменьшился шаг}{}
+
+
+\newpage
+\section{Контрольные вопросы}
+\begin{enumerate}
+\item Оцените число действий, необходимое для перехода на следующий слой по времени методом переменных направлений.
+
+\item Почему при увеличении числа измерений резко возрастает количество операций для решения неявных схем (по сравнению с одномерной схемой)?
+
+\item Можно ли использовать метод переменных направлений в
+областях произвольной формы?
+
+\item Можно ли использовать метод переменных направлений для решения пространственных и вообще $n$-мерных задач?
+
+\item Можно ли использовать метод переменных направлений на неравномерных сетках?
+
+\end{enumerate}
+
+
+\newpage
+
+\end{document} 

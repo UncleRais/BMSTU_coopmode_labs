@@ -8,7 +8,7 @@ double f(double x)
 return( x*(1 - x) );
 }
 
-double fxx(double x)
+double fxx(double x, double h)
 {
 return( -2 );
 }

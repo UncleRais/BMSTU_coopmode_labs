@@ -8,7 +8,7 @@ double f(double x)
 return( 0.5*pow(x + 1, 2) );
 }
 
-double fxx(double x)
+double fxx(double x, double h)
 {
 return( 1 );
 }

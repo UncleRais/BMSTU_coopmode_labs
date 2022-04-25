@@ -8,7 +8,7 @@ double f(double x)
 return( x * cos(pi * x / 2));
 }
 
-double fxx(double x)
+double fxx(double x, double h)
 {
 return( -pi * sin(pi * x / 2) - pi / 2 * pi / 2 * x * cos(pi / 2 * x));
 }
