@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 
 	std::string path = "./output/solution.dat";
 
-	std::array<size_t, 3> N = {10, 10, 10}; //Количество разбиений (x1 / x2 / время)
+	std::array<size_t, 3> N = {8, 8, 10}; //Количество разбиений (x1 / x2 / время)
 	type finish = 1.; //Конечное время
 
 	poisson_eq_solve<type> model(f, G, M);

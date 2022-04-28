@@ -37,36 +37,59 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 	//Расчет правой части уравнения на сетке 
 	for(size_t i = 0; i < N[0] + 1; ++i)
 		for(size_t j = 0; j < N[1] + 1; ++j)
-			phi[i,j] = f(i * h1, j * h2);
+			phi[i][j] = f(i * h1, j * h2);
+	//Граничные условия (пока только U = кси)
+	//Г1 и Г2
+	for(size_t i = 0; i < N[0] + 1; ++i)
+	{
+		prev[0][i] = G[1](i*h1);
+		prev[N[1]][i] = G[0](i*h1);
+	}
+
+	//Г3 и Г4
+	for(size_t j = 0; j < N[1] + 1; ++j)
+	{
+		prev[j][0] = G[2](j*h2);
+		prev[j][N[0]] = G[3](j*h2);
+	}
+
+	// for(size_t i = 0; i < N[1] + 1; ++i)
+	// {
+	// 	std::cout << "| ";
+	// 	for(size_t j = 0; j < N[0] + 1; ++j)
+	// 		std::cout <<std::setw(4)<<std::setprecision(3)<< prev[i][j] << " ";
+	// 	std::cout << "|\n";
+	// }
+
 
 	//Операторы схем
-	T scheme1 = [hh1](size_t i, size_t j, std::vector<std::vector<T>> y){return(hh1 * (y[i+1,j] - 2*y[i,j] + y[i-1,j]));};	
-	T scheme2 = [hh2](size_t i, size_t j, std::vector<std::vector<T>> y){return(hh2 * (y[i,j+1] - 2*y[i,j] + y[i,j-1]));};	
+	//T scheme1 = [this,hh1](size_t i, size_t j, std::vector<std::vector<T>> y){return(hh1 * (y[i+1][j] - 2*y[i][j] + y[i-1][j]));};	
+	//T scheme2 = [this,hh2](size_t i, size_t j, std::vector<std::vector<T>> y){return(hh2 * (y[i][j+1] - 2*y[i][j] + y[i][j-1]));};	
 
 	//Расчет первого слоя
 
 
-	//Осноной расчет
-	for(double k = 1; k < N[2] + 1; ++k)
-	{	
-		for(size_t i = 0; i < N[0] + 1; ++i)
-		{
-			for( size_t j = 1; j < N[1]; ++j)
-			{
+	// //Осноной расчет
+	// for(double k = 1; k < N[2] + 1; ++k)
+	// {	
+	// 	for(size_t i = 0; i < N[0] + 1; ++i)
+	// 	{
+	// 		for( size_t j = 1; j < N[1]; ++j)
+	// 		{
 
-			};
-		};
+	// 		};
+	// 	};
 
 
-		for(size_t j = 0; i < N[1] + 1; ++i)
-		{
-			for( size_t i = 1; j < N[0]; ++j)
-			{
+	// 	for(size_t j = 0; i < N[1] + 1; ++i)
+	// 	{
+	// 		for( size_t i = 1; j < N[0]; ++j)
+	// 		{
 
-			};
-		};
-		prev = Banish::solve(A , C , B , F);
-	}
+	// 		};
+	// 	};
+	// 	prev = Banish::solve(A , C , B , F);
+	// }
 
 
 
