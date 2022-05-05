@@ -5,18 +5,18 @@
 
 double f(double x1, double x2)
 {
-return(4.);
+return(-4.);
 }
 
 double G1(double x1)
 {
-return(pow(x1,2));
+return(1. + pow(x1,2));
 }
 
 
 double G2(double x1)
 {
-return(1. + pow(x1,2));
+return(pow(x1,2));
 }
 
 
