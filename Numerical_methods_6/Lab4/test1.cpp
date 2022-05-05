@@ -32,6 +32,7 @@ return(1.);
 }
 
 std::vector<std::function <double (double)>> G = {G1,G2,G3,G4};
+std::vector<int> IndG = {0,0,0,0};
 double M[2] = {1.,1.};
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef test2_cpp
-#define test2_cpp
+#ifndef test3_cpp
+#define test3_cpp
 
 #include <cmath>
 
@@ -32,6 +32,7 @@ return(2.);
 }
 
 std::vector<std::function <double (double)>> G = {G1,G2,G3,G4};
+std::vector<int> IndG = {0,0,1,1};
 double M[2] = {1., 1.};
 
 #endif

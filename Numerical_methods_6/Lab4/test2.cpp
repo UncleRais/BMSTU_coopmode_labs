@@ -10,13 +10,13 @@ return( 0. );
 
 double G1(double x1)
 {
-return( -1. );
+return( 1. );
 }
 
 
 double G2(double x1)
 {
-return( 1. );
+return( -1. );
 }
 
 
@@ -32,6 +32,7 @@ return(1. + x2);
 }
 
 std::vector<std::function <double (double)>> G = {G1,G2,G3,G4};
+std::vector<int> IndG = {1,1,0,0};
 double M[2] = {1., 1.};
 
 #endif
