@@ -1,27 +1,35 @@
 #ifndef POISSON_EQ_SOLVE_CPP
 #define POISSON_EQ_SOLVE_CPP
 
-//#include <climits>
 //#include <limits> 
+#include <typeinfo>
 
 
 #include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/Banish/Banish.cpp"
 //#include "../../../../../Numerical_methods_5/Helpers/Foundation/Algorithms/NonLinearSolve/NonLin.cpp"
 #include "./poisson_eq_solve.h"
 
+template < typename T >
+T sqr(T x){return(pow(x,2));};
+
 template < typename T > 
-void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t, 3>& N, T finish)
+void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t, 2>& N, T eps)
 {
 	std::ofstream file;
 	file.open(path);
 
-	const T h1 = L[0] / N[0], h2 = L[1] / N[1], tau = finish / N[2];   //Шаги
+	const T finish = 1/sqrt(sqr(L[0])/sqr(N[0]) + sqr(L[1])/sqr(N[1])) / sqrt(1/sqr(L[0]) + 1/sqr(L[1]))*log(1/eps)/pi;
+	const T tau = sqrt(sqr(L[0])/sqr(N[0]) + sqr(L[1])/sqr(N[1])) / sqrt(1/sqr(L[0]) + 1/sqr(L[1]))/pi;
+	const size_t N2 = size_t(finish/tau); 
+
+	std::cout << finish << " "<< N2 << " " << tau;
+	const T h1 = L[0] / N[0], h2 = L[1] / N[1];   //Шаги
 	const T hh1 = 1/ pow(h1 , 2), hh2 = 1 / pow(h2, 2), tautau = 1 / tau; //Вспомогательные переменные
 	//std::cout << h1 << " " << h2 << " " << tau << "\n";
 
 	std::vector<std::vector<T>> phi(N[1]+1, std::vector<T>(N[0]+1, 0));
 	std::vector<std::vector<T>> prev(N[1]+1, std::vector<T>(N[0]+1, 0));
-	//Напоминание: i - выбор строки , j - выбор столбца. prev[j][i]
+	//Напоминание: i - выбор строки , j - выбор столбца. prev[i][j]
 
 	//Расчет правой части уравнения на сетке 
 	for(size_t i = 0; i < N[1] + 1; ++i)
@@ -43,10 +51,15 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 	std::vector<T> C1(N[1], hh2);
 	std::vector<T> F1(N[1] + 1);
 
-	std::vector<T> yi(N[0] + 1), yj(N[1] + 1);
+	std::vector<T> yj(N[1] + 1);
+
+	prev[0][0] = G[0](0);
+	prev[N[1]][0] = G[3](0);
+	prev[0][N[0]] = G[2](0);
+	prev[N[1]][N[0]] = G[1](N[0]*h1);
 
 	//Осноной расчет
-	for(double k = 1; k < N[2] + 1; ++k)
+	for(double k = 1; k < N2 + 1; ++k)
 	{	
 		//Идем по строкам
 		for(size_t i = 1; i < N[1]; ++i)
@@ -114,10 +127,6 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 		//
 	}
 
-	prev[0][0] = G[0](0);
-	prev[N[1]][0] = G[3](0);
-	prev[0][N[0]] = G[2](0);
-	prev[N[1]][N[0]] = G[1](N[0]*h1);
 
 	// for(size_t i = 0; i < N[1] + 1; ++i)
 	// {
