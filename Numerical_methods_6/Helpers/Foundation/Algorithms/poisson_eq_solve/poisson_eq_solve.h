@@ -30,7 +30,7 @@ poisson_eq_solve (func2d f_, std::vector<func1d> G_, std::vector<int> IndG_, T M
 
 };
 
-void solve(const std::string path, const std::array<size_t, 2>& N, T eps = 0.001);
+void solve(const std::string path, const std::array<size_t, 2>& N, T tau, T eps = 1e-3);
 
 };
 

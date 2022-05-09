@@ -12,23 +12,34 @@
 template < typename T >
 T sqr(T x){return(pow(x,2));};
 
-template < typename T > 
-void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t, 2>& N, T eps)
+template <typename T >
+T norm(const std::vector<std::vector<T>>& a, const std::vector<std::vector<T>>& b, T h1, T h2)
 {
-	std::ofstream file;
+	size_t N = a.size(), M = a[0].size();
+	T res = 0;
+	if(N == b.size()&&M == b[0].size())
+		for(size_t i = 0; i < N; ++i)
+			for(size_t j = 0; j < M; ++j)
+				//if(fabs(a[i][j] - b[i][j]) > res) res = fabs(a[i][j] - b[i][j]);
+				res+= sqr(a[i][j] - b[i][j])*h1*h2;
+	return sqrt(res);
+}
+
+template < typename T > 
+void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t, 2>& N, T tau, T eps)
+{
+	std::ofstream file, fnorms;
 	file.open(path);
+	fnorms.open("./output/norms.dat");
 
-	const T finish = 1/sqrt(sqr(L[0])/sqr(N[0]) + sqr(L[1])/sqr(N[1])) / sqrt(1/sqr(L[0]) + 1/sqr(L[1]))*log(1/eps)/pi;
-	const T tau = sqrt(sqr(L[0])/sqr(N[0]) + sqr(L[1])/sqr(N[1])) / sqrt(1/sqr(L[0]) + 1/sqr(L[1]))/pi;
-	const size_t N2 = size_t(finish/tau); 
+	//const T tau = 0.001;//sqrt(sqr(L[0])/sqr(N[0]) + sqr(L[1])/sqr(N[1])) / sqrt(1/sqr(L[0]) + 1/sqr(L[1])) / pi/100;
 
-	std::cout << finish << " "<< N2 << " " << tau;
 	const T h1 = L[0] / N[0], h2 = L[1] / N[1];   //Шаги
-	const T hh1 = 1/ pow(h1 , 2), hh2 = 1 / pow(h2, 2), tautau = 1 / tau; //Вспомогательные переменные
+	const T hh1 = 1 / sqr(h1), hh2 = 1 / sqr(h2), tautau = 1 / tau; //Вспомогательные переменные
 	//std::cout << h1 << " " << h2 << " " << tau << "\n";
 
 	std::vector<std::vector<T>> phi(N[1]+1, std::vector<T>(N[0]+1, 0));
-	std::vector<std::vector<T>> prev(N[1]+1, std::vector<T>(N[0]+1, 0));
+	std::vector<std::vector<T>> actual(N[1]+1, std::vector<T>(N[0]+1, 0));
 	//Напоминание: i - выбор строки , j - выбор столбца. prev[i][j]
 
 	//Расчет правой части уравнения на сетке 
@@ -53,21 +64,24 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 
 	std::vector<T> yj(N[1] + 1);
 
-	prev[0][0] = G[0](0);
-	prev[N[1]][0] = G[3](0);
-	prev[0][N[0]] = G[2](0);
-	prev[N[1]][N[0]] = G[1](N[0]*h1);
+	actual[0][0] = G[0](0);
+	actual[N[1]][0] = G[1](0);
+	actual[0][N[0]] = G[0](0);
+	actual[N[1]][N[0]] = G[1](N[0]*h1);
 
+	std::vector<std::vector<T>> prev = actual;
+
+	std::vector<T> norms = {100, 90};
+	size_t k = 1;
 	//Осноной расчет
-	for(double k = 1; k < N2 + 1; ++k)
+	while(norms[k]  >= eps*(1 - norms[k] / norms[k-1])) //*(1 - norms[k] / norms[k-1])      norms[k]  >= eps
 	{	
 		//Идем по строкам
 		for(size_t i = 1; i < N[1]; ++i)
 		{
-			if(IndG[2]== 1)
+			if(IndG[2])
 			{ //Условие 2 рода
 			B0[0] = (1/h1 + h1/2); C0[0] = -1/h1; F0[0] = (G[2](i*h2) + h1/2);
-			//B0[0] = 1; C0[0] = -1; F0[0] = h1*G[2](i*h2);
 			}
 			else
 			{ //Условие 1 рода
@@ -79,23 +93,23 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 				F0[j] = -(tautau * 2 * prev[i][j] + sch2(i,j,prev) + phi[i][j]);
 			};
 
-			if(IndG[3] == 1)
+			if(IndG[3])
 			{ //Условие 2 рода
 			A0[N[0] - 1] = -1/h1; B0[N[0]] = 1/h1 + h1/2; F0[N[0]] = (G[3](i*h2) + h1/2);
-			//A0[N[0] - 1] = -1; B0[N[0]] = 1; F0[N[0]] = G[3](i*h2)*h1;
 			}
 			else
 			{ //Условие 1 рода
 			A0[N[0] - 1] = 0; B0[N[0]] = -1; F0[N[0]] = -G[3](i*h2);
 			};
 	
-			prev[i] = Banish::solve(A0, B0, C0, F0);
+			actual[i] = Banish::solve(A0, B0, C0, F0);
 		};
 		//
+		prev = actual;
 		//Идем по столбцам
 		for(size_t j = 1; j < N[0]; ++j)
 		{
-			if(IndG[1]==1)
+			if(IndG[1])
 			{ //Условие 2 рода
 				B1[0] = -(1/h2 + h2/2); C1[0] = 1/h2; F1[0] = -(G[1](j*h1) + h2/2);
 			}
@@ -109,7 +123,7 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 				F1[i] = -(tautau * 2 * prev[i][j] + sch1(i,j,prev) + phi[i][j]);
 			};
 
-			if(IndG[0]== 1)
+			if(IndG[0])
 			{ //Условие 2 рода
 				A1[N[1] - 1] = -1/h2; B1[N[1]] = 1/h2 + h2/2; F1[N[1]] = G[0](j*h1) + h2/2;
 			}
@@ -121,12 +135,14 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 			yj = Banish::solve(A1, B1, C1, F1);
 			for(size_t i = 0; i < N[1] + 1; ++i)
 			{
-				prev[i][j] = yj[i];
+				actual[i][j] = yj[i];
 			}
 		};
 		//
+		k++;
+		norms.push_back(norm(actual, prev, h1, h2));
+		prev = actual;
 	}
-
 
 	// for(size_t i = 0; i < N[1] + 1; ++i)
 	// {
@@ -136,16 +152,34 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 	// 	std::cout << "|\n";
 	// }
 
+	// std::cout << "|\n";
+
+	// for(size_t i = 0; i < N[1] + 1; ++i)
+	// {
+	// 	std::cout << "| ";
+	// 	for(size_t j = 0; j < N[0] + 1; ++j)
+	// 		std::cout <<std::setw(7)<<std::setprecision(3)<< actual[i][j] << " ";
+	// 	std::cout << "|\n";
+	// }
+
+	std::cout << "iters = " << k << "\n";
+	std::cout << "finish = " << k * tau << "\n";
+	//std::cout << norms;
+
  	for(size_t i = 0; i < N[1] + 1; ++i)
  	{
 		for(size_t j = 0; j < N[0] + 1; ++j)
-			file << prev[i][j] << ' ';
+			file << actual[i][j] << ' ';
 		file << std::endl;
 	};
+
+	for(size_t i = 0; i < norms.size(); ++i)
+		fnorms << norms[i] << " ";
 
 	file << N[0] << " " << L[0] << std::endl;
 	file << N[1] << " " << L[1] << std::endl;
 	file.close();
+	fnorms.close();
 } 
 
 #endif
