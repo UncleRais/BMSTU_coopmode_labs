@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	 std::array<size_t, 2> N = {10,10}; //Количество разбиений (x1 / x2 / время)
 
 	poisson_eq_solve<type> model(f, G, IndG, M);
-	model.solve(path, N, 0.001, 1e-4);
+	model.solve(path, N, 0.001, 1e-8);
 	model.solve("./output/solution 2x.dat", {20, 20}, 0.0005, 1e-4);
 
 	model.solve("./output/solution_1x1y.dat", {5, 5}, 0.001);

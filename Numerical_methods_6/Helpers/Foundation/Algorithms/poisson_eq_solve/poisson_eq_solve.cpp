@@ -82,6 +82,8 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 			if(IndG[2])
 			{ //Условие 2 рода
 			B0[0] = (1/h1 + h1/2); C0[0] = -1/h1; F0[0] = (G[2](i*h2) + h1/2);
+			// B0[0] = - (2* tautau + hh1);
+			// F0[0] =  -(2* tautau * prev[i][0] + sch2(i,0,prev) + phi[i][0] + G[2](i*h2)/h1);
 			}
 			else
 			{ //Условие 1 рода
@@ -96,6 +98,8 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 			if(IndG[3])
 			{ //Условие 2 рода
 			A0[N[0] - 1] = -1/h1; B0[N[0]] = 1/h1 + h1/2; F0[N[0]] = (G[3](i*h2) + h1/2);
+			// B0[N[0]] = - (2*tautau + hh1);
+			// F0[N[0]] = -(2*tautau * prev[i][N[0]] + sch2(i,N[0],prev) + phi[i][N[0]] + G[3](i*h2)/h1);
 			}
 			else
 			{ //Условие 1 рода
@@ -112,6 +116,8 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 			if(IndG[1])
 			{ //Условие 2 рода
 				B1[0] = -(1/h2 + h2/2); C1[0] = 1/h2; F1[0] = -(G[1](j*h1) + h2/2);
+				// B1[0] = - (2 * tautau + hh2);
+				// F1[0] = -(tautau * 2 * prev[0][j] + sch1(0,j,prev) + phi[0][j] + G[1](j*h1)/h2);
 			}
 			else
 			{ //Условие 1 рода
@@ -126,6 +132,8 @@ void poisson_eq_solve<T>::solve(const std::string path, const std::array<size_t,
 			if(IndG[0])
 			{ //Условие 2 рода
 				A1[N[1] - 1] = -1/h2; B1[N[1]] = 1/h2 + h2/2; F1[N[1]] = G[0](j*h1) + h2/2;
+				// B1[N[1]] = - (2 * tautau + hh2);
+				// F1[N[1]] = -(tautau * 2 * prev[N[1]][j] + sch1(N[1],j,prev) + phi[N[1]][j] + G[0](j*h1)/h2);
 			}
 			else
 			{ //Условие 1 рода
