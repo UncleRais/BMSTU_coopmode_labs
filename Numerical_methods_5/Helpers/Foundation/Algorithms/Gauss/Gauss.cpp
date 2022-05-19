@@ -5,6 +5,7 @@
 #include <cmath>
 #include "../../Foundation.cpp"
 #include "../../Math.cpp"
+#include "../../Print/Print.cpp"
 
 template < typename T >
 std::vector<SwappingElement> Gauss::forwardMove(Matr<T>& matrix, std::vector<T>& vec) {
@@ -50,6 +51,7 @@ template < typename T >
 std::vector<T> Gauss::solve(Matr<T> matrix, std::vector<T> vec, bool uppertriangular) {
 	std::vector<SwappingElement> journal;
 	std::vector<T> vecT = vec;
+
 	if (!uppertriangular)
 	{
 		journal = forwardMove(matrix, vecT);

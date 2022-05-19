@@ -1,31 +1,29 @@
 #include "../../Numerical_methods_5/Helpers/Foundation/Foundation.cpp"
 #include "../../Numerical_methods_6/Helpers/Foundation/Foundation.cpp"
-#include "../../Numerical_methods_6/Helpers/Foundation/Algorithms/poisson_eq_solve/poisson_eq_solve.cpp"
+#include "../../Numerical_methods_6/Helpers/Foundation/Algorithms/integral_equation/integral_equation.cpp"
+#include "../../Numerical_methods_5/Helpers/Foundation/Algorithms/Gauss/Gauss.cpp"
 
-#include "test3.cpp"
+#include <ctime>
+
+#include "test2.cpp"
 
 
 int main(int argc, char** argv) 
 {
-	typedef double type; 
+    const integral_equation_parameters<double> params(lambda, f, K, M);		//Параметры уравнения
+	std::string path = "./output/solution.dat";							    //Путь
+	size_t N = 100; 														//Количество разбиений 
 
-	std::string path = "./output/solution.dat";
+	integral_equation<double> model(params, N);
 
-	 std::array<size_t, 2> N = {10,10}; //Количество разбиений (x1 / x2 / время)
+	size_t start_time =  clock();
+	model.solve_quadrature(path);
+	size_t end_time = clock(); 
+	std::cout << "Time: "<< end_time - start_time << "\n"; 
 
-	poisson_eq_solve<type> model(f, G, IndG, M);
-	model.solve(path, N, 0.001, 1e-8);
-	model.solve("./output/solution 2x.dat", {20, 20}, 0.0005, 1e-4);
-
-	model.solve("./output/solution_1x1y.dat", {5, 5}, 0.001);
-	model.solve("./output/solution_2x1y.dat", {10, 5}, 0.001);
-	model.solve("./output/solution_3x1y.dat", {20, 5}, 0.001);
-	model.solve("./output/solution_1x2y.dat", {5, 10}, 0.001);
-	model.solve("./output/solution_2x2y.dat", {10, 10}, 0.001);
-	model.solve("./output/solution_3x2y.dat", {20, 10}, 0.001);
-	model.solve("./output/solution_1x3y.dat", {5, 20}, 0.001);
-	model.solve("./output/solution_2x3y.dat", {10, 20}, 0.001);
-	model.solve("./output/solution_3x3y.dat", {20, 20}, 0.001);
-
+	// Matr<double> matrix({1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1});
+	// std::vector<double> vec = {0,0,3,0};
+	// auto res = Gauss::solve(matrix, vec);
+	// std::cout << res;
 
  }

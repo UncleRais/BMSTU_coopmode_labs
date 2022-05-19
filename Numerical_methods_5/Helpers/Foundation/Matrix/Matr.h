@@ -12,7 +12,7 @@ enum ErrorMatr {
 	linearDependence
 };
 
-template<typename T> 
+template< class T> 
 class Matr {
 
 private:
@@ -50,6 +50,8 @@ public:
 	void inverse();
 
 	void minor();
+
+	void infminor() { std::cout << minor_ << "\n"; };
 
 	void resetMinor();
 
@@ -97,13 +99,14 @@ public:
 
 public:
 
-	Matr();
+	Matr(){ std::cout << "def\n";};
 
 	Matr(const std::vector<T>& matrix);
 
 	Matr(const Matr<T>& copy);
 
 	Matr(size_t matrsize, T value);
+
 
 };
 

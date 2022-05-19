@@ -421,9 +421,6 @@ Matr<T>& Matr<T>::operator =(const Matr<T>& rightv)
 }
 
 template<typename T> 
-Matr<T>::Matr() {}
-
-template<typename T> 
 Matr<T>::Matr(const std::vector<T>& matrix) 
 {
 	try
@@ -469,7 +466,7 @@ Matr<T>::Matr(size_t matrsize, T value) {
 	{
 		for (size_t j = 0; j < systemSize; ++j)
 		{
-			matrix_[i*systemSize + j] = value;
+			matrix_.push_back(value);
 		}
 		rows_.push_back(i); cols_.push_back(i);
 	}
