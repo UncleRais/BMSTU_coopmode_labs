@@ -14,6 +14,8 @@ void integral_equation<T>::solve_quadrature(const std::string& path)
 	std::vector<T> grid; grid.reserve(number_of_points);
 	std::vector<T> right_part; right_part.reserve(number_of_points);
 	std::vector<T> coef_a(number_of_points, h);
+	coef_a.front() = h/2;
+	coef_a.back() = h/2;
 
 	for(size_t i = 0; i < number_of_points; ++i) 
 	{
@@ -45,7 +47,8 @@ void integral_equation<T>::solve_simple_iterations(const std::string& path, cons
 	T h = (_parameters.area_.back() - _parameters.area_.front()) / _sections; 
 	size_t number_of_points = _sections + 1;
 
-	std::vector<T> result(number_of_points, T(0));
+	std::vector<T> result; result.reserve(number_of_points);
+	for(size_t i = 0; i < number_of_points; ++i) result.push_back(_parameters.f_(_parameters.area_.front() + i * h));
 	std::vector<T> iterated(number_of_points, T(0));;
 	while(true) 
 	{
