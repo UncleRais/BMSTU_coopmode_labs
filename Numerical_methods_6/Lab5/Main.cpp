@@ -17,7 +17,8 @@ int main(int argc, char** argv)
 	integral_equation<double> model(params, N);
 
 	size_t start_time =  clock();
-	model.solve_quadrature(path);
+	// model.solve_quadrature(path);
+	model.solve_simple_iterations(path);
 	size_t end_time = clock(); 
 	std::cout << "Time: "<< end_time - start_time << "\n"; 
 
