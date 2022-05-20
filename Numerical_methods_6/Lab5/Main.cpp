@@ -5,21 +5,26 @@
 
 #include <ctime>
 
-#include "test2.cpp"
+#include "test1.cpp"
 
 
 int main(int argc, char** argv) 
 {
     const integral_equation_parameters<double> params(lambda, f, K, M);		//Параметры уравнения
-	std::string path = "./output/solution22.dat";							//Путь
+	std::string path = "./output/solution_";			
+	std::string format = ".dat";			   
 	size_t N = 100; 														//Количество разбиений 
 
 	integral_equation<double> model(params, N);
 
 	size_t start_time =  clock();
-	// model.solve_quadrature(path);
-	model.solve_simple_iterations(path);
+	model.solve_quadrature(path + "quad" + format);
 	size_t end_time = clock(); 
+	std::cout << "Time: "<< end_time - start_time << "\n"; 
+
+	start_time =  clock();
+	model.solve_simple_iterations(path + "simple" + format, 1e-10);
+	end_time = clock(); 
 	std::cout << "Time: "<< end_time - start_time << "\n"; 
 
 	// Matr<double> matrix({1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1});
