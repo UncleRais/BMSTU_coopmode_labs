@@ -1,0 +1,162 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}
+\usepackage[]{float}
+
+\usepackage[oglav, boldsect, eqwhole, figwhole, %
+   remarks, hyperref, hyperprint]{fn2kursstyle}
+
+\frenchspacing
+\righthyphenmin=2
+
+%вставка рисунков
+\newcommand{\Picture}[4]
+{
+\begin{figure}[H]
+\noindent 
+\centering\includegraphics[width = #2\textwidth]{pic/#1}
+\caption{#3}
+\label{#4}
+\end{figure}
+}
+
+%Командна для римских прописных 
+\newcommand{\RomanNumeralCaps}[1]
+    {\MakeUppercase{\romannumeral #1}}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\title{Численные решения интегральных уравнений}
+\group{ФН2-62Б}
+\author{A.\,И.~Токарев}
+\secauthor{Ю.\,А.~Сафронов}
+\supervisor{}
+\date{2022}
+
+\def\hmath$#1${\texorpdfstring{{\rmfamily\textit{#1}}}{#1}}
+
+\begin{document}
+\maketitle
+\tableofcontents 
+
+\newpage
+\section-{Результаты расчетов}
+Будем решать уравнение Фредгольма \RomanNumeralCaps{2} рода
+\[
+u(x) - \lambda \int\limits_{a}^{b}{K(x,s)u(s)ds} = f(x), \quad x\in[a,b].
+\]
+
+\section{Часть №1}
+Требуется решить рассмотреть два интегральных уравнения с двумя вариантами пределов интегрирования
+
+\begin{equation}
+u(x) - \dfrac{1}{2} \int\limits_{a}^{b}{(1 - x\cos(x s))u(s)ds} = \dfrac{1}{2}(1 + \sin{x}),
+\label{eq1}
+\end{equation}
+\begin{equation}
+u(x) - \dfrac{1}{2} \int\limits_{a}^{b}{(1 - x\cos(x s))u(s)ds} = x^2 + \sqrt x,
+\label{eq2}
+\end{equation}
+\[
+ a=0, \quad b = 1, \quad \text{или} \quad a=0{.}1, \quad b = 1.
+\]
+\subsection{Метод квадратур}
+
+\Picture{11.pdf}{0.6}{Численное решение уравнения \eqref{eq1} для случая $a=0, b = 1$ }{}
+\Picture{12.pdf}{0.6}{Численное решение уравнения \eqref{eq1} для случая $a=0{.}1, b = 1$ }{}
+\Picture{21.pdf}{0.6}{Численное решение уравнения \eqref{eq2} для случая $a=0, b = 1$ }{}
+\Picture{22.pdf}{0.6}{Численное решение уравнения \eqref{eq2} для случая $a=0{.}1, b = 1$ }{}
+
+
+\section{Контрольные вопросы}
+
+\begin{enumerate}
+\item При выполнении каких условий интегральное уравнение Фредгольма 2 рода имеет решение? В каком случае решение является единственным?
+
+На вопросы существования решения этого уравнения отвечает классическая теория Фредгольма.
+Если $ K(t, s),\,f(t) $ -- непрерывные функции на заданных отрезках, то $\forall \lambda \in \mathbb{R}$ интегральное уравнение. Рассмотрим интегральное уравнение 
+\[
+u(t) - \lambda \displaystyle \int_a^b K(t, s) u(s) ds = f(t),
+\]
+\noindent где $ K(t, s) $ -- ядро этого уравнения, являющееся функцией непрерывной на декартовом произведении отрезка $[a, b]$ на себя, а $ \lambda \neq 0$ -- параметр данного уравнения. Представим уравнение в операторном виде:
+\[
+(I - A)(u) = f,  
+\]
+\noindent где оператор $A$ преобразует исходную функцию $ u(t) $ в 
+\[
+v(t) = \lambda \displaystyle \int_a^b K(t, s)u(s)ds,  
+\]
+\noindent то есть действует из $C[a,b] \rightarrow C[a, b]$. Используя свойства определенного интеграла для функции $ v = A(u) $ и любой точки $ t \in [a, b] $ находим:
+\[
+| v(t) | = | \lambda \displaystyle \int_a^b K(t, s)u(s) ds | \leq | \lambda | \displaystyle \int_a^b | K(t, s) u(s) | ds \leq |\lambda|(b-a) \max_{t, s \in [a, b]} | K(t, s) | \max_{t \in [a, b]} |u(t)|.
+\]
+Пусть $ q = | \lambda |(b-a) \displaystyle \max_{t, s \in [a, b]} | K(t, s) | < 1  \Rightarrow $
+\[
+\norm{ Au }_{C[a, b]} = \max_{t \in [a, b]} | v(t) | \leq q \max_{ t \in [a, b] } | u(t) | = q \norm{u}_{C[a, b]}.
+\]
+Таким образом $ \norm{A} \leq q < 1 $. Значит, согласено теореме об обратном операторе $ \exists S = (I - A)^{-1} $, то есть рассматриваемое интегральное уравнение имеет единственное решение $u^0 = S(f)$, причем 
+\[
+| u^0 |_{C[a, b]} \leq \norm{S} \norm{f}_{C[a, b]} \leq \dfrac{1}{1 - q} \norm{f}_{C[a, b]}, \quad \norm{f}_{C[a, b]} = \max_{t \in [a, b]} |f(t)|.
+\]
+Дополнение: если однородное уравнение $ f(x) = 0 $ имеет только тривиальное решение, то значение параметра $ \lambda $ называется правильным или регулярным. Тогда у неоднородного уравнения при любой правой части $ f(x) $ существует единственное решение.
+
+\item Можно ли привести матрицу СЛАУ, получающуюся при использовании метода квадратур, к симметричному виду в случае, если ядро интегрального уравнения является симметричным, т. е. $ K(x, s) = K(s, x) $?
+
+Да, можно. Если использовать квадратурные формулы центральных прямоугольников, то матрица системы 
+\noindent \[ 
+\begin{pmatrix}
+1 - \lambda a_0^N K(x_0,s_0)  &    - \lambda a_1^N K(x_0,s_1)   &  ...  &   - \lambda a_{N-1}^N K(x_0,s_{N-1})&   - \lambda a_N^N K(x_0,s_N)  \\
+-\lambda a_0^N K(x_1,s_0)  &   1 - \lambda a_1^N K(x_1,s_1)   &  ...  &   - \lambda a_{N-1}^N K(x_1,s_{N-1})&   - \lambda a_N^N K(x_1,s_N)  \\
+... &   ...   &  ...  &   ...  \\
+-\lambda a_0^N K(x_{N-1},s_0)  &    - \lambda a_1^N K(x_{N-1},s_1)   &  ...  &  1 - \lambda a_{N-1}^N K(x_{N-1},s_{N-1})&  -\lambda a_N^N K(x_{N-1},s_N) \\
+-\lambda a_0^N K(x_N,s_0)  &    - \lambda a_1^N K(x_N,s_1)   &  ... &-\lambda a_{N-1}^N K(x_{N},s_{N-1}) &  1 - \lambda a_N^N K(x_N,s_N) \\
+\end{pmatrix} 
+\]
+
+примет вид
+\[A=
+        \begin{pmatrix}
+            1 - \lambda \sfrac{h}{2} K(x_0,s_0)  &    - \lambda h K(x_0,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_0,s_N)  \\
+             -\lambda \sfrac{h}{2} K(x_1,s_0)  &   1 - \lambda h K(x_1,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_1,s_N)  \\
+            ... &   ...   &  ...  &   ...  \\
+ 	  -\lambda \sfrac{h}{2} K(x_{N-1},s_0)  &    - \lambda h K(x_{N-1},s_1)   &  ...  &  - \lambda \sfrac{h}{2} K(x_{N-1},s_N) \\
+            -\lambda \sfrac{h}{2} K(x_N,s_0)  &    - \lambda h K(x_N,s_1)   &  ...  &  1 - \lambda \sfrac{h}{2} K(x_N,s_N) \\
+        \end{pmatrix}, \quad Ay = f.
+    \]
+
+Поскольку $K(x,s) = K(s,x)$, то для симметричности достаточно домножить уравнения $(2)-(N-1)$ на 2, тогда 
+
+\[A=
+        \begin{pmatrix}
+            1 - \lambda \sfrac{h}{2} K(x_0,s_0)  &    - \lambda h K(x_0,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_0,s_N)  \\
+             -\lambda  h K(x_1,s_0)  &  2( 1 - \lambda h K(x_1,s_1))   &  ...  &   - \lambda h K(x_1,s_N)  \\
+            ... &   ...   &  ...  &   ...  \\
+ 	  -\lambda h K(x_{N-1},s_0)  &    - 2\lambda h K(x_{N-1},s_1)   &  ...  & - \lambda h K(x_{N-1},s_N) \\
+            -\lambda \sfrac{h}{2} K(x_N,s_0)  &    - \lambda h K(x_N,s_1)   &  ...  &  1 - \lambda \sfrac{h}{2} K(x_N,s_N) \\
+        \end{pmatrix}, \quad Ay = f.
+    \]
+
+
+\item Предложите способ контроля точности результата вычислений при использовании метода квадратур.
+
+Можно сравнивать с точным решением.
+
+\item Оцените возможность и эффективность применения методов квадратур, простой итерации и замены ядра при решении интегральных уравнений Вольтерры 2 рода.
+
+\item Что называют резольвентой ядра интегрального уравнения?
+
+Резольвентой интегрального уравнения Фредгольма 2 рода называется такая функция $ R = R(s, t, \lambda) $, что решение этого уравнения представляется в виде:
+\[
+u(s) = f(s) + \displaystyle \int_a^b R(s, t, \lambda) f(t) dt,
+\]
+где $\lambda$ не является собственным числом.
+\item Почему замену ядра интегрального уравнения вырожденным предпочтительнее осуществлять путем разложения по многочленам Чебышева, а не по формуле Тейлора?
+
+\item Какие вы можете предложить методы решения переопределенной системы $ (5.13) $, $ (5.17) $ помимо введения дополнительно переменной $ R $?
+\end{enumerate}
+
+\newpage
+
+\end{document} 
