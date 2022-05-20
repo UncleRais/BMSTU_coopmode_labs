@@ -42,16 +42,14 @@ template <class T>
 class integral_equation {
 
 public:
-size_t _sections;
 integral_equation_parameters<T> _parameters;
 
 public:
-integral_equation(const integral_equation_parameters<T>& params, size_t sections): 
-_sections(sections), _parameters(params) {};
+integral_equation(const integral_equation_parameters<T>& params): _parameters(params) {};
 
-void solve_quadrature(const std::string& path);
+void solve_quadrature(const std::string& path, size_t sections);
 
-void solve_simple_iterations(const std::string& path, const double eps = 10e-5);
+void solve_simple_iterations(const std::string& path, size_t sections, const double eps = 10e-5, int iterations = 3);
 
 };
 
