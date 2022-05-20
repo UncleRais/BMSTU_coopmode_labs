@@ -11,13 +11,14 @@
 int main(int argc, char** argv) 
 {
     const integral_equation_parameters<double> params(lambda, f, K, M);		//Параметры уравнения
-	std::string path = "./output/solution22.dat";							    //Путь
+	std::string path = "./output/solution22.dat";							//Путь
 	size_t N = 100; 														//Количество разбиений 
 
 	integral_equation<double> model(params, N);
 
 	size_t start_time =  clock();
-	model.solve_quadrature(path);
+	// model.solve_quadrature(path);
+	model.solve_simple_iterations(path);
 	size_t end_time = clock(); 
 	std::cout << "Time: "<< end_time - start_time << "\n"; 
 

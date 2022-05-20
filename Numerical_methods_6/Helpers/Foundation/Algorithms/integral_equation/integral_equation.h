@@ -51,7 +51,7 @@ _sections(sections), _parameters(params) {};
 
 void solve_quadrature(const std::string& path);
 
-void solve_simple_iterations(const std::string& path);
+void solve_simple_iterations(const std::string& path, const double eps = 10e-5);
 
 };
 
