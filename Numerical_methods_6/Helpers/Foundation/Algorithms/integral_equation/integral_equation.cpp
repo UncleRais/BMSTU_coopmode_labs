@@ -14,6 +14,8 @@ void integral_equation<T>::solve_quadrature(const std::string& path)
 	std::vector<T> grid; grid.reserve(number_of_points);
 	std::vector<T> right_part; right_part.reserve(number_of_points);
 	std::vector<T> coef_a(number_of_points, h);
+	coef_a.front() = h/2;
+	coef_a.back() = h/2;
 
 	for(size_t i = 0; i < number_of_points; ++i) 
 	{

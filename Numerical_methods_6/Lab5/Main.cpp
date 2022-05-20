@@ -11,7 +11,7 @@
 int main(int argc, char** argv) 
 {
     const integral_equation_parameters<double> params(lambda, f, K, M);		//Параметры уравнения
-	std::string path = "./output/solution.dat";							    //Путь
+	std::string path = "./output/solution22.dat";							    //Путь
 	size_t N = 100; 														//Количество разбиений 
 
 	integral_equation<double> model(params, N);

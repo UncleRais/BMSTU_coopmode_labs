@@ -42,11 +42,39 @@
 \tableofcontents 
 
 \newpage
+\section-{Результаты расчетов}
+Будем решать уравнение Фредгольма \RomanNumeralCaps{2} рода
+\[
+u(x) - \lambda \int\limits_{a}^{b}{K(x,s)u(s)ds} = f(x), \quad x\in[a,b].
+\]
+
+\section{Часть №1}
+Требуется решить рассмотреть два интегральных уравнения с двумя вариантами пределов интегрирования
+
+\begin{equation}
+u(x) - \dfrac{1}{2} \int\limits_{a}^{b}{(1 - x\cos(x s))u(s)ds} = \dfrac{1}{2}(1 + \sin{x}),
+\label{eq1}
+\end{equation}
+\begin{equation}
+u(x) - \dfrac{1}{2} \int\limits_{a}^{b}{(1 - x\cos(x s))u(s)ds} = x^2 + \sqrt x,
+\label{eq2}
+\end{equation}
+\[
+ a=0, \quad b = 1, \quad \text{или} \quad a=0{.}1, \quad b = 1.
+\]
+\subsection{Метод квадратур}
+
+\Picture{11.pdf}{0.6}{Численное решение уравнения \eqref{eq1} для случая $a=0, b = 1$ }{}
+\Picture{12.pdf}{0.6}{Численное решение уравнения \eqref{eq1} для случая $a=0{.}1, b = 1$ }{}
+\Picture{21.pdf}{0.6}{Численное решение уравнения \eqref{eq2} для случая $a=0, b = 1$ }{}
+\Picture{22.pdf}{0.6}{Численное решение уравнения \eqref{eq2} для случая $a=0{.}1, b = 1$ }{}
+
 
 \section{Контрольные вопросы}
 
 \begin{enumerate}
 \item При выполнении каких условий интегральное уравнение Фредгольма 2 рода имеет решение? В каком случае решение является единственным?
+
 На вопросы существования решения этого уравнения отвечает классическая теория Фредгольма.
 Если $ K(t, s),\,f(t) $ -- непрерывные функции на заданных отрезках, то $\forall \lambda \in \mathbb{R}$ интегральное уравнение. Рассмотрим интегральное уравнение 
 \[
@@ -76,12 +104,49 @@ v(t) = \lambda \displaystyle \int_a^b K(t, s)u(s)ds,
 
 \item Можно ли привести матрицу СЛАУ, получающуюся при использовании метода квадратур, к симметричному виду в случае, если ядро интегрального уравнения является симметричным, т. е. $ K(x, s) = K(s, x) $?
 
+Да, можно. Если использовать квадратурные формулы центральных прямоугольников, то матрица системы 
+\noindent \[ 
+\begin{pmatrix}
+1 - \lambda a_0^N K(x_0,s_0)  &    - \lambda a_1^N K(x_0,s_1)   &  ...  &   - \lambda a_{N-1}^N K(x_0,s_{N-1})&   - \lambda a_N^N K(x_0,s_N)  \\
+-\lambda a_0^N K(x_1,s_0)  &   1 - \lambda a_1^N K(x_1,s_1)   &  ...  &   - \lambda a_{N-1}^N K(x_1,s_{N-1})&   - \lambda a_N^N K(x_1,s_N)  \\
+... &   ...   &  ...  &   ...  \\
+-\lambda a_0^N K(x_{N-1},s_0)  &    - \lambda a_1^N K(x_{N-1},s_1)   &  ...  &  1 - \lambda a_{N-1}^N K(x_{N-1},s_{N-1})&  -\lambda a_N^N K(x_{N-1},s_N) \\
+-\lambda a_0^N K(x_N,s_0)  &    - \lambda a_1^N K(x_N,s_1)   &  ... &-\lambda a_{N-1}^N K(x_{N},s_{N-1}) &  1 - \lambda a_N^N K(x_N,s_N) \\
+\end{pmatrix} 
+\]
+
+примет вид
+\[A=
+        \begin{pmatrix}
+            1 - \lambda \sfrac{h}{2} K(x_0,s_0)  &    - \lambda h K(x_0,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_0,s_N)  \\
+             -\lambda \sfrac{h}{2} K(x_1,s_0)  &   1 - \lambda h K(x_1,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_1,s_N)  \\
+            ... &   ...   &  ...  &   ...  \\
+ 	  -\lambda \sfrac{h}{2} K(x_{N-1},s_0)  &    - \lambda h K(x_{N-1},s_1)   &  ...  &  - \lambda \sfrac{h}{2} K(x_{N-1},s_N) \\
+            -\lambda \sfrac{h}{2} K(x_N,s_0)  &    - \lambda h K(x_N,s_1)   &  ...  &  1 - \lambda \sfrac{h}{2} K(x_N,s_N) \\
+        \end{pmatrix}, \quad Ay = f.
+    \]
+
+Поскольку $K(x,s) = K(s,x)$, то для симметричности достаточно домножить уравнения $(2)-(N-1)$ на 2, тогда 
+
+\[A=
+        \begin{pmatrix}
+            1 - \lambda \sfrac{h}{2} K(x_0,s_0)  &    - \lambda h K(x_0,s_1)   &  ...  &   - \lambda \sfrac{h}{2} K(x_0,s_N)  \\
+             -\lambda  h K(x_1,s_0)  &  2( 1 - \lambda h K(x_1,s_1))   &  ...  &   - \lambda h K(x_1,s_N)  \\
+            ... &   ...   &  ...  &   ...  \\
+ 	  -\lambda h K(x_{N-1},s_0)  &    - 2\lambda h K(x_{N-1},s_1)   &  ...  & - \lambda h K(x_{N-1},s_N) \\
+            -\lambda \sfrac{h}{2} K(x_N,s_0)  &    - \lambda h K(x_N,s_1)   &  ...  &  1 - \lambda \sfrac{h}{2} K(x_N,s_N) \\
+        \end{pmatrix}, \quad Ay = f.
+    \]
+
+
 \item Предложите способ контроля точности результата вычислений при использовании метода квадратур.
+
 Можно сравнивать с точным решением.
 
 \item Оцените возможность и эффективность применения методов квадратур, простой итерации и замены ядра при решении интегральных уравнений Вольтерры 2 рода.
 
 \item Что называют резольвентой ядра интегрального уравнения?
+
 Резольвентой интегрального уравнения Фредгольма 2 рода называется такая функция $ R = R(s, t, \lambda) $, что решение этого уравнения представляется в виде:
 \[
 u(s) = f(s) + \displaystyle \int_a^b R(s, t, \lambda) f(t) dt,
