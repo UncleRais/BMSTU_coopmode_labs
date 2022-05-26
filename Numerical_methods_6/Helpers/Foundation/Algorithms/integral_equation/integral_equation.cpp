@@ -6,7 +6,7 @@
 #include "../../../../../Numerical_methods_5/Helpers/Foundation/Matrix/Matr.cpp"
 
 template < typename T > 
-void integral_equation<T>::solve_quadrature(const std::string& path)
+void integral_equation<T>::solve_quadrature(const std::string& path, size_t _sections)
 {
 	T h = (_parameters.area_.back() - _parameters.area_.front()) / _sections; 
 	size_t number_of_points = _sections + 1;
@@ -48,15 +48,18 @@ void integral_equation<T>::solve_degenerate(const std::string& path)
 }
 
 template < typename T > 
-void integral_equation<T>::solve_simple_iterations(const std::string& path, const double eps)
+void integral_equation<T>::solve_simple_iterations(const std::string& path, size_t _sections, const double eps, int iterations)
 {
 	T h = (_parameters.area_.back() - _parameters.area_.front()) / _sections; 
 	size_t number_of_points = _sections + 1;
 
+	std::ofstream errors;
+	errors.open("./output/errors.dat");
 	std::vector<T> result; result.reserve(number_of_points);
 	for(size_t i = 0; i < number_of_points; ++i) result.push_back(_parameters.f_(_parameters.area_.front() + i * h));
-	std::vector<T> iterated(number_of_points, T(0));;
-	while(true) 
+	std::vector<T> iterated(number_of_points, T(0));
+	const int _iterations = iterations;
+	while(iterations > 0) 
 	{
 		for(size_t i = 0; i < number_of_points; ++i)
 		{
@@ -67,7 +70,7 @@ void integral_equation<T>::solve_simple_iterations(const std::string& path, cons
 				for(size_t k = 0; k < number_of_points; ++k)
 				{
 					const T x_k = (this->_parameters).area_.front()+k*h;
-					const T a_k = h;
+					const T a_k = (k == 0 || k == number_of_points-1) ? h/2 : h;
 					sum += (this->_parameters).lambda_*(this->_parameters).K_(x_i, x_k)*result[k]*a_k;
 				}
 				return sum;
@@ -75,9 +78,13 @@ void integral_equation<T>::solve_simple_iterations(const std::string& path, cons
 			iterated[i] = c_i+f_i;
 		}
 		const T _norm = norm(result-iterated);
+		errors << _iterations - iterations + 1 << " " << _norm << "\n";
 		result = iterated;
-		if (_norm<eps) { break; }
+		// if (_norm<eps) { break; }
+		--iterations;
 	}
+	errors.close();
+
 	std::ofstream file;
 	file.open(path);
 	for(size_t i = 0; i < result.size(); ++i) file << _parameters.area_.front()+i*h << " " << result[i] << "\n"; 

@@ -13,7 +13,7 @@ double K(double x, double s)
 return(0.5 * (1. - x*cos(x*s)));
 }
 
-std::array<double, 2> M = {0.1, 1.};
+std::array<double, 2> M = {0., 1.};
 
 double lambda = 1.;
 
