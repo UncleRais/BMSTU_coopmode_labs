@@ -20,7 +20,7 @@ struct AlgPrint {
 	static void value(const T& message);
 
 	template<typename T>
-	static void printsystem(const Matr<T>& matrix, const std::vector<T>& vec, int width = 7, int prec = 8);
+	static void printsystem(const Matr<T>& matrix, const std::vector<T>& vec, int width = 10, int prec = 4);
 
 };
 

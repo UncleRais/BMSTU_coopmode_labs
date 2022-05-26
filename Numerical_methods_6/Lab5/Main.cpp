@@ -6,16 +6,18 @@
 #include <ctime>
 
 
-#include "test1.cpp"
+#include "test2.cpp"
 #include "test3.cpp"
+#include "degenerate.cpp"
+
 
 
 int main(int argc, char** argv) 
 {
-    const integral_equation_parameters<double> params(lambda, f, K, F, Q, M);		//Параметры уравнения
+    const integral_equation_parameters<double> params(lambda, f, K, phi, psi, F, Q, M);		//Параметры уравнения
 	std::string path = "./output/solution_";			
 	std::string format = ".dat";			   
-	size_t N = 5; 														//Количество разбиений 
+	size_t N = 100; 														//Количество разбиений 
 
 	integral_equation<double> model(params);
 
@@ -25,12 +27,12 @@ int main(int argc, char** argv)
 	std::cout << "solve_quadrature Time: "<< end_time - start_time << "\n"; 
 
 	start_time =  clock();
-	model.solve_simple_iterations(path + "simple" + format, N, 1e-10, 100);
+	model.solve_simple_iterations(path + "simple" + format, N, 1e-10, 10);
 	end_time = clock(); 
 	std::cout << "solve_simple_iterations Time: "<< end_time - start_time << "\n"; 
 
 	start_time =  clock();
-	model.solve_degenerate(path + "degenerate" + format);
+	model.solve_degenerate(path + "degenerate" + format, 80);
 	end_time = clock(); 
 	std::cout << "solve_degenerate Time: "<< end_time - start_time << "\n"; 
 

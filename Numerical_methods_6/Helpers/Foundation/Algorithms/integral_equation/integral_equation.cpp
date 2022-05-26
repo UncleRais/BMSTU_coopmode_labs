@@ -41,15 +41,12 @@ void integral_equation<T>::solve_quadrature(const std::string& path, size_t _sec
 
 }
 
-template < typename T > 
-void integral_equation<T>::solve_degenerate(const std::string& path)
-{
-	
-}
 
 template < typename T > 
 void integral_equation<T>::solve_simple_iterations(const std::string& path, size_t _sections, const double eps, int iterations)
 {
+	std::ofstream file;
+	file.open(path);
 	T h = (_parameters.area_.back() - _parameters.area_.front()) / _sections; 
 	size_t number_of_points = _sections + 1;
 
@@ -82,13 +79,51 @@ void integral_equation<T>::solve_simple_iterations(const std::string& path, size
 		result = iterated;
 		// if (_norm<eps) { break; }
 		--iterations;
+		for(size_t i = 0; i < result.size(); ++i) file << _parameters.area_.front()+i*h << " " << result[i] << " "; 
+			file << "\n";
 	}
 	errors.close();
 
+	file.close();
+}
+
+template < typename T > 
+void integral_equation<T>::solve_degenerate(const std::string& path, size_t sections)
+{
+	T h = (_parameters.area_.back() - _parameters.area_.front()) / sections;  
+	size_t size = _parameters.phi_.size();
+	Matr<T> matrix(size , T{0});
+	std::vector<T> right_part; right_part.reserve(size);
+	std::vector<T> x; x.reserve(sections);
+	for(size_t i = 0; i < sections; ++i) x.push_back(_parameters.area_.front() + (i+0.5)*h);
+
+	auto integrate = [this, sections, h, x](std::function<T(T)> f, std::function<T(T)> g) -> T 
+    {
+        T sum = 0;
+        for(size_t i = 0; i < sections; ++i) 
+       		sum += f(x[i]) * g(x[i]);
+        return(sum * h);
+    };
+
+	for(size_t i = 0; i < size; ++i)
+	{
+		right_part.push_back(integrate(_parameters.psi_[i], _parameters.f_));
+		for(size_t j = 0; j < size; ++j)
+		{
+			matrix.at(i, j) = -_parameters.lambda_ * integrate(_parameters.psi_[i], _parameters.phi_[j]);
+		}
+		matrix.at(i, i) += T{1};
+	}
+
+	AlgPrint::printsystem(matrix, right_part);
+
+	auto result = Gauss::solve(matrix, right_part);
+
 	std::ofstream file;
 	file.open(path);
-	for(size_t i = 0; i < result.size(); ++i) file << _parameters.area_.front()+i*h << " " << result[i] << "\n"; 
+	for(size_t i = 0; i < result.size(); ++i) file << result[i] <<"\n"; 
 	file.close();
+
 }
 
 
