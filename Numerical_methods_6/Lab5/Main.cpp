@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	std::cout << "solve_quadrature Time: "<< end_time - start_time << "\n"; 
 
 	start_time =  clock();
-	model.solve_simple_iterations(path + "simple" + format, N, 1e-10, 10);
+	model.solve_simple_iterations(path + "simple" + format, N, 1e-10, 100);
 	end_time = clock(); 
 	std::cout << "solve_simple_iterations Time: "<< end_time - start_time << "\n"; 
 

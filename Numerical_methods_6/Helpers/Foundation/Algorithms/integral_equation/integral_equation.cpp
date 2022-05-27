@@ -95,14 +95,15 @@ void integral_equation<T>::solve_degenerate(const std::string& path, size_t sect
 	Matr<T> matrix(size , T{0});
 	std::vector<T> right_part; right_part.reserve(size);
 	std::vector<T> x; x.reserve(sections);
-	for(size_t i = 0; i < sections; ++i) x.push_back(_parameters.area_.front() + (i+0.5)*h);
+	for(size_t i = 0; i < sections + 1; ++i) x.push_back(_parameters.area_.front() + (i)*h);
 
 	auto integrate = [this, sections, h, x](std::function<T(T)> f, std::function<T(T)> g) -> T 
     {
         T sum = 0;
         for(size_t i = 0; i < sections; ++i) 
-       		sum += f(x[i]) * g(x[i]);
-        return(sum * h);
+       		//sum += f(x[i]) * g(x[i]);
+       		sum += (f(x[i]) * g(x[i]) + f(x[i + 1]) * g(x[i + 1]))/2;
+        return(sum*h);
     };
 
 	for(size_t i = 0; i < size; ++i)
