@@ -116,8 +116,6 @@ void integral_equation<T>::solve_degenerate(const std::string& path, size_t sect
 		matrix.at(i, i) += T{1};
 	}
 
-	AlgPrint::printsystem(matrix, right_part);
-
 	auto result = Gauss::solve(matrix, right_part);
 
 	std::ofstream file;
@@ -141,7 +139,7 @@ void integral_equation<T>::solve_singular(const std::string& path, size_t sectio
 
 	for(size_t i = 1; i < sections + 1; ++i)
 	{
-		T var1 = 2*pi*(i-0.5)/sections, var2 = 2*pi*(i-1)/sections;
+		T var1 = length*(i-0.5), var2 = length*(i-1);
 
 		k.push_back({ cos(var1) , sin(var1) });
 		c.push_back({ cos(var2) , sin(var2) });
@@ -158,10 +156,12 @@ void integral_equation<T>::solve_singular(const std::string& path, size_t sectio
 	for(size_t i = 0; i < sections; ++i)
 	{
 		for(size_t j = 0; j < sections; ++j)
-			matrix.at(i, j+1) *= scalar(_parameters.Q_(k[i], c[j]), n[i]);
+			matrix.at(i, j) *= scalar(_parameters.Q_(k[i], c[j]), n[i]);
 		matrix.at(i, sections) = T{1}; 
 	}
 	matrix.at(sections, sections) = T{0};
+
+	//AlgPrint::printsystem(matrix, right_part);
 
 	auto result = Gauss::solve(matrix, right_part);
 
