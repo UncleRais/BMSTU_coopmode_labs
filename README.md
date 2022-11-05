@@ -1,21 +1,21 @@
 # BMSTU_coopmode_labs
 
-## (OptimizationMethods)Laboratory works: Minimization methods of different order  
+## (OptimizationMethods) Laboratory works: Minimization methods of different order  
 Contains different implementations of following algorithms:
 
 * 
 
-## (Numerical_methods_5)Laboratory works: Numerical methods of linear algebra task solving
+## (Numerical_methods_5) Laboratory works: Numerical methods of linear algebra task solving
 Contains different implementations of following algorithms:
 
 * Direct methods of SLAE solving: Gauss method with main element choosing;
 * Matrix decompsitions: LU, QR;
 * Iterative methods of SLAE solving: simple, Jacobi, Seidel, relaxation;
-* Interpolation methods: Lagrange, spline. 
+* Interpolation methods: Lagrange, spline;
 * Methods of finding own values and own vectors: inverse iterations, Rayleigh relation;
 * Methods of nonlinear equation solving: bisection, Newton, tangential.
 
-## (Numerical_methods_6)Laboratory works: Numerical methods of mathematical physics task solving
+## (Numerical_methods_6) Laboratory works: Numerical methods of mathematical physics task solving
 Contains different implementations of following algorithms:
 
 * Methods of ordinary differential equations solving: explicit and implicit Euler, Runge - Kutta with method Runge of step choosing, Adams - Bashforth, predictor - corrector;
