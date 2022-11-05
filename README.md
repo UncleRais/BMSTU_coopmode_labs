@@ -20,7 +20,7 @@ Contains different implementations of following algorithms:
 
 * Methods of ordinary differential equations solving: explicit and implicit Euler, Runge - Kutta with method Runge of step choosing, Adams - Bashforth, predictor - corrector;
 * Numerical solution of boundary value problem of one dimensional thermal conductivity equation using six dot pattern;
-* Numerical solution of boundary value problem of one dimensional wave equation using five dot pattern <<cross>>;
+* Numerical solution of boundary value problem of one dimensional wave equation using five dot pattern "cross";
 * Numerical solution of boundary value problem of two dimensional Poisson equation using alternating direction method;
 * Methods of integral equations solving: quadrature, simple iterations, degenerate kernel. 
 
