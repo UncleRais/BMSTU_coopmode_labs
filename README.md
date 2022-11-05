@@ -3,7 +3,43 @@
 ## (OptimizationMethods) Laboratory works: Minimization methods of different order  
 Contains different implementations of following algorithms:
 
-* 
+*Package 1 (1-dimensional dichotomy)
+**Dichotomy method
+**Golden-section search
+
+*Package 2 (gradient descent methods)
+**Steepest descent
+**Gradient descent with geometric step reduction
+
+*Package 3 (nonlinear conjugate gradient methods)
+**Nonlinear conjugate gradient method
+**Fletcher-Reeves method
+**Polak-Ribière method
+**Nonlinear conjugate gradient method with Hessian matrix
+
+*Package 4 (Newton's methods)
+**Newton's method
+**Modified Newton's method with step reduction
+
+*Package 5 (Quasi-Newton methods)
+**Davidon-Fletcher-Powell method
+**Broyden-Fletcher-Goldfarb - Shanno method
+**Powell method
+**McCormick method
+
+*Package 6 (direct search methods)
+**Cyclic coordinate descent
+**Pattern search (Hooke - Jeeves method)
+**Rosenbrock method
+**Powell method
+
+*Package 7 (simplex methods)
+**Regular simplex method
+**Downhill simplex method (Nelder[Dash]Mead method)
+
+*Package 8 (barrier methods)
+**Interior penalty function method
+**Exterior penalty function method
 
 ## (Numerical_methods_5) Laboratory works: Numerical methods of linear algebra task solving
 Contains different implementations of following algorithms:
